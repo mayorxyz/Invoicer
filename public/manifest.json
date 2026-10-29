@@ -1,0 +1,17 @@
+{
+  "name": "Invoicer - Invoice & Receipt Generator",
+  "short_name": "Invoicer",
+  "description": "Professional invoice, receipt, and quote generator. Works offline. All data stays in your browser.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F5F0",
+  "theme_color": "#1F3FD1",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,292 @@
+/* Design Tokens - Liftoff Style */
+
+:root {
+  /* Semantic Color Tokens - Light Mode */
+  --bg: #FAFAFA;
+  --bg-subtle: #F4F4F4;
+  --surface: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --border: #E4E4E4;
+  --border-strong: #CFCFCF;
+  --text: #111111;
+  --text-muted: #595959;
+  --text-faint: #8A8A8A;
+  --accent: #FF5A1F;
+  --accent-hover: #E64D15;
+  --accent-contrast: #FFFFFF;
+  --accent-tint: #FFF3ED;
+  --ring: #FF5A1F;
+  --overlay: rgba(0, 0, 0, 0.5);
+  
+  /* Status Colors */
+  --success: #1A9D5A;
+  --success-bg: #E8F6EE;
+  --warning: #C77700;
+  --warning-bg: #FFF4DC;
+  --danger: #D92D20;
+  --danger-bg: #FDECEA;
+  --info: #2563EB;
+  --info-bg: #EAF1FF;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(17, 17, 17, 0.06);
+  --shadow-md: 0 4px 12px rgba(17, 17, 17, 0.08);
+  --shadow-lg: 0 12px 32px -8px rgba(17, 17, 17, 0.12);
+  --shadow-xl: 0 24px 48px -12px rgba(17, 17, 17, 0.16);
+  
+  /* Background Glow - Light Mode */
+  --bg-glow: radial-gradient(60% 50% at 85% 0%, #FFE4D6 0%, rgba(255, 243, 237, 0) 70%);
+  
+  /* Typography */
+  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  
+  /* Type Scale */
+  --h1-size: 56px;
+  --h1-line: 60px;
+  --h1-tracking: -0.03em;
+  
+  --h2-size: 48px;
+  --h2-line: 52px;
+  --h2-tracking: -0.03em;
+  
+  --h3-size: 40px;
+  --h3-line: 44px;
+  --h3-tracking: -0.025em;
+  
+  --h4-size: 32px;
+  --h4-line: 38px;
+  --h4-tracking: -0.02em;
+  
+  --h5-size: 24px;
+  --h5-line: 30px;
+  --h5-tracking: -0.015em;
+  
+  --h6-size: 20px;
+  --h6-line: 26px;
+  --h6-tracking: -0.01em;
+  
+  --body-size: 16px;
+  --body-line: 24px;
+  
+  --small-size: 14px;
+  --small-line: 20px;
+  
+  --caption-size: 12px;
+  --caption-line: 16px;
+  
+  /* Spacing (8px grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-pill: 9999px;
+  
+  /* Layout */
+  --topbar-height: 64px;
+  --sidebar-width: 248px;
+  --sidebar-collapsed: 72px;
+  --max-content: 1280px;
+  --gutter: 24px;
+  
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 400ms;
+}
+
+/* Dark Mode */
+[data-theme="dark"] {
+  --bg: #0B0B0C;
+  --bg-subtle: #111113;
+  --surface: #151517;
+  --surface-raised: #1C1C1F;
+  --border: #2A2A2E;
+  --border-strong: #3A3A40;
+  --text: #F5F5F5;
+  --text-muted: #A1A1A6;
+  --text-faint: #76767C;
+  --accent: #FF6B35;
+  --accent-hover: #FF5A1F;
+  --accent-contrast: #111111;
+  --accent-tint: rgba(255, 107, 53, 0.12);
+  --ring: #FF6B35;
+  --overlay: rgba(0, 0, 0, 0.7);
+  
+  /* Status Colors - Dark Mode */
+  --success: #22C55E;
+  --success-bg: rgba(34, 197, 94, 0.15);
+  --warning: #F59E0B;
+  --warning-bg: rgba(245, 158, 11, 0.15);
+  --danger: #EF4444;
+  --danger-bg: rgba(239, 68, 68, 0.15);
+  --info: #3B82F6;
+  --info-bg: rgba(59, 130, 246, 0.15);
+  
+  /* Shadows - Dark Mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 24px 48px -12px rgba(0, 0, 0, 0.6);
+  
+  /* Background Glow - Dark Mode */
+  --bg-glow: radial-gradient(60% 50% at 85% 0%, rgba(255, 107, 53, 0.06) 0%, rgba(255, 107, 53, 0) 70%);
+}
+
+/* Typography Classes */
+.h1 {
+  font-size: var(--h1-size);
+  line-height: var(--h1-line);
+  letter-spacing: var(--h1-tracking);
+  font-weight: 600;
+}
+
+.h2 {
+  font-size: var(--h2-size);
+  line-height: var(--h2-line);
+  letter-spacing: var(--h2-tracking);
+  font-weight: 600;
+}
+
+.h3 {
+  font-size: var(--h3-size);
+  line-height: var(--h3-line);
+  letter-spacing: var(--h3-tracking);
+  font-weight: 600;
+}
+
+.h4 {
+  font-size: var(--h4-size);
+  line-height: var(--h4-line);
+  letter-spacing: var(--h4-tracking);
+  font-weight: 600;
+}
+
+.h5 {
+  font-size: var(--h5-size);
+  line-height: var(--h5-line);
+  letter-spacing: var(--h5-tracking);
+  font-weight: 600;
+}
+
+.h6 {
+  font-size: var(--h6-size);
+  line-height: var(--h6-line);
+  letter-spacing: var(--h6-tracking);
+  font-weight: 600;
+}
+
+.body {
+  font-size: var(--body-size);
+  line-height: var(--body-line);
+}
+
+.small {
+  font-size: var(--small-size);
+  line-height: var(--small-line);
+}
+
+.caption {
+  font-size: var(--caption-size);
+  line-height: var(--caption-line);
+}
+
+.eyebrow {
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  color: var(--slate);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--flame);
+  border-radius: 1px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Fluid Typography for Mobile */
+@media (max-width: 768px) {
+  .h1 {
+    font-size: clamp(36px, 8vw, var(--h1-size));
+    line-height: 1.1;
+  }
+  
+  .h2 {
+    font-size: clamp(32px, 7vw, var(--h2-size));
+    line-height: 1.1;
+  }
+  
+  .h3 {
+    font-size: clamp(28px, 6vw, var(--h3-size));
+    line-height: 1.15;
+  }
+  
+  .h4 {
+    font-size: clamp(24px, 5vw, var(--h4-size));
+    line-height: 1.2;
+  }
+}
+
+/* Background Glow */
+.bg-glow {
+  background: var(--muted);
+  position: relative;
+}
+
+.bg-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60%;
+  height: 50%;
+  background: radial-gradient(60% 50% at 85% 0%, #FFE4D6 0%, rgba(255, 243, 237, 0) 70%);
+  pointer-events: none;
+}
+
+.dark .bg-glow::before {
+  background: radial-gradient(60% 50% at 85% 0%, rgba(255, 90, 31, 0.06) 0%, rgba(255, 90, 31, 0) 70%);
+}
+
+/* Preview Stage */
+.preview-stage {
+  background: var(--flame-tint);
+  border-radius: var(--radius-lg);
+  background-image: linear-gradient(to bottom, var(--flame-tint), var(--white));
+  padding: var(--space-4);
+}
+
+.dark .preview-stage {
+  background-image: linear-gradient(to bottom, var(--flame-tint), var(--surface));
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

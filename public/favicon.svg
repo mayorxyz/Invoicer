@@ -1,0 +1,35 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#FF5A1F"/>
+  
+  <!-- Document icon -->
+  <g transform="translate(128, 96)">
+    <!-- Main document body -->
+    <path d="M 0 40 L 0 280 Q 0 296 16 296 L 240 296 Q 256 296 256 280 L 256 40 Q 256 24 240 24 L 176 24 L 160 8 L 16 8 Q 0 8 0 24 Z" 
+          fill="white" 
+          stroke="white" 
+          stroke-width="2"/>
+    
+    <!-- Folded corner -->
+    <path d="M 160 8 L 160 40 Q 160 48 168 48 L 256 48" 
+          fill="none" 
+          stroke="#FF5A1F" 
+          stroke-width="3" 
+          stroke-linecap="round"/>
+    
+    <!-- Document lines -->
+    <rect x="40" y="80" width="176" height="8" rx="4" fill="#FF5A1F" opacity="0.3"/>
+    <rect x="40" y="112" width="176" height="8" rx="4" fill="#FF5A1F" opacity="0.3"/>
+    <rect x="40" y="144" width="140" height="8" rx="4" fill="#FF5A1F" opacity="0.3"/>
+    <rect x="40" y="176" width="176" height="8" rx="4" fill="#FF5A1F" opacity="0.3"/>
+    <rect x="40" y="208" width="120" height="8" rx="4" fill="#FF5A1F" opacity="0.3"/>
+    
+    <!-- Checkmark -->
+    <path d="M 180 240 L 200 260 L 240 220" 
+          fill="none" 
+          stroke="#FF5A1F" 
+          stroke-width="12" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+  </g>
+</svg>
