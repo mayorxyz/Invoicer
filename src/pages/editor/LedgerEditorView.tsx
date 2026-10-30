@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../store/useStore';
-import { Icon } from '../ui/Icon';
+import { Icon } from '../../components/ui/Icon';
 import { totals, formatMoney, toMinor, fromMinor } from '../../lib/money';
 import { today, addDays, formatDateLocale } from '../../lib/dates';
 import type { Mode, Item } from '../../types';
@@ -355,7 +355,7 @@ export function LedgerEditorView() {
                 <select
                   value={draft.currency}
                   onChange={e => updateDraft({ currency: e.target.value })}
-                  className="bg-background border border-rule rounded-lg px-2.5 py-1.5 text-xs font-semibold font-mono outline-none"
+                  className="w-auto font-mono text-xs font-semibold py-1.5"
                 >
                   <option value="NGN">₦ NGN</option>
                   <option value="USD">$ USD</option>
@@ -485,7 +485,7 @@ export function LedgerEditorView() {
                 </label>
               }
             >
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+              <div className={`grid grid-cols-1 gap-5 ${shipToEnabled ? 'xl:grid-cols-2' : ''}`}>
                 <div className="space-y-3 min-w-0">
                   <h4 className="text-xs uppercase font-bold tracking-wide" style={{ color: 'var(--accent)' }}>Bill To</h4>
                   <Field label="Client / Company Name *">
@@ -576,7 +576,7 @@ export function LedgerEditorView() {
                 <Field label="Discount">
                   <div className="flex gap-1.5">
                     <input type="number" value={draft.discVal} onChange={e => updateDraft({ discVal: parseFloat(e.target.value) || 0 })} placeholder="0" className={`${INPUT} font-mono flex-1`} />
-                    <select value={draft.discType} onChange={e => updateDraft({ discType: e.target.value as 'percent' | 'fixed' })} className={`${INPUT} !w-auto`}>
+                    <select value={draft.discType} onChange={e => updateDraft({ discType: e.target.value as 'percent' | 'fixed' })} className="w-auto min-w-0 bg-surface border border-rule rounded-lg px-3 py-2 text-sm outline-none focus:border-[var(--accent)]">
                       <option value="percent">%</option>
                       <option value="fixed">Fixed</option>
                     </select>

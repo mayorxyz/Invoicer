@@ -1,17 +1,17 @@
 import React, { useState, useMemo } from 'react';
-import { useStore } from '../../store/useStore';
-import { PageHeader } from '../ui/PageHeader';
-import { DataTable } from '../ui/DataTable';
-import { EmptyState } from '../ui/EmptyState';
-import { SampleBanner } from '../ui/SampleBanner';
-import { SamplePill } from '../ui/SamplePill';
-import { ClientDialog } from '../ui/ClientDialog';
-import { ConfirmDialog } from '../ui/ConfirmDialog';
-import { useToast } from '../ui/Toast';
-import { Icon } from '../ui/Icon';
-import { formatMoney } from '../../lib/money';
+import { useStore } from '../store/useStore';
+import { PageHeader } from '../components/ui/PageHeader';
+import { DataTable } from '../components/ui/DataTable';
+import { EmptyState } from '../components/ui/EmptyState';
+import { SampleBanner } from '../components/ui/SampleBanner';
+import { SamplePill } from '../components/ui/SamplePill';
+import { ClientDialog } from '../components/ui/ClientDialog';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
+import { useToast } from '../components/ui/Toast';
+import { Icon } from '../components/ui/Icon';
+import { formatMoney } from '../lib/money';
 import { v4 as uuid } from 'uuid';
-import type { Client } from '../../types';
+import type { Client } from '../types';
 
 export function ClientsPage() {
   const { state, dismissDemo, addClient, updateClient, deleteClient, newDraft, setView } = useStore();

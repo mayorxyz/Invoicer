@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useStore } from '../../store/useStore';
-import { IconButton } from '../ui/Button';
-import { Icon } from '../ui/Icon';
-import { PaperClassic } from '../papers/Classic';
-import { PaperModern } from '../papers/Modern';
-import { PaperMinimal } from '../papers/Minimal';
+import { IconButton } from '../../components/ui/Button';
+import { Icon } from '../../components/ui/Icon';
+import { PaperClassic } from '../../components/papers/Classic';
+import { PaperModern } from '../../components/papers/Modern';
+import { PaperMinimal } from '../../components/papers/Minimal';
 
 export function PreviewStage() {
   const { draft, updateDraft } = useStore();

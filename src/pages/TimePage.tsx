@@ -1,19 +1,19 @@
 import React, { useState, useMemo } from 'react';
-import { useStore } from '../../store/useStore';
-import { PageHeader } from '../ui/PageHeader';
-import { StatCard } from '../ui/StatCard';
-import { DataTable } from '../ui/DataTable';
-import { EmptyState } from '../ui/EmptyState';
-import { SampleBanner } from '../ui/SampleBanner';
-import { SamplePill } from '../ui/SamplePill';
-import { TimeEntryDialog } from '../ui/TimeEntryDialog';
-import { ConfirmDialog } from '../ui/ConfirmDialog';
-import { useToast } from '../ui/Toast';
-import { Icon } from '../ui/Icon';
-import { formatMoney } from '../../lib/money';
-import { formatDateLocale } from '../../lib/dates';
+import { useStore } from '../store/useStore';
+import { PageHeader } from '../components/ui/PageHeader';
+import { StatCard } from '../components/ui/StatCard';
+import { DataTable } from '../components/ui/DataTable';
+import { EmptyState } from '../components/ui/EmptyState';
+import { SampleBanner } from '../components/ui/SampleBanner';
+import { SamplePill } from '../components/ui/SamplePill';
+import { TimeEntryDialog } from '../components/ui/TimeEntryDialog';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
+import { useToast } from '../components/ui/Toast';
+import { Icon } from '../components/ui/Icon';
+import { formatMoney } from '../lib/money';
+import { formatDateLocale } from '../lib/dates';
 import { v4 as uuid } from 'uuid';
-import type { TimeEntry } from '../../types';
+import type { TimeEntry } from '../types';
 
 export function TimePage() {
   const { state, dismissDemo, addTimeEntry, updateTimeEntry, deleteTimeEntry } = useStore();

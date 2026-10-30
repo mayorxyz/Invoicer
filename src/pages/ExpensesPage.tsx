@@ -1,19 +1,19 @@
 import React, { useState, useMemo } from 'react';
-import { useStore } from '../../store/useStore';
-import { PageHeader } from '../ui/PageHeader';
-import { StatCard } from '../ui/StatCard';
-import { DataTable } from '../ui/DataTable';
-import { EmptyState } from '../ui/EmptyState';
-import { SampleBanner } from '../ui/SampleBanner';
-import { SamplePill } from '../ui/SamplePill';
-import { ExpenseDialog } from '../ui/ExpenseDialog';
-import { ConfirmDialog } from '../ui/ConfirmDialog';
-import { useToast } from '../ui/Toast';
-import { Icon } from '../ui/Icon';
-import { formatMoney } from '../../lib/money';
-import { formatDateLocale } from '../../lib/dates';
+import { useStore } from '../store/useStore';
+import { PageHeader } from '../components/ui/PageHeader';
+import { StatCard } from '../components/ui/StatCard';
+import { DataTable } from '../components/ui/DataTable';
+import { EmptyState } from '../components/ui/EmptyState';
+import { SampleBanner } from '../components/ui/SampleBanner';
+import { SamplePill } from '../components/ui/SamplePill';
+import { ExpenseDialog } from '../components/ui/ExpenseDialog';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
+import { useToast } from '../components/ui/Toast';
+import { Icon } from '../components/ui/Icon';
+import { formatMoney } from '../lib/money';
+import { formatDateLocale } from '../lib/dates';
 import { v4 as uuid } from 'uuid';
-import type { Expense } from '../../types';
+import type { Expense } from '../types';
 
 export function ExpensesPage() {
   const { state, dismissDemo, addExpense, deleteExpense } = useStore();
@@ -268,7 +268,7 @@ export function ExpensesPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-1.5 bg-background border border-border rounded-md text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
+            className="text-xs md:text-sm"
           >
             <option value="all">All Categories</option>
             {categories.map(cat => (

@@ -9,6 +9,24 @@ import { generateSampleClients, generateSampleItems, generateSampleDocuments, ge
 
 type View = 'editor' | 'documents' | 'history' | 'clients' | 'items' | 'reports' | 'expenses' | 'time' | 'settings';
 
+export const VIEW_PATHS: Record<View, string> = {
+  editor: '/',
+  documents: '/documents',
+  history: '/history',
+  clients: '/clients',
+  items: '/items',
+  reports: '/reports',
+  expenses: '/expenses',
+  time: '/time',
+  settings: '/settings',
+};
+
+export function viewFromPath(pathname: string): View {
+  const normalized = pathname.replace(/\/+$/, '') || '/';
+  const entry = (Object.entries(VIEW_PATHS) as [View, string][]).find(([, p]) => p === normalized);
+  return entry ? entry[0] : 'editor';
+}
+
 interface Toast { id: string; message: string; action?: () => void; actionLabel?: string }
 
 interface Store {
@@ -44,9 +62,12 @@ interface Store {
   redo: () => void;
 
   // Documents
+  updateInvoice: (inv: Invoice) => void;
   duplicateInvoice: (id: string) => void;
   deleteInvoice: (id: string) => void;
   convertDocument: (id: string, toMode: Mode) => void;
+  
+  
 
   // Clients
   addClient: (c: Client) => void;
@@ -136,10 +157,16 @@ export const useStore = create<Store>((set, get) => ({
   init: () => {
     const noStorage = !storage.isLocalStorageAvailable();
     const state = storage.loadState();
-    set({ state, noStorage });
+    set({ state, noStorage, view: viewFromPath(window.location.pathname) });
   },
 
-  setView: (v) => set({ view: v }),
+  setView: (v) => {
+    set({ view: v });
+    const path = VIEW_PATHS[v];
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, '', path);
+    }
+  },
   setMobileTab: (t) => set({ mobileTab: t }),
 
   getBusiness: () => {
@@ -304,6 +331,21 @@ export const useStore = create<Store>((set, get) => ({
     set({ state: newState });
     persist(newState);
     get().addToast('Converted');
+  },
+    updateInvoice: (inv) => {
+    const { state, draft } = get();
+    const updated = { ...inv, updatedAt: new Date().toISOString() };
+    let newState = {
+      ...state,
+      invoices: state.invoices.map(i => (i.id === updated.id ? updated : i)),
+    };
+    newState = dismissDemoOnWrite(newState);
+    set({
+      state: newState,
+      draft: draft && draft.id === updated.id ? { ...draft, status: updated.status } : draft,
+    });
+    persist(newState);
+    get().addToast(`Marked as ${updated.status}`);
   },
 
   addClient: (c) => {

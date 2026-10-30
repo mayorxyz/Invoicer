@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
-import { useStore } from '../../store/useStore';
-import { PageHeader } from '../ui/PageHeader';
-import { StatCard } from '../ui/StatCard';
-import { EmptyState } from '../ui/EmptyState';
-import { SampleBanner } from '../ui/SampleBanner';
-import { formatMoney } from '../../lib/money';
-import { derivedStatus } from '../../lib/status';
+import { useStore } from '../store/useStore';
+import { PageHeader } from '../components/ui/PageHeader';
+import { StatCard } from '../components/ui/StatCard';
+import { EmptyState } from '../components/ui/EmptyState';
+import { SampleBanner } from '../components/ui/SampleBanner';
+import { formatMoney } from '../lib/money';
+import { derivedStatus } from '../lib/status';
 
 export function ReportsPage() {
   const { state, dismissDemo } = useStore();

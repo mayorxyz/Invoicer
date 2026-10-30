@@ -1,23 +1,32 @@
 import React, { useEffect } from 'react';
-import { useStore } from './store/useStore';
+import { useStore, viewFromPath } from './store/useStore';
 import { TopBar } from './components/layout/TopBar';
 import { Sidebar } from './components/layout/Sidebar';
 import { MobileTabs } from './components/layout/MobileTabs';
-import { LedgerEditorView } from './components/editor/LedgerEditorView';
-import { DocumentsPage } from './components/pages/DocumentsPage';
-import { HistoryPage } from './components/pages/HistoryPage';
-import { ClientsPage } from './components/pages/ClientsPage';
-import { ItemsPage } from './components/pages/ItemsPage';
-import { ReportsPage } from './components/pages/ReportsPage';
-import { ExpensesPage } from './components/pages/ExpensesPage';
-import { TimePage } from './components/pages/TimePage';
-import { SettingsPage } from './components/pages/SettingsPage';
+import { LedgerEditorView } from './pages/editor/LedgerEditorView';
+import { DocumentsPage } from './pages/DocumentsPage';
+import { HistoryPage } from './pages/HistoryPage';
+import { ClientsPage } from './pages/ClientsPage';
+import { ItemsPage } from './pages/ItemsPage';
+import { ReportsPage } from './pages/ReportsPage';
+import { ExpensesPage } from './pages/ExpensesPage';
+import { TimePage } from './pages/TimePage';
+import { SettingsPage } from './pages/SettingsPage';
 
 function App() {
   const { init, state, view, toggleSidebar } = useStore();
   
   useEffect(() => {
     init();
+  }, []);
+
+  // Sync view with browser back/forward navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      useStore.setState({ view: viewFromPath(window.location.pathname) });
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
   
   // Apply theme

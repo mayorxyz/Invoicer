@@ -103,7 +103,7 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3 py-2.5 bg-background border border-border rounded-md text-sm"
+              className="w-full text-sm"
             />
           </div>
           <div>
@@ -130,7 +130,7 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
             type="text"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-3 py-2.5 bg-background border border-border rounded-md text-sm"
+            className="w-full text-sm"
             placeholder="General"
           />
         </div>
@@ -158,7 +158,7 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-              className="w-full px-3 py-2.5 bg-background border border-border rounded-md text-sm"
+              className="w-full text-sm"
             >
               <option value="USD">USD</option>
               <option value="EUR">EUR</option>
@@ -174,7 +174,7 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
             type="number"
             value={tax}
             onChange={(e) => setTax(parseFloat(e.target.value) || 0)}
-            className="w-full px-3 py-2.5 bg-background border border-border rounded-md text-sm"
+            className="w-full text-sm"
             placeholder="0.00"
             step="0.01"
             min="0"
@@ -186,7 +186,7 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full px-3 py-2.5 bg-background border border-border rounded-md text-sm resize-none"
+            className="w-full text-sm resize-none"
             placeholder="Optional notes..."
             rows={3}
           />

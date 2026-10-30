@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useStore } from '../../store/useStore';
-import { PageHeader } from '../ui/PageHeader';
-import { ConfirmDialog } from '../ui/ConfirmDialog';
-import { useToast } from '../ui/Toast';
-import { Icon } from '../ui/Icon';
-import { ACCENT_PALETTE } from '../../lib/defaults';
-import { CURRENCY_LIST } from '../../data/currencies';
-import { ALL_COUNTRIES } from '../../data/countries';
-import { SUPPORTED_LANGUAGES } from '../../i18n';
+import { useStore } from '../store/useStore';
+import { PageHeader } from '../components/ui/PageHeader';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
+import { useToast } from '../components/ui/Toast';
+import { Icon } from '../components/ui/Icon';
+import { ACCENT_PALETTE } from '../lib/defaults';
+import { CURRENCY_LIST } from '../data/currencies';
+import { ALL_COUNTRIES } from '../data/countries';
+import { SUPPORTED_LANGUAGES } from '../i18n';
 
 const sections = [
   { id: 'business', label: 'Business Profile', icon: 'buildings' },
@@ -48,7 +48,7 @@ export function SettingsPage() {
                 type="text"
                 value={business.name}
                 onChange={(e) => updateBusiness({ name: e.target.value })}
-                className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
+                className="w-full text-xs md:text-sm"
                 placeholder="e.g. Acme Corp"
               />
             </div>
@@ -58,7 +58,7 @@ export function SettingsPage() {
                 type="email"
                 value={business.email}
                 onChange={(e) => updateBusiness({ email: e.target.value })}
-                className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
+                className="w-full text-xs md:text-sm"
                 placeholder="contact@company.com"
               />
             </div>
@@ -68,7 +68,7 @@ export function SettingsPage() {
                 type="text"
                 value={business.phone}
                 onChange={(e) => updateBusiness({ phone: e.target.value })}
-                className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
+                className="w-full text-xs md:text-sm"
                 placeholder="+1 (555) 000-0000"
               />
             </div>
@@ -78,7 +78,7 @@ export function SettingsPage() {
                 value={business.address}
                 onChange={(e) => updateBusiness({ address: e.target.value })}
                 rows={3}
-                className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground resize-none"
+                className="w-full text-xs md:text-sm resize-none"
                 placeholder="Street address, City, Country"
               />
             </div>
@@ -93,7 +93,7 @@ export function SettingsPage() {
               <select
                 value={state.settings.homeCurrency}
                 onChange={(e) => updateSettings({ homeCurrency: e.target.value })}
-                className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
+                className="w-full text-xs md:text-sm"
               >
                 {CURRENCY_LIST.map(curr => (
                   <option key={curr.code} value={curr.code}>
@@ -107,7 +107,7 @@ export function SettingsPage() {
               <select
                 value={state.settings.country}
                 onChange={(e) => updateSettings({ country: e.target.value })}
-                className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
+                className="w-full text-xs md:text-sm"
               >
                 {ALL_COUNTRIES.map(country => (
                   <option key={country.code} value={country.code}>
@@ -169,7 +169,7 @@ export function SettingsPage() {
               <select
                 value={state.settings.language}
                 onChange={(e) => updateSettings({ language: e.target.value as any })}
-                className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
+                className="w-full text-xs md:text-sm"
               >
                 {SUPPORTED_LANGUAGES.map(lang => (
                   <option key={lang.code} value={lang.code}>

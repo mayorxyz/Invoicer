@@ -1,9 +1,9 @@
 import React from 'react';
-import { useStore } from '../../store/useStore';
-import { PageHeader } from '../ui/PageHeader';
-import { EmptyState } from '../ui/EmptyState';
-import { SampleBanner } from '../ui/SampleBanner';
-import { formatDateLocale } from '../../lib/dates';
+import { useStore } from '../store/useStore';
+import { PageHeader } from '../components/ui/PageHeader';
+import { EmptyState } from '../components/ui/EmptyState';
+import { SampleBanner } from '../components/ui/SampleBanner';
+import { formatDateLocale } from '../lib/dates';
 
 export function HistoryPage() {
   const { state, dismissDemo } = useStore();

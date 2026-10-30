@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Icon } from '../ui/Icon';
-import { useStore } from '../../store/useStore';
+import { useStore, VIEW_PATHS } from '../../store/useStore';
 import { exportBackup } from '../../lib/storage';
 
 const primaryTabs = [
@@ -92,9 +92,12 @@ export function MobileTabs() {
             {secondaryMenuItems.map((item) => {
               const isActive = view === item.id;
               return (
-                <button
+                <a
                   key={item.id}
-                  onClick={() => {
+                  href={VIEW_PATHS[item.id]}
+                  onClick={(e) => {
+                    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
                     setView(item.id as any);
                     setMenuOpen(false);
                   }}
@@ -111,7 +114,7 @@ export function MobileTabs() {
                     color={isActive ? 'var(--accent)' : 'currentColor'}
                   />
                   <span>{item.label}</span>
-                </button>
+                </a>
               );
             })}
 
@@ -141,9 +144,12 @@ export function MobileTabs() {
         {primaryTabs.map((tab) => {
           const isActive = view === tab.id;
           return (
-            <button
+            <a
               key={tab.id}
-              onClick={() => {
+              href={VIEW_PATHS[tab.id]}
+              onClick={(e) => {
+                if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                e.preventDefault();
                 setView(tab.id as any);
                 setMenuOpen(false);
               }}
@@ -162,7 +168,7 @@ export function MobileTabs() {
               <span className="text-[9px] leading-tight tracking-tight mt-0.5">
                 {tab.label}
               </span>
-            </button>
+            </a>
           );
         })}
 

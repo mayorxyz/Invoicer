@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useStore } from '../../store/useStore';
-import { Accordion, AccordionSection } from '../ui/Accordion';
-import { Button } from '../ui/Button';
-import { Input, Select, Textarea } from '../ui/Input';
-import { Segmented } from '../ui/Segmented';
-import { Icon } from '../ui/Icon';
+import { Accordion, AccordionSection } from '../../components/ui/Accordion';
+import { Button } from '../../components/ui/Button';
+import { Input, Select, Textarea } from '../../components/ui/Input';
+import { Segmented } from '../../components/ui/Segmented';
+import { Icon } from '../../components/ui/Icon';
 import { totals, formatMoney } from '../../lib/money';
 import { today, addDays } from '../../lib/dates';
 import { getCountry, MODE_LABELS } from '../../data/countries';

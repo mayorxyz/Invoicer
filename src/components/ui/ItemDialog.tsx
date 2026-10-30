@@ -117,7 +117,7 @@ export function ItemDialog({ open, onClose, onSave, initialData }: ItemDialogPro
               type="text"
               value={sku}
               onChange={(e) => setSku(e.target.value)}
-              className="w-full px-3 py-2.5 bg-background border border-border rounded-md text-sm"
+              className="w-full text-sm"
               placeholder="SKU-001"
             />
           </div>
@@ -127,7 +127,7 @@ export function ItemDialog({ open, onClose, onSave, initialData }: ItemDialogPro
               type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-3 py-2.5 bg-background border border-border rounded-md text-sm"
+              className="w-full text-sm"
               placeholder="General"
             />
           </div>
@@ -139,7 +139,7 @@ export function ItemDialog({ open, onClose, onSave, initialData }: ItemDialogPro
             <select
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
-              className="w-full px-3 py-2.5 bg-background border border-border rounded-md text-sm"
+              className="w-full text-sm"
             >
               <option value="pcs">Pieces</option>
               <option value="hrs">Hours</option>

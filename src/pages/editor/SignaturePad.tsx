@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Icon } from '../ui/Icon';
+import { Icon } from '../../components/ui/Icon';
 
 interface SignaturePadProps {
   value: string;

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Icon } from '../ui/Icon';
 import { Button } from '../ui/Button';
 import { Tooltip } from '../ui/Dialog';
-import { useStore } from '../../store/useStore';
+import { useStore, VIEW_PATHS } from '../../store/useStore';
 import { exportBackup } from '../../lib/storage';
 
 const navItems = [
@@ -159,12 +159,17 @@ export function Sidebar() {
           <div className="flex flex-col gap-0.5">
             {navItems.map((item) => {
               const isActive = view === item.id;
+              const href = VIEW_PATHS[item.id];
 
-              const button = (
-                <button
+              const link = (
+                <a
                   key={item.id}
-                  type="button"
-                  onClick={() => setView(item.id as any)}
+                  href={href}
+                  onClick={(e) => {
+                    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    setView(item.id as any);
+                  }}
                   aria-current={isActive ? 'page' : undefined}
                   aria-label={collapsed ? item.label : undefined}
                   className={[
@@ -234,18 +239,18 @@ export function Sidebar() {
                         className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-accent"
                       />
                     )}
-                </button>
+                 </a>
               );
 
               if (collapsed) {
                 return (
                   <React.Fragment key={item.id}>
-                    {renderTooltip(item.label, button)}
+                    {renderTooltip(item.label, link)}
                   </React.Fragment>
                 );
               }
 
-              return button;
+              return link;
             })}
           </div>
         </nav>

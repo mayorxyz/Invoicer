@@ -53,18 +53,13 @@ export function Select({ label, error, helper, children, className = '', id, ...
       <div className="relative w-full">
         <select
           id={selectId}
-          className={`w-full bg-surface border rounded-lg text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-accent transition-all appearance-none cursor-pointer h-10 md:h-11 px-3.5 pr-8 ${
-            error ? 'border-danger focus:ring-danger' : 'border-border hover:border-border-strong'
+          className={`w-full h-10 md:h-11 text-xs md:text-sm ${
+            error ? 'border-danger' : ''
           } ${className}`}
           {...props}
         >
           {children}
         </select>
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
       </div>
       {error && <p className="text-[11px] md:text-xs text-danger">{error}</p>}
       {helper && !error && <p className="text-[11px] md:text-xs text-muted">{helper}</p>}
