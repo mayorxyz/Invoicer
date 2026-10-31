@@ -83,7 +83,7 @@ export function InvoicePreview({
       </div>
 
       {/* Items */}
-      <div className="overflow-x-auto -mx-1">
+      <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-rule">
@@ -116,8 +116,8 @@ export function InvoicePreview({
       </div>
 
       {/* Totals */}
-      <div className="border-t border-rule pt-4 flex flex-col xl:flex-row print:flex-row gap-6 break-inside-avoid totals-block">
-        <div className="flex-1 min-w-0 text-xs space-y-2 notes-block">
+      <div className="border-t border-rule pt-4 flex flex-col md:flex-row print:flex-row gap-6 break-inside-avoid totals-block">
+        <div className="flex-1 min-w-0 text-xs space-y-2 notes-block md:pr-2">
           <div className="text-[10px] uppercase font-bold tracking-wider text-muted">Notes & Terms</div>
           <div className="text-[11px] text-muted whitespace-pre-line leading-relaxed break-words">{draft.notes || 'Thank you for your business!'}</div>
           {signature && (
