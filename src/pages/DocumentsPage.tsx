@@ -284,7 +284,7 @@ export function DocumentsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="flex-1 md:flex-initial text-xs md:text-sm"
+              className="flex-1 md:flex-initial px-3 py-1.5 bg-background border border-border rounded-md text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
             >
               <option value="all">All Status</option>
               <option value="draft">Draft</option>
@@ -297,7 +297,7 @@ export function DocumentsPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="flex-1 md:flex-initial text-xs md:text-sm"
+              className="flex-1 md:flex-initial px-3 py-1.5 bg-background border border-border rounded-md text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
             >
               <option value="all">All Types</option>
               <option value="invoice">Invoice</option>

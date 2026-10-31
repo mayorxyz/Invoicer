@@ -45,7 +45,8 @@ export async function downloadInvoicePdf(
 
   const A4_W = 794;
   const A4_H = 1122;
-  const pad = Math.round((14 * A4_W) / 210); // 14mm
+  const pad = Math.round((14 * A4_W) / 210); // 14mm in px
+  const contentH = A4_H - 2 * pad; // usable height per page, in px
 
   const clone = source.cloneNode(true) as HTMLElement;
 
@@ -67,9 +68,9 @@ export async function downloadInvoicePdf(
       color: foreground,
       width: `${A4_W}px`,
       maxWidth: 'none',
-      minHeight: `${A4_H}px`,
+      minHeight: `${contentH}px`,
       margin: '0',
-      padding: `${pad}px`,
+      padding: `0 ${pad}px`,
       borderRadius: '0',
       border: 'none',
       boxShadow: 'none',
@@ -96,7 +97,7 @@ export async function downloadInvoicePdf(
     const pushDown = totalsBlock && lastChild === totalsBlock ? totalsBlock : lastChild;
     if (pushDown) pushDown.style.marginTop = 'auto';
 
-    const fullHeight = Math.max(A4_H, Math.ceil(clone.scrollHeight));
+    const fullHeight = Math.ceil(clone.scrollHeight);
 
     const canvas = await html2canvas(clone, {
       scale: 2,
@@ -108,7 +109,6 @@ export async function downloadInvoicePdf(
       windowWidth: A4_W,
       windowHeight: fullHeight,
       logging: false,
-      // Strip dark mode only inside html2canvas's private copy of the page.
       onclone: clonedDoc => {
         const root = clonedDoc.documentElement;
         root.classList.remove('dark');
@@ -120,22 +120,28 @@ export async function downloadInvoicePdf(
 
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pdfW = pdf.internal.pageSize.getWidth();
-    const pdfH = pdf.internal.pageSize.getHeight();
+    const marginMm = 14;
 
-    const pagePx = Math.floor((pdfH / pdfW) * canvas.width);
     const scale = canvas.width / A4_W;
+    const pagePx = Math.floor(contentH * scale);
     const cloneTop = clone.getBoundingClientRect().top;
-    const safeBreaks = Array.from(clone.querySelectorAll('tr, .totals-block, .notes-block'))
-      .map(el => (el.getBoundingClientRect().top - cloneTop) * scale)
+
+    // Safe places to start a new page: table rows, blocks, and top-level sections
+    const breakEls = [
+      ...Array.from(clone.querySelectorAll('tr, .totals-block, .notes-block, [data-pdf-break]')),
+      ...Array.from(clone.children),
+    ];
+    const safeBreaks = Array.from(
+      new Set(breakEls.map(el => Math.floor((el.getBoundingClientRect().top - cloneTop) * scale) - 2))
+    )
+      .filter(b => b > 0)
       .sort((a, b) => a - b);
 
     let y = 0, page = 0;
     while (y < canvas.height - 2 && page < 20) {
       let end = Math.min(y + pagePx, canvas.height);
-      if (canvas.height - y <= pagePx * 1.01) {
-        end = canvas.height;
-      } else {
-        const snap = safeBreaks.filter(b => b > y + pagePx * 0.5 && b <= end).pop();
+      if (canvas.height - y > pagePx) {
+        const snap = safeBreaks.filter(b => b > y + pagePx * 0.3 && b <= end).pop();
         if (snap) end = snap;
       }
       const h = end - y;
@@ -147,7 +153,7 @@ export async function downloadInvoicePdf(
       ctx.fillRect(0, 0, pc.width, pc.height);
       ctx.drawImage(canvas, 0, y, canvas.width, h, 0, 0, canvas.width, h);
       if (page > 0) pdf.addPage();
-      pdf.addImage(pc.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pdfW, Math.min((h * pdfW) / canvas.width, pdfH));
+      pdf.addImage(pc.toDataURL('image/jpeg', 0.95), 'JPEG', 0, marginMm, pdfW, (h * pdfW) / canvas.width);
       y = end;
       page++;
     }

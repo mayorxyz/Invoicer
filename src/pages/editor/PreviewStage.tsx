@@ -5,7 +5,8 @@ import { Icon } from '../../components/ui/Icon';
 import { PaperClassic } from '../../components/papers/Classic';
 import { PaperModern } from '../../components/papers/Modern';
 import { PaperMinimal } from '../../components/papers/Minimal';
-
+import { PaperDefault } from '../../components/papers/Default';
+import { totals } from '../../lib/money';
 export function PreviewStage({ signature = '', photos = [] }: { signature?: string; photos?: string[] }) {
   const { draft, updateDraft, state } = useStore();
   const [zoom, setZoom] = useState(100);
@@ -46,6 +47,19 @@ export function PreviewStage({ signature = '', photos = [] }: { signature?: stri
             marginBottom: zoom > 100 ? `${(zoom - 100) * 4}px` : '0px',
           }}
         >
+          {draft.template === 'default' && (
+            <PaperDefault
+              draft={draft}
+              business={state.businesses[0]}
+              totals={totals(draft)}
+              accent={accent}
+              shipToEnabled={!!draft.shipToAddress}
+              signature={signature}
+              photos={photos}
+              paymentTerms={draft.terms}
+              poNumber={draft.customFields?.find(f => f.label === 'PO Number')?.value || ''}
+            />
+          )}
           {draft.template === 'classic' && <PaperClassic accent={accent} signature={signature} photos={photos} />}
           {draft.template === 'modern' && <PaperModern accent={accent} signature={signature} photos={photos} />}
           {draft.template === 'minimal' && <PaperMinimal accent={accent} signature={signature} photos={photos} />}

@@ -57,7 +57,7 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [toggleSidebar]);
   
-  const sidebarWidth = state.settings.sidebarCollapsed ? '72px' : '248px';
+  const sidebarWidth = state.settings.sidebarCollapsed ? '64px' : '240px';
   
   return (
     <div className="h-dvh overflow-hidden">

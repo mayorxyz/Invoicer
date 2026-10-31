@@ -176,6 +176,7 @@ export function EditorView() {
                 <label className="text-[13px] font-medium text-ink mb-2 block">Template</label>
                 <Segmented
                   options={[
+                    { value: 'default', label: 'Default' },
                     { value: 'classic', label: 'Classic' },
                     { value: 'modern', label: 'Modern' },
                     { value: 'minimal', label: 'Minimal' },

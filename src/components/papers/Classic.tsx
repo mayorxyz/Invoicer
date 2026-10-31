@@ -1,52 +1,106 @@
 import React from 'react';
 import { useStore } from '../../store/useStore';
-import { totals, formatMoney } from '../../lib/money';
+import { totals, formatMoney, toMinor } from '../../lib/money';
 import { formatDateLocale } from '../../lib/dates';
-import { amountInWords } from '../../lib/words';
-import { derivedStatus } from '../../lib/status';
 import { MODE_LABELS } from '../../data/countries';
-import { Icon } from '../ui/Icon';
-import { SignaturePhotos, type PaperProps } from './shared';
+import type { PaperProps } from './shared';
 
-export function PaperClassic({ signature = '', photos = [], accent: accentProp }: PaperProps = {}) {
+type ClassicProps = PaperProps & {
+  shipToEnabled?: boolean;
+  paymentTerms?: string;
+  poNumber?: string;
+};
+
+export function PaperClassic({
+  signature = '',
+  photos = [],
+  accent: accentProp,
+  shipToEnabled = false,
+  paymentTerms = '',
+  poNumber: poProp,
+}: ClassicProps = {} as ClassicProps) {
   const { draft, state } = useStore();
   if (!draft) return null;
-  
+
   const business = state.businesses[0];
   const t = totals(draft);
-  const status = derivedStatus(draft);
-  const locale = state.settings.locale;
   const accent = accentProp || state.settings.accent || draft.accent;
-  
+  const m = (n: number) => formatMoney(n, draft.currency);
+  const fmt = (d: string) => (d ? formatDateLocale(d, 'en-US', 'MMM dd, yyyy') : '');
+  const isReceipt = draft.mode === 'receipt';
+
+  const poNumber = poProp ?? draft.customFields?.find((f: any) => f.label === 'PO Number')?.value ?? '';
+  const extraFields = (draft.customFields || []).filter((f: any) => f.label !== 'PO Number' && f.value);
+
+  const meta: [string, string][] = [
+    ['Date', fmt(draft.issueDate)],
+    ...(isReceipt ? [] : ([
+      ...(paymentTerms ? [['Terms', paymentTerms]] : []),
+      ['Due', fmt(draft.dueDate)],
+    ] as [string, string][])),
+    ...(poNumber ? ([['PO #', poNumber]] as [string, string][]) : []),
+    ...extraFields.map((f: any) => [f.label, f.value] as [string, string]),
+  ].filter(([, v]) => v);
+
   return (
-    <div className="bg-surface shadow-xl p-12 min-h-[297mm]" style={{ fontFamily: 'var(--font-sans)' }}>
+    <div className="bg-surface shadow-xl p-12 min-h-[297mm] flex flex-col text-[13px] leading-relaxed" style={{ fontFamily: 'var(--font-sans)' }}>
       {/* Header */}
-      <div className="flex justify-between items-start mb-12">
-        <div>
-          {business.logo && <img src={business.logo} alt="" className="h-12 mb-4" />}
-          <h1 className="text-2xl font-semibold text-ink mb-2">{business.name}</h1>
-          <p className="text-sm text-slate whitespace-pre-line">{business.address}</p>
-          <p className="text-sm text-slate">{business.email}</p>
+      <div className="flex justify-between items-start gap-8 mb-10">
+        <div className="min-w-0 flex-1">
+          {business.logo && <img src={business.logo} alt="" className="h-12 mb-4 object-contain" />}
+          <h1 className="text-2xl font-semibold text-ink mb-2 break-words">{business.name}</h1>
+          {business.address && <p className="text-sm text-slate whitespace-pre-line break-words">{business.address}</p>}
+          {business.email && <p className="text-sm text-slate break-all">{business.email}</p>}
+          {business.phone && <p className="text-sm text-slate">{business.phone}</p>}
+          {business.taxId && (
+            <p className="text-xs text-slate font-mono mt-1">{business.taxIdLabel || 'Tax ID'}: {business.taxId}</p>
+          )}
         </div>
-        <div className="text-right">
+        <div className="text-right shrink-0 max-w-[260px]">
           <p className="eyebrow mb-2">Details</p>
           <h2 className="text-4xl font-semibold mb-2" data-accent="text" style={{ color: accent }}>
             {MODE_LABELS[draft.mode]}
           </h2>
-          <p className="text-sm tabular text-ink font-medium">{draft.number}</p>
+          <p className="text-sm tabular text-ink font-medium mb-2">{draft.number}</p>
+          <table className="ml-auto text-xs tabular">
+            <tbody>
+              {meta.map(([k, v]) => (
+                <tr key={k}>
+                  <td className="pr-3 py-0.5 text-slate text-right whitespace-nowrap">{k}:</td>
+                  <td className="py-0.5 text-ink text-right whitespace-nowrap">{v}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-      
-      {/* Bill To */}
-      <div className="mb-12 pl-4 border-l-2" data-accent="border" style={{ borderColor: accent }}>
-        <p className="eyebrow mb-2">Bill to</p>
-        <h3 className="text-lg font-semibold text-ink mb-1">{draft.client.name || '—'}</h3>
-        <p className="text-sm text-slate whitespace-pre-line">{draft.client.address}</p>
-        <p className="text-sm text-slate">{draft.client.email}</p>
+
+      {/* Bill To / Ship To */}
+      <div data-pdf-break className="mb-10 grid grid-cols-2 gap-8">
+        <div className="pl-4 border-l-2 min-w-0" data-accent="border" style={{ borderColor: accent }}>
+          <p className="eyebrow mb-2">Bill to</p>
+          <h3 className="text-lg font-semibold text-ink mb-1 break-words">{draft.client.name || '—'}</h3>
+          {draft.client.address && <p className="text-sm text-slate whitespace-pre-line break-words">{draft.client.address}</p>}
+          {draft.client.email && <p className="text-sm text-slate break-all">{draft.client.email}</p>}
+          {draft.client.phone && <p className="text-sm text-slate">{draft.client.phone}</p>}
+        </div>
+        {shipToEnabled && (
+          <div className="pl-4 border-l-2 border-border min-w-0">
+            <p className="eyebrow mb-2">Ship to</p>
+            <h3 className="text-lg font-semibold text-ink mb-1 break-words">{draft.shipToName || '—'}</h3>
+            {draft.shipToAddress && <p className="text-sm text-slate whitespace-pre-line break-words">{draft.shipToAddress}</p>}
+          </div>
+        )}
       </div>
-      
+
       {/* Items Table */}
-      <table className="w-full mb-8">
+      <table className="w-full table-fixed mb-8">
+        <colgroup>
+          <col />
+          <col style={{ width: '64px' }} />
+          <col style={{ width: '110px' }} />
+          <col style={{ width: '120px' }} />
+        </colgroup>
         <thead>
           <tr className="border-b-2 border-ink">
             <th className="text-left py-2 text-xs font-medium text-slate uppercase tracking-wide">Description</th>
@@ -56,73 +110,95 @@ export function PaperClassic({ signature = '', photos = [], accent: accentProp }
           </tr>
         </thead>
         <tbody>
-          {draft.items.map(item => (
-            <tr key={item.id} className="border-b border-border">
-              <td className="py-3 text-sm">{item.desc || '—'}</td>
-              <td className="py-3 text-sm text-right tabular">{item.qty}</td>
-              <td className="py-3 text-sm text-right tabular">{formatMoney(Math.round(item.price * 100), draft.currency)}</td>
-              <td className="py-3 text-sm text-right tabular font-medium">{formatMoney(Math.round(item.qty * item.price * 100), draft.currency)}</td>
-            </tr>
-          ))}
+          {draft.items.map((item: any) => {
+            const detail = item.customFields?.[0]?.value;
+            return (
+              <tr key={item.id} data-pdf-break className="border-b border-border align-top">
+                <td className="py-3 pr-3 text-sm">
+                  <div className="break-words">{item.desc || '—'}</div>
+                  {detail && <div className="text-xs text-slate mt-1 whitespace-pre-line break-words leading-snug">{detail}</div>}
+                </td>
+                <td className="py-3 text-sm text-right tabular">{item.qty}</td>
+                <td className="py-3 text-sm text-right tabular whitespace-nowrap">{m(toMinor(item.price, draft.currency))}</td>
+                <td className="py-3 text-sm text-right tabular font-medium whitespace-nowrap">{m(Math.round(item.qty * toMinor(item.price, draft.currency)))}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
-      
+
       {/* Totals */}
-      <div className="flex justify-end mb-12">
-        <div className="w-64 space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-slate">Subtotal</span>
-            <span className="tabular">{formatMoney(t.subtotal, draft.currency)}</span>
-          </div>
-          {t.invoiceDiscount > 0 && (
-            <div className="flex justify-between text-sm">
-              <span className="text-slate">Discount</span>
-              <span className="tabular">-{formatMoney(t.invoiceDiscount, draft.currency)}</span>
-            </div>
-          )}
-          {t.taxAdded > 0 && (
-            <div className="flex justify-between text-sm">
-              <span className="text-slate">Tax</span>
-              <span className="tabular">{formatMoney(t.taxAdded, draft.currency)}</span>
-            </div>
-          )}
+      <div data-pdf-break className="flex justify-end mb-10">
+        <div className="w-72 space-y-2">
+          <Row k="Subtotal" v={m(t.subtotal)} />
+          {t.invoiceDiscount > 0 && <Row k="Discount" v={`-${m(t.invoiceDiscount)}`} />}
+          {t.taxAdded > 0 && <Row k="Tax" v={m(t.taxAdded)} />}
+          {t.shipping > 0 && <Row k="Shipping" v={m(t.shipping)} />}
           <div className="flex justify-between text-sm pt-2 border-t border-border">
             <span className="font-semibold">Total</span>
-            <span className="tabular font-semibold">{formatMoney(t.total, draft.currency)}</span>
+            <span className="tabular font-semibold whitespace-nowrap">{m(t.total)}</span>
           </div>
           {t.paid > 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-slate">Paid</span>
-              <span className="tabular text-success">-{formatMoney(t.paid, draft.currency)}</span>
+              <span className="tabular text-success whitespace-nowrap">-{m(t.paid)}</span>
             </div>
           )}
           <div className="flex justify-between text-lg pt-2 border-t-2" data-accent="border" style={{ borderColor: accent }}>
-            <span className="font-semibold">Balance due</span>
-            <span className="tabular font-semibold" data-accent="text" style={{ color: accent }}>
-              {formatMoney(Math.max(0, t.balance), draft.currency)}
+            <span className="font-semibold">{isReceipt ? 'Paid' : 'Balance due'}</span>
+            <span className="tabular font-semibold whitespace-nowrap" data-accent="text" style={{ color: accent }}>
+              {m(Math.max(0, t.balance))}
             </span>
           </div>
         </div>
       </div>
-      
-      {/* Notes */}
-      {draft.notes && (
-        <div className="mb-8">
-          <p className="eyebrow mb-2">Notes</p>
-          <p className="text-sm text-slate whitespace-pre-line">{draft.notes}</p>
+
+      {/* Footer (last child: sits at the bottom of the page in the PDF) */}
+      <div data-pdf-break className="flex flex-col gap-6">
+        {draft.notes && (
+          <div>
+            <p className="eyebrow mb-2">Notes</p>
+            <p className="text-sm text-slate whitespace-pre-line break-words">{draft.notes}</p>
+          </div>
+        )}
+        {draft.terms && (
+          <div>
+            <p className="eyebrow mb-2">Terms</p>
+            <p className="text-xs text-slate whitespace-pre-line break-words">{draft.terms}</p>
+          </div>
+        )}
+
+        <div className="flex justify-end">
+          <div className="w-60">
+            <div className="h-16 flex items-end justify-center">
+              {signature && <img src={signature} alt="Signature" className="max-h-16 max-w-full object-contain" />}
+            </div>
+            <div className="border-t border-ink pt-1.5 text-[11px] uppercase font-medium tracking-wide text-slate text-center">
+              Authorized signature
+            </div>
+          </div>
         </div>
-      )}
-      
-      {/* Terms */}
-      {draft.terms && (
-        <div>
-          <p className="eyebrow mb-2">Terms</p>
-          <p className="text-xs text-slate whitespace-pre-line">{draft.terms}</p>
-        </div>
-      )}
-      
-      {/* Signature & Photos */}
-      <SignaturePhotos signature={signature} photos={photos} className="mt-8" />
+
+        {photos.length > 0 && (
+          <div className="border-t border-border pt-4">
+            <p className="eyebrow mb-3">Attachments</p>
+            <div className="grid grid-cols-3 gap-3">
+              {photos.map((p, i) => (
+                <img key={i} src={p} alt={`Attachment ${i + 1}`} className="w-full h-36 object-cover rounded border border-border" />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Row({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="flex justify-between text-sm">
+      <span className="text-slate">{k}</span>
+      <span className="tabular whitespace-nowrap">{v}</span>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import type { Mode, Template } from '../../types';
 import { v4 as uuid } from 'uuid';
 import { downloadInvoicePdf } from '../../lib/downloadInvoicePdf';
 import { EditorForm } from './EditorForm';
-import { InvoicePreview } from './InvoicePreview';
+import { PaperDefault } from '../../components/papers/Default';
 import { PaperClassic } from '../../components/papers/Classic';
 import { PaperModern } from '../../components/papers/Modern';
 import { PaperMinimal } from '../../components/papers/Minimal';
@@ -325,10 +325,11 @@ export function LedgerEditorView() {
             style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 6%, var(--background))' }}
           >
             {template === 'default' ? (
-              <InvoicePreview
+              <PaperDefault
                 draft={draft}
                 business={business}
                 totals={t}
+                accent={accent}
                 shipToEnabled={shipToEnabled}
                 signature={signature}
                 photos={photos}
@@ -336,11 +337,11 @@ export function LedgerEditorView() {
                 poNumber={poNumber}
               />
             ) : template === 'classic' ? (
-              <PaperClassic accent={accent} signature={signature} photos={photos} />
+              <PaperClassic signature={signature} photos={photos} accent={accent} />
             ) : template === 'modern' ? (
-              <PaperModern accent={accent} signature={signature} photos={photos} />
+              <PaperModern signature={signature} photos={photos} accent={accent} />
             ) : (
-              <PaperMinimal accent={accent} signature={signature} photos={photos} />
+              <PaperMinimal signature={signature} photos={photos} accent={accent} />
             )}
           </div>
         </div>
