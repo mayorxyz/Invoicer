@@ -159,6 +159,8 @@ export function LedgerEditorView() {
     URL.revokeObjectURL(url);
   };
 
+  const paperProps = { draft, business, totals: t, accent, shipToEnabled, signature, photos, paymentTerms, poNumber };
+
   const bar = (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-4 sm:gap-6 font-mono">
@@ -324,25 +326,10 @@ export function LedgerEditorView() {
             }`}
             style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 6%, var(--background))' }}
           >
-            {template === 'default' ? (
-              <PaperDefault
-                draft={draft}
-                business={business}
-                totals={t}
-                accent={accent}
-                shipToEnabled={shipToEnabled}
-                signature={signature}
-                photos={photos}
-                paymentTerms={paymentTerms}
-                poNumber={poNumber}
-              />
-            ) : template === 'classic' ? (
-              <PaperClassic signature={signature} photos={photos} accent={accent} />
-            ) : template === 'modern' ? (
-              <PaperModern signature={signature} photos={photos} accent={accent} />
-            ) : (
-              <PaperMinimal signature={signature} photos={photos} accent={accent} />
-            )}
+            {template === 'default' ? <PaperDefault {...paperProps} />
+              : template === 'classic' ? <PaperClassic {...paperProps} />
+              : template === 'modern' ? <PaperModern {...paperProps} />
+              : <PaperMinimal {...paperProps} />}
           </div>
         </div>
         <div className="lg:hidden bg-surface border-t border-rule px-3 py-3 pb-[calc(5.25rem+env(safe-area-inset-bottom,0px))] print-hide">
