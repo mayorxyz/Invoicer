@@ -7,6 +7,7 @@ import type { Mode, Template } from '../../types';
 import { v4 as uuid } from 'uuid';
 import { downloadInvoicePdf } from '../../lib/downloadInvoicePdf';
 import { EditorForm } from './EditorForm';
+import { Select } from '../../components/ui/Select';
 import { PaperDefault } from '../../components/papers/Default';
 import { PaperClassic } from '../../components/papers/Classic';
 import { PaperModern } from '../../components/papers/Modern';
@@ -251,7 +252,7 @@ export function LedgerEditorView() {
           </button>
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase font-bold text-muted hidden sm:inline-block">Template</span>
-            <select
+            <Select
               aria-label="Template"
               value={template}
               onChange={e => setTemplate(e.target.value as Template)}
@@ -261,7 +262,7 @@ export function LedgerEditorView() {
               <option value="classic">Classic</option>
               <option value="modern">Modern</option>
               <option value="minimal">Minimal</option>
-            </select>
+            </Select>
           </div>
           <div className="ml-auto flex items-center gap-1.5">
             <button onClick={handleLoadSample} className="text-xs font-semibold px-2.5 h-7 border border-rule hover:bg-background rounded-lg transition-colors whitespace-nowrap">

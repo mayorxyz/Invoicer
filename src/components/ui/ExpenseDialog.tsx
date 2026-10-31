@@ -3,6 +3,8 @@ import { Dialog } from './Dialog';
 import { Button } from './Button';
 import { today } from '../../lib/dates';
 import type { Expense } from '../../types';
+import { Select } from './Select';
+
 
 interface ExpenseDialogProps {
   open: boolean;
@@ -155,7 +157,7 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
           </div>
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">Currency</label>
-            <select
+            <Select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
               className="w-full text-sm"
@@ -164,7 +166,7 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
               <option value="EUR">EUR</option>
               <option value="GBP">GBP</option>
               <option value="NGN">NGN</option>
-            </select>
+            </Select>
           </div>
         </div>
 

@@ -9,6 +9,7 @@ import { SampleBanner } from '../components/ui/SampleBanner';
 import { SamplePill } from '../components/ui/SamplePill';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { Icon } from '../components/ui/Icon';
+import { Select } from '../components/ui/Select';
 import { formatMoney } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { derivedStatus } from '../lib/status';
@@ -281,7 +282,7 @@ export function DocumentsPage() {
             />
           </div>
           <div className="flex gap-2">
-            <select
+            <Select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="flex-1 md:flex-initial px-3 py-1.5 bg-background border border-border rounded-md text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
@@ -293,8 +294,8 @@ export function DocumentsPage() {
               <option value="partial">Partial</option>
               <option value="overdue">Overdue</option>
               <option value="cancelled">Cancelled</option>
-            </select>
-            <select
+            </Select>
+            <Select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               className="flex-1 md:flex-initial px-3 py-1.5 bg-background border border-border rounded-md text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
@@ -303,7 +304,7 @@ export function DocumentsPage() {
               <option value="invoice">Invoice</option>
               <option value="quote">Quote</option>
               <option value="receipt">Receipt</option>
-            </select>
+            </Select>
           </div>
         </div>
       </div>

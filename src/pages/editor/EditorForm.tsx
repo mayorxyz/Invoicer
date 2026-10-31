@@ -6,6 +6,7 @@ import type { Mode, Item } from '../../types';
 import { SignaturePad } from './SignaturePad';
 import { PhotoUploader } from './PhotoUploader';
 import type { Draft, Business } from './editorTypes';
+import { Select } from '../../components/ui/Select';
 
 export const INPUT =
   'w-full min-w-0 bg-surface border border-rule rounded-lg px-3 py-2 text-base sm:text-sm outline-none transition-shadow focus:border-[var(--accent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--accent)_20%,transparent)]';
@@ -100,7 +101,7 @@ export function EditorForm({
         </div>
         <div className="flex items-center gap-2">
           <span className="hidden sm:inline text-xs uppercase font-bold tracking-wider text-muted">Currency</span>
-          <select
+          <Select
             value={draft.currency}
             onChange={e => updateDraft({ currency: e.target.value })}
             className="w-auto font-mono text-xs font-semibold py-1.5"
@@ -109,7 +110,7 @@ export function EditorForm({
             <option value="USD">$ USD</option>
             <option value="EUR">€ EUR</option>
             <option value="GBP">£ GBP</option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -181,13 +182,13 @@ export function EditorForm({
             <input type="date" value={draft.issueDate} onChange={e => onIssueDateChange(e.target.value)} className={`${INPUT} font-mono`} />
           </Field>
           <Field label="Payment Terms">
-            <select value={paymentTerms} onChange={e => onPaymentTermsChange(e.target.value)} className={INPUT}>
+            <Select value={paymentTerms} onChange={e => onPaymentTermsChange(e.target.value)} className={INPUT}>
               <option value="Net 15">Net 15 Days</option>
               <option value="Net 30">Net 30 Days</option>
               <option value="Net 60">Net 60 Days</option>
               <option value="Due on Receipt">Due on Receipt</option>
               <option value="Custom">Custom</option>
-            </select>
+            </Select>
           </Field>
           <Field label="Due Date">
             <input type="date" value={draft.dueDate} onChange={e => updateDraft({ dueDate: e.target.value })} className={`${INPUT} font-mono`} />
@@ -316,10 +317,10 @@ export function EditorForm({
           <Field label="Discount">
             <div className="flex gap-1.5">
               <input type="number" value={draft.discVal} onChange={e => updateDraft({ discVal: parseFloat(e.target.value) || 0 })} placeholder="0" className={`${INPUT} font-mono flex-1`} />
-              <select value={draft.discType} onChange={e => updateDraft({ discType: e.target.value as 'percent' | 'fixed' })} className="w-auto min-w-0 bg-surface border border-rule rounded-lg px-3 py-2 text-sm outline-none focus:border-[var(--accent)]">
+              <Select value={draft.discType} onChange={e => updateDraft({ discType: e.target.value as 'percent' | 'fixed' })} className="w-auto min-w-0 bg-surface border border-rule rounded-lg px-3 py-2 text-sm outline-none focus:border-[var(--accent)]">
                 <option value="percent">%</option>
                 <option value="fixed">Fixed</option>
-              </select>
+              </Select>
             </div>
           </Field>
           <Field label="Tax Rate (%)">

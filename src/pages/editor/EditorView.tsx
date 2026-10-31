@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useStore } from '../../store/useStore';
 import { Accordion, AccordionSection } from '../../components/ui/Accordion';
 import { Button } from '../../components/ui/Button';
-import { Input, Select, Textarea } from '../../components/ui/Input';
+import { Input, Textarea } from '../../components/ui/Input';
+import { Select } from '../../components/ui/Select';
 import { Segmented } from '../../components/ui/Segmented';
 import { Icon } from '../../components/ui/Icon';
 import { totals, formatMoney } from '../../lib/money';
@@ -107,7 +108,7 @@ export function EditorView() {
           <AccordionSection index="02" title="Document" completed={completedSections.document}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input label="Number" value={draft.number} onChange={e => updateDraft({ number: e.target.value })} />
-              <Select label="Currency" value={draft.currency} onChange={e => updateDraft({ currency: e.target.value })}>
+              <Select value={draft.currency} onChange={e => updateDraft({ currency: e.target.value })}>
                 {CURRENCY_LIST.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
               </Select>
               <Input label="Issue date" type="date" value={draft.issueDate} onChange={e => updateDraft({ issueDate: e.target.value })} />

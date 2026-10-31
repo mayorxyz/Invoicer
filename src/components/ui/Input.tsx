@@ -1,4 +1,5 @@
 import React from 'react';
+import { Select as CustomSelect } from './Select';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -51,7 +52,7 @@ export function Select({ label, error, helper, children, className = '', id, ...
         {label}
       </label>
       <div className="relative w-full">
-        <select
+        <CustomSelect
           id={selectId}
           className={`w-full h-10 md:h-11 text-xs md:text-sm ${
             error ? 'border-danger' : ''
@@ -59,7 +60,7 @@ export function Select({ label, error, helper, children, className = '', id, ...
           {...props}
         >
           {children}
-        </select>
+        </CustomSelect>
       </div>
       {error && <p className="text-[11px] md:text-xs text-danger">{error}</p>}
       {helper && !error && <p className="text-[11px] md:text-xs text-muted">{helper}</p>}

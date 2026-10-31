@@ -10,6 +10,7 @@ import { ExpenseDialog } from '../components/ui/ExpenseDialog';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { useToast } from '../components/ui/Toast';
 import { Icon } from '../components/ui/Icon';
+import { Select } from '../components/ui/Select';
 import { formatMoney } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { v4 as uuid } from 'uuid';
@@ -265,16 +266,17 @@ export function ExpensesPage() {
               className="w-full pl-9 pr-3 py-1.5 bg-background border border-border rounded-md text-xs md:text-sm focus:outline-none focus:ring-1 focus:ring-accent text-foreground"
             />
           </div>
-          <select
+          <Select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="text-xs md:text-sm"
+            aria-label="Filter expenses by category"
           >
             <option value="all">All Categories</option>
             {categories.map(cat => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog } from './Dialog';
 import { Button } from './Button';
+import { Select } from './Select';
 import type { SavedItem } from '../../types';
 
 interface ItemDialogProps {
@@ -136,7 +137,7 @@ export function ItemDialog({ open, onClose, onSave, initialData }: ItemDialogPro
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">Unit</label>
-            <select
+            <Select
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
               className="w-full text-sm"
@@ -147,7 +148,7 @@ export function ItemDialog({ open, onClose, onSave, initialData }: ItemDialogPro
               <option value="kg">Kilograms</option>
               <option value="m">Meters</option>
               <option value="service">Service</option>
-            </select>
+            </Select>
           </div>
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">

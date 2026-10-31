@@ -4,6 +4,7 @@ import { PageHeader } from '../components/ui/PageHeader';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { useToast } from '../components/ui/Toast';
 import { Icon } from '../components/ui/Icon';
+import { Select } from '../components/ui/Select';
 import { ACCENT_PALETTE } from '../lib/defaults';
 import { CURRENCY_LIST } from '../data/currencies';
 import { ALL_COUNTRIES } from '../data/countries';
@@ -90,7 +91,7 @@ export function SettingsPage() {
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-foreground mb-1.5">Default Currency</label>
-              <select
+              <Select
                 value={state.settings.homeCurrency}
                 onChange={(e) => updateSettings({ homeCurrency: e.target.value })}
                 className="w-full text-xs md:text-sm"
@@ -100,11 +101,11 @@ export function SettingsPage() {
                     {curr.code} — {curr.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div>
               <label className="block text-xs font-semibold text-foreground mb-1.5">Country</label>
-              <select
+              <Select
                 value={state.settings.country}
                 onChange={(e) => updateSettings({ country: e.target.value })}
                 className="w-full text-xs md:text-sm"
@@ -114,7 +115,7 @@ export function SettingsPage() {
                     {country.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
         );
@@ -166,7 +167,7 @@ export function SettingsPage() {
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-foreground mb-1.5">UI Language</label>
-              <select
+              <Select
                 value={state.settings.language}
                 onChange={(e) => updateSettings({ language: e.target.value as any })}
                 className="w-full text-xs md:text-sm"
@@ -176,7 +177,7 @@ export function SettingsPage() {
                     {lang.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
         );
