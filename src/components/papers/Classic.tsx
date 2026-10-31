@@ -6,8 +6,9 @@ import { amountInWords } from '../../lib/words';
 import { derivedStatus } from '../../lib/status';
 import { MODE_LABELS } from '../../data/countries';
 import { Icon } from '../ui/Icon';
+import { SignaturePhotos, type PaperProps } from './shared';
 
-export function PaperClassic() {
+export function PaperClassic({ signature = '', photos = [], accent: accentProp }: PaperProps = {}) {
   const { draft, state } = useStore();
   if (!draft) return null;
   
@@ -15,9 +16,10 @@ export function PaperClassic() {
   const t = totals(draft);
   const status = derivedStatus(draft);
   const locale = state.settings.locale;
+  const accent = accentProp || state.settings.accent || draft.accent;
   
   return (
-    <div className="bg-white shadow-xl p-12 min-h-[297mm]" style={{ fontFamily: 'var(--font-sans)' }}>
+    <div className="bg-surface shadow-xl p-12 min-h-[297mm]" style={{ fontFamily: 'var(--font-sans)' }}>
       {/* Header */}
       <div className="flex justify-between items-start mb-12">
         <div>
@@ -28,7 +30,7 @@ export function PaperClassic() {
         </div>
         <div className="text-right">
           <p className="eyebrow mb-2">Details</p>
-          <h2 className="text-4xl font-semibold mb-2" style={{ color: draft.accent }}>
+          <h2 className="text-4xl font-semibold mb-2" data-accent="text" style={{ color: accent }}>
             {MODE_LABELS[draft.mode]}
           </h2>
           <p className="text-sm tabular text-ink font-medium">{draft.number}</p>
@@ -36,7 +38,7 @@ export function PaperClassic() {
       </div>
       
       {/* Bill To */}
-      <div className="mb-12 pl-4 border-l-2" style={{ borderColor: draft.accent }}>
+      <div className="mb-12 pl-4 border-l-2" data-accent="border" style={{ borderColor: accent }}>
         <p className="eyebrow mb-2">Bill to</p>
         <h3 className="text-lg font-semibold text-ink mb-1">{draft.client.name || '—'}</h3>
         <p className="text-sm text-slate whitespace-pre-line">{draft.client.address}</p>
@@ -94,9 +96,9 @@ export function PaperClassic() {
               <span className="tabular text-success">-{formatMoney(t.paid, draft.currency)}</span>
             </div>
           )}
-          <div className="flex justify-between text-lg pt-2 border-t-2" style={{ borderColor: draft.accent }}>
+          <div className="flex justify-between text-lg pt-2 border-t-2" data-accent="border" style={{ borderColor: accent }}>
             <span className="font-semibold">Balance due</span>
-            <span className="tabular font-semibold" style={{ color: draft.accent }}>
+            <span className="tabular font-semibold" data-accent="text" style={{ color: accent }}>
               {formatMoney(Math.max(0, t.balance), draft.currency)}
             </span>
           </div>
@@ -118,6 +120,9 @@ export function PaperClassic() {
           <p className="text-xs text-slate whitespace-pre-line">{draft.terms}</p>
         </div>
       )}
+      
+      {/* Signature & Photos */}
+      <SignaturePhotos signature={signature} photos={photos} className="mt-8" />
     </div>
   );
 }

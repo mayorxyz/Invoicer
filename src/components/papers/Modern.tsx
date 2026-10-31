@@ -2,19 +2,21 @@ import React from 'react';
 import { useStore } from '../../store/useStore';
 import { totals, formatMoney } from '../../lib/money';
 import { MODE_LABELS } from '../../data/countries';
+import { SignaturePhotos, type PaperProps } from './shared';
 
-export function PaperModern() {
+export function PaperModern({ signature = '', photos = [], accent: accentProp }: PaperProps = {}) {
   const { draft, state } = useStore();
   if (!draft) return null;
   
   const business = state.businesses[0];
   const t = totals(draft);
+  const accent = accentProp || state.settings.accent || draft.accent;
   
   return (
-    <div className="bg-white shadow-xl p-12 min-h-[297mm]" style={{ fontFamily: 'var(--font-sans)' }}>
+    <div className="bg-surface shadow-xl p-12 min-h-[297mm]" style={{ fontFamily: 'var(--font-sans)' }}>
       {/* Header */}
       <div className="mb-12">
-        <h1 className="h3 mb-2" style={{ color: draft.accent }}>
+        <h1 className="h3 mb-2" data-accent="text" style={{ color: accent }}>
           {MODE_LABELS[draft.mode]}
         </h1>
         <p className="text-sm tabular text-ink font-medium">{draft.number}</p>
@@ -52,7 +54,7 @@ export function PaperModern() {
       </div>
       
       {/* Totals with peach band */}
-      <div className="rounded-lg p-6 mb-8" style={{ backgroundColor: `${draft.accent}10` }}>
+      <div className="rounded-lg p-6 mb-8" style={{ backgroundColor: `${accent}10` }}>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-slate">Subtotal</span>
@@ -74,9 +76,9 @@ export function PaperModern() {
             <span className="font-semibold">Total</span>
             <span className="tabular font-semibold">{formatMoney(t.total, draft.currency)}</span>
           </div>
-          <div className="flex justify-between text-xl pt-2 border-t-2" style={{ borderColor: draft.accent }}>
+          <div className="flex justify-between text-xl pt-2 border-t-2" data-accent="border" style={{ borderColor: accent }}>
             <span className="font-semibold">Balance due</span>
-            <span className="tabular font-semibold" style={{ color: draft.accent }}>
+            <span className="tabular font-semibold" data-accent="text" style={{ color: accent }}>
               {formatMoney(Math.max(0, t.balance), draft.currency)}
             </span>
           </div>
@@ -90,6 +92,9 @@ export function PaperModern() {
           <p className="text-sm text-slate whitespace-pre-line">{draft.notes}</p>
         </div>
       )}
+      
+      {/* Signature & Photos */}
+      <SignaturePhotos signature={signature} photos={photos} className="mt-8" />
     </div>
   );
 }

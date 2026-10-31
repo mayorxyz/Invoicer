@@ -2,16 +2,18 @@ import React from 'react';
 import { useStore } from '../../store/useStore';
 import { totals, formatMoney } from '../../lib/money';
 import { MODE_LABELS } from '../../data/countries';
+import { SignaturePhotos, type PaperProps } from './shared';
 
-export function PaperMinimal() {
+export function PaperMinimal({ signature = '', photos = [], accent: accentProp }: PaperProps = {}) {
   const { draft, state } = useStore();
   if (!draft) return null;
   
   const business = state.businesses[0];
   const t = totals(draft);
+  const accent = accentProp || state.settings.accent || draft.accent;
   
   return (
-    <div className="bg-white shadow-xl p-16 min-h-[297mm]" style={{ fontFamily: 'var(--font-sans)' }}>
+    <div className="bg-surface shadow-xl p-16 min-h-[297mm]" style={{ fontFamily: 'var(--font-sans)' }}>
       {/* Header */}
       <div className="mb-16">
         <h1 className="text-5xl font-semibold text-ink mb-4">
@@ -73,9 +75,9 @@ export function PaperMinimal() {
             <span className="font-semibold">Total</span>
             <span className="tabular font-semibold">{formatMoney(t.total, draft.currency)}</span>
           </div>
-          <div className="flex justify-between text-3xl pt-4 border-t-2" style={{ borderColor: draft.accent }}>
+          <div className="flex justify-between text-3xl pt-4 border-t-2" data-accent="border" style={{ borderColor: accent }}>
             <span className="font-semibold">Balance due</span>
-            <span className="tabular font-semibold" style={{ color: draft.accent }}>
+            <span className="tabular font-semibold" data-accent="text" style={{ color: accent }}>
               {formatMoney(Math.max(0, t.balance), draft.currency)}
             </span>
           </div>
@@ -89,6 +91,9 @@ export function PaperMinimal() {
           <p className="text-sm text-slate whitespace-pre-line">{draft.notes}</p>
         </div>
       )}
+      
+      {/* Signature & Photos */}
+      <SignaturePhotos signature={signature} photos={photos} className="mt-16" />
     </div>
   );
 }

@@ -22,73 +22,99 @@ export async function downloadInvoicePdf(
   }
 
   const clone = paperElement.cloneNode(true) as HTMLElement;
-
   const accent = getComputedStyle(paperElement).getPropertyValue('--accent').trim();
 
+  const A4_W = 794;
+  const A4_H = 1122;
+
   const container = document.createElement('div');
-  container.style.position = 'fixed';
-  container.style.left = '-9999px';
-  container.style.top = '0';
-  container.style.width = '794px';
-  container.style.background = '#FFFFFF';
-  container.style.color = '#000000';
-  container.style.zIndex = '-1';
+  container.style.cssText =
+    `position:fixed;left:-9999px;top:0;width:${A4_W}px;background:#fff;color:#1a1a1a;z-index:-1;`;
   container.appendChild(clone);
   document.body.appendChild(container);
 
   try {
-    clone.style.background = '#FFFFFF';
-    clone.style.color = '#1a1a1a';
-    if (accent) clone.style.setProperty('--accent', accent);
-    clone.style.maxWidth = 'none';
-    clone.style.width = '100%';
-    clone.style.margin = '0';
-    clone.style.boxShadow = 'none';
+    // 1. Neutralise theme: remap dark backgrounds/light text to print colours
+    const lum = (c: string) => {
+      const m = c.match(/[\d.]+/g);
+      if (!m) return null;
+      const [r, g, b, a = '1'] = m.map(Number);
+      return { l: (0.299 * r + 0.587 * g + 0.114 * b) / 255, a: Number(a) };
+    };
+    [clone, ...Array.from(clone.querySelectorAll<HTMLElement>('*'))].forEach(el => {
+      const cs = getComputedStyle(el);
+      const bg = lum(cs.backgroundColor);
+      if (bg && bg.a > 0 && bg.l < 0.35) el.style.backgroundColor = '#FFFFFF';
+      const fg = lum(cs.color);
+      if (fg && fg.l > 0.6) el.style.color = '#1a1a1a';
+      else if (fg && fg.l < 0.05) el.style.color = '#000000';
+      (['borderTopColor', 'borderBottomColor', 'borderLeftColor', 'borderRightColor'] as const).forEach(p => {
+        const c = lum(cs[p]);
+        if (c && c.l < 0.35) el.style[p] = '#E5E7EB';
+      });
+      el.style.boxShadow = 'none';
+      el.style.backdropFilter = 'none';
+    });
 
-    const contentRatio = (297 - 20) / (210 - 20);
-    clone.style.boxSizing = 'border-box';
-    clone.style.minHeight = `${Math.floor(794 * contentRatio)}px`;
-    clone.style.display = 'flex';
-    clone.style.flexDirection = 'column';
+    // 2. Paper = full A4
+    Object.assign(clone.style, {
+      background: '#FFFFFF',
+      color: '#1a1a1a',
+      width: `${A4_W}px`,
+      maxWidth: 'none',
+      minHeight: `${A4_H}px`,
+      margin: '0',
+      borderRadius: '0',
+      border: 'none',
+      boxShadow: 'none',
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+    });
+    if (accent) clone.style.setProperty('--accent', accent);
+
+    const cw = clone.getBoundingClientRect().width;
+    const ch = clone.getBoundingClientRect().height;
+    let framed = false;
+    clone.querySelectorAll<HTMLElement>('*').forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (parseFloat(getComputedStyle(el).borderTopLeftRadius) > 0 && r.width > cw * 0.9 && r.height > ch * 0.5) {
+        Object.assign(el.style, { border: 'none', borderRadius: '0', margin: '0', boxShadow: 'none' });
+        framed = true;
+      }
+    });
+    if (framed) clone.style.padding = '0';
 
     const bottomBlock = clone.querySelector('.notes-block, .totals-block') as HTMLElement | null;
-    if (bottomBlock) bottomBlock.style.marginTop = 'auto';
+    if (bottomBlock) {
+      bottomBlock.style.marginTop = 'auto';
+      for (let p = bottomBlock.parentElement; p && p !== container; p = p.parentElement) {
+        Object.assign(p.style, { display: 'flex', flexDirection: 'column', flex: '1 1 auto' });
+      }
+    }
 
     const header = clone.querySelector('.invoice-header') as HTMLElement | null;
-    if (header) {
-      header.style.display = 'flex';
-      header.style.flexDirection = 'row';
-      header.style.justifyContent = 'space-between';
-      header.style.alignItems = 'flex-start';
-    }
-
+    if (header) Object.assign(header.style, {
+      display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start',
+    });
     const meta = clone.querySelector('.invoice-meta') as HTMLElement | null;
-    if (meta) {
-      meta.style.marginLeft = 'auto';
-      meta.style.textAlign = 'right';
-      meta.style.flexShrink = '0';
-    }
+    if (meta) Object.assign(meta.style, { marginLeft: 'auto', textAlign: 'right', flexShrink: '0' });
 
-    clone.querySelectorAll('.text-foreground').forEach(el => {
-      (el as HTMLElement).style.color = '#1a1a1a';
+    clone.querySelectorAll<HTMLElement>('.text-muted').forEach(el => (el.style.color = '#6B6F76'));
+    clone.querySelectorAll<HTMLElement>('.invoice-accent').forEach(el => {
+      el.style.color = 'var(--accent)';
+      el.querySelectorAll<HTMLElement>('*').forEach(c => (c.style.color = 'var(--accent)'));
     });
-    clone.querySelectorAll('.text-muted').forEach(el => {
-      (el as HTMLElement).style.color = '#6B6F76';
+    clone.querySelectorAll<HTMLElement>('[data-accent="text"]').forEach(el => {
+      el.style.color = 'var(--accent)';
     });
-    clone.querySelectorAll('.from-value').forEach(el => {
-      (el as HTMLElement).style.color = '#000000';
-    });
-    clone.querySelectorAll('.invoice-accent').forEach(el => {
-      const node = el as HTMLElement;
-      node.style.color = 'var(--accent)';
-      node.querySelectorAll('*').forEach(child => {
-        (child as HTMLElement).style.color = 'var(--accent)';
+    clone.querySelectorAll<HTMLElement>('[data-accent="border"]').forEach(el => {
+      const cs = getComputedStyle(el);
+      (['borderTopColor', 'borderBottomColor', 'borderLeftColor', 'borderRightColor'] as const).forEach(p => {
+        if (cs[p] && cs[p] !== 'rgba(0, 0, 0, 0)') el.style[p] = 'var(--accent)';
       });
     });
-
-    clone.querySelectorAll('.print\\:hidden').forEach(el => {
-      (el as HTMLElement).style.display = 'none';
-    });
+    clone.querySelectorAll<HTMLElement>('.print\\:hidden').forEach(el => (el.style.display = 'none'));
 
     await document.fonts.ready;
 
@@ -108,63 +134,45 @@ export async function downloadInvoicePdf(
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#FFFFFF',
-      width: 794,
-      windowWidth: 794,
+      width: A4_W,
+      height: A4_H,
+      windowWidth: A4_W,
+      windowHeight: A4_H,
       logging: false,
     });
 
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pdfW = pdf.internal.pageSize.getWidth();   // 210
+    const pdfH = pdf.internal.pageSize.getHeight();  // 297
 
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-    const margin = 10;
-    const contentWidth = pdfWidth - 2 * margin;
-    const contentHeight = pdfHeight - 2 * margin;
+    const pagePx = Math.floor((pdfH / pdfW) * canvas.width);
+    const scale = canvas.width / A4_W;
+    const cloneTop = clone.getBoundingClientRect().top;
+    const safeBreaks = Array.from(clone.querySelectorAll('tr, .totals-block, .notes-block'))
+      .map(el => (el.getBoundingClientRect().top - cloneTop) * scale)
+      .sort((a, b) => a - b);
 
-    const imgHeight = (canvas.height * contentWidth) / canvas.width;
-
-    if (imgHeight <= contentHeight) {
-      pdf.addImage(
-        canvas.toDataURL('image/jpeg', 0.95),
-        'JPEG',
-        margin,
-        margin,
-        contentWidth,
-        imgHeight
-      );
-    } else {
-      const scale = canvas.width / 794;
-      const pagePx = Math.floor((contentHeight / contentWidth) * canvas.width);
-      const cloneTop = clone.getBoundingClientRect().top;
-      const safeBreaks = Array.from(clone.querySelectorAll('tr, .totals-block, .notes-block'))
-        .map(el => (el.getBoundingClientRect().top - cloneTop) * scale)
-        .sort((a, b) => a - b);
-
-      let y = 0;
-      let page = 0;
-      while (y < canvas.height - 1 && page < 20) {
-        let end = Math.min(y + pagePx, canvas.height);
-        if (end < canvas.height) {
-          const snap = safeBreaks.filter(b => b > y + pagePx * 0.5 && b <= end).pop();
-          if (snap) end = snap;
-        }
-        const h = end - y;
-        const pc = document.createElement('canvas');
-        pc.width = canvas.width;
-        pc.height = h;
-        pc.getContext('2d')!.drawImage(canvas, 0, y, canvas.width, h, 0, 0, canvas.width, h);
-        if (page > 0) pdf.addPage();
-        pdf.addImage(
-          pc.toDataURL('image/jpeg', 0.95),
-          'JPEG',
-          margin,
-          margin,
-          contentWidth,
-          (h * contentWidth) / canvas.width
-        );
-        y = end;
-        page++;
+    let y = 0, page = 0;
+    while (y < canvas.height - 2 && page < 20) {
+      let end = Math.min(y + pagePx, canvas.height);
+      if (canvas.height - y <= pagePx * 1.01) {
+        end = canvas.height; // fits: never snap
+      } else {
+        const snap = safeBreaks.filter(b => b > y + pagePx * 0.5 && b <= end).pop();
+        if (snap) end = snap;
       }
+      const h = end - y;
+      const pc = document.createElement('canvas');
+      pc.width = canvas.width;
+      pc.height = h;
+      const ctx = pc.getContext('2d')!;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, pc.width, pc.height);
+      ctx.drawImage(canvas, 0, y, canvas.width, h, 0, 0, canvas.width, h);
+      if (page > 0) pdf.addPage();
+      pdf.addImage(pc.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pdfW, Math.min((h * pdfW) / canvas.width, pdfH));
+      y = end;
+      page++;
     }
 
     pdf.save(filename);

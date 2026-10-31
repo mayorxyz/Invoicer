@@ -6,8 +6,8 @@ import { PaperClassic } from '../../components/papers/Classic';
 import { PaperModern } from '../../components/papers/Modern';
 import { PaperMinimal } from '../../components/papers/Minimal';
 
-export function PreviewStage() {
-  const { draft, updateDraft } = useStore();
+export function PreviewStage({ signature = '', photos = [] }: { signature?: string; photos?: string[] }) {
+  const { draft, updateDraft, state } = useStore();
   const [zoom, setZoom] = useState(100);
   const [page, setPage] = useState(1);
 
@@ -15,6 +15,7 @@ export function PreviewStage() {
 
   const totalPages = 1; // Simplified for now
   const paperWidthClass = draft.paperSize === 'A4' ? 'w-[210mm]' : 'w-[216mm]';
+  const accent = state.settings.accent || draft.accent;
 
   return (
     <div className="flex flex-col h-full bg-background-subtle/40 rounded-2xl border border-rule overflow-hidden">
@@ -45,9 +46,9 @@ export function PreviewStage() {
             marginBottom: zoom > 100 ? `${(zoom - 100) * 4}px` : '0px',
           }}
         >
-          {draft.template === 'classic' && <PaperClassic />}
-          {draft.template === 'modern' && <PaperModern />}
-          {draft.template === 'minimal' && <PaperMinimal />}
+          {draft.template === 'classic' && <PaperClassic accent={accent} signature={signature} photos={photos} />}
+          {draft.template === 'modern' && <PaperModern accent={accent} signature={signature} photos={photos} />}
+          {draft.template === 'minimal' && <PaperMinimal accent={accent} signature={signature} photos={photos} />}
         </div>
       </div>
     </div>
