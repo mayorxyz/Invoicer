@@ -36,6 +36,7 @@ export async function downloadInvoicePdf(
     (paperElement.querySelector('.print-paper') as HTMLElement | null) ??
     (paperElement.firstElementChild as HTMLElement | null) ??
     paperElement;
+
   const accent =
     getComputedStyle(source).getPropertyValue('--accent').trim() ||
     getComputedStyle(paperElement).getPropertyValue('--accent').trim();
@@ -126,11 +127,12 @@ export async function downloadInvoicePdf(
     const pagePx = Math.floor(contentH * scale);
     const cloneTop = clone.getBoundingClientRect().top;
 
-    // Safe places to start a new page: table rows, blocks, and top-level sections
+    // Collect all safe break elements across different template architectures
     const breakEls = [
       ...Array.from(clone.querySelectorAll('tr, .totals-block, .notes-block, [data-pdf-break]')),
       ...Array.from(clone.children),
     ];
+    
     const safeBreaks = Array.from(
       new Set(breakEls.map(el => Math.floor((el.getBoundingClientRect().top - cloneTop) * scale) - 2))
     )
@@ -141,10 +143,12 @@ export async function downloadInvoicePdf(
     while (y < canvas.height - 2 && page < 20) {
       let end = Math.min(y + pagePx, canvas.height);
       if (canvas.height - y > pagePx) {
-        const snap = safeBreaks.filter(b => b > y + pagePx * 0.3 && b <= end).pop();
+        const snap = safeBreaks.filter(b => b > y + pagePx * 0.25 && b <= end).pop();
         if (snap) end = snap;
       }
       const h = end - y;
+      if (h <= 0) break;
+
       const pc = document.createElement('canvas');
       pc.width = canvas.width;
       pc.height = h;
@@ -152,8 +156,10 @@ export async function downloadInvoicePdf(
       ctx.fillStyle = background;
       ctx.fillRect(0, 0, pc.width, pc.height);
       ctx.drawImage(canvas, 0, y, canvas.width, h, 0, 0, canvas.width, h);
+      
       if (page > 0) pdf.addPage();
       pdf.addImage(pc.toDataURL('image/jpeg', 0.95), 'JPEG', 0, marginMm, pdfW, (h * pdfW) / canvas.width);
+      
       y = end;
       page++;
     }

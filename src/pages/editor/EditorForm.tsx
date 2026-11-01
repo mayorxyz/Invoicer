@@ -362,6 +362,33 @@ export function EditorForm({
               className={`${INPUT} font-mono`}
             />
           </Field>
+          <Field label="Name of Bank">
+            <input
+              type="text"
+              value={draft.bankName || ''}
+              onChange={e => updateDraft({ bankName: e.target.value })}
+              placeholder="e.g. Chase Bank"
+              className={`${INPUT} font-mono`}
+            />
+          </Field>
+          <Field label="Account Number">
+            <input
+              type="text"
+              value={draft.bankAccount || ''}
+              onChange={e => updateDraft({ bankAccount: e.target.value })}
+              placeholder="1234567890"
+              className={`${INPUT} font-mono`}
+            />
+          </Field>
+          <Field label="Routing Number">
+            <input
+              type="text"
+              value={draft.bankRouting || ''}
+              onChange={e => updateDraft({ bankRouting: e.target.value })}
+              placeholder="098765432"
+              className={`${INPUT} font-mono`}
+            />
+          </Field>
         </div>
       </Card>
 

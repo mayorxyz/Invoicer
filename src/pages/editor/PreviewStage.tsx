@@ -6,6 +6,13 @@ import { PaperClassic } from '../../components/papers/Classic';
 import { PaperModern } from '../../components/papers/Modern';
 import { PaperMinimal } from '../../components/papers/Minimal';
 import { PaperDefault } from '../../components/papers/Default';
+import { PaperCorporate } from '../../components/papers/Corporate';
+import { Paperformal as PaperFormal } from '../../components/papers/formal';
+import { PaperFramed } from '../../components/papers/Framed';
+import { PaperRetro } from '../../components/papers/Retro';
+import { PaperSidebar } from '../../components/papers/Sidebar';
+import { PaperSplit } from '../../components/papers/Split';
+import { PaperModernClean } from '../../components/papers/ModernClean';
 import { totals } from '../../lib/money';
 export function PreviewStage({ signature = '', photos = [] }: { signature?: string; photos?: string[] }) {
   const { draft, updateDraft, state } = useStore();
@@ -63,6 +70,13 @@ export function PreviewStage({ signature = '', photos = [] }: { signature?: stri
           {draft.template === 'classic' && <PaperClassic accent={accent} signature={signature} photos={photos} />}
           {draft.template === 'modern' && <PaperModern accent={accent} signature={signature} photos={photos} />}
           {draft.template === 'minimal' && <PaperMinimal accent={accent} signature={signature} photos={photos} />}
+          {draft.template === 'corporate' && <PaperCorporate accent={accent} signature={signature} photos={photos} />}
+          {draft.template === 'formal' && <PaperFormal accent={accent} signature={signature} photos={photos} />}
+          {draft.template === 'framed' && <PaperFramed accent={accent} signature={signature} photos={photos} />}
+          {draft.template === 'retro' && <PaperRetro accent={accent} signature={signature} photos={photos} />}
+          {draft.template === 'sidebar' && <PaperSidebar accent={accent} signature={signature} photos={photos} />}
+          {draft.template === 'split' && <PaperSplit accent={accent} signature={signature} photos={photos} />}
+          {draft.template === 'modernclean' && <PaperModernClean accent={accent} signature={signature} photos={photos} />}
         </div>
       </div>
     </div>

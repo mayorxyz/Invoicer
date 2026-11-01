@@ -43,7 +43,7 @@ export function PaperModern({
   ].filter(([, v]) => v);
 
   return (
-    <div className="bg-surface shadow-xl p-12 min-h-[297mm] flex flex-col text-[13px] leading-relaxed" style={{ fontFamily: 'var(--font-sans)' }}>
+    <div className="print-paper bg-surface shadow-xl p-12 min-h-[297mm] w-full flex flex-col text-[13px] leading-relaxed overflow-visible" style={{ fontFamily: 'var(--font-sans)' }}>
       {/* Header */}
       <div className="flex justify-between items-start gap-8 mb-10">
         <div>

@@ -110,11 +110,25 @@ export function PaperDefault({
 
       {/* Totals */}
       <div className="border-t border-rule pt-4 flex flex-col md:flex-row print:flex-row gap-6 break-inside-avoid totals-block">
-        <div className="flex-1 min-w-0 text-xs space-y-2 notes-block md:pr-2">
-          <div className="text-[10px] uppercase font-bold tracking-wider text-muted">Notes & Terms</div>
-          <div className="text-[11px] text-muted whitespace-pre-line leading-relaxed break-words">{draft.notes || 'Thank you for your business!'}</div>
+        <div className="flex-1 min-w-0 text-xs space-y-4 notes-block md:pr-2">
+          <div className="space-y-1">
+            <div className="text-[10px] uppercase font-bold tracking-wider text-muted">Notes & Terms</div>
+            <div className="text-[11px] text-muted whitespace-pre-line leading-relaxed break-words">{draft.notes || 'Thank you for your business!'}</div>
+          </div>
+
+          <div className="pt-2 space-y-0.5 text-slate">
+            {draft.bankName && (
+              <div className="space-y-0.5">
+                <p className="font-bold uppercase tracking-wider text-slate text-[11px] mb-1 font-mono">Name of Bank</p>
+                <p className="font-mono">{draft.bankName}</p>
+              </div>
+            )}
+            {draft.bankAccount && <p className="font-mono">Account number: {draft.bankAccount}</p>}
+            {draft.bankRouting && <p className="font-mono">Routing: {draft.bankRouting}</p>}
+          </div>
+
           {signature && (
-            <div className="pt-4">
+            <div className="pt-2">
               <div className="text-[10px] uppercase font-bold tracking-wider text-muted mb-2">Authorized Signature</div>
               <img src={signature} alt="Signature" className="h-12 max-w-[160px] border-b border-rule pb-2" />
             </div>

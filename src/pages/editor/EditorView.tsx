@@ -181,6 +181,13 @@ export function EditorView() {
                     { value: 'classic', label: 'Classic' },
                     { value: 'modern', label: 'Modern' },
                     { value: 'minimal', label: 'Minimal' },
+                    { value: 'corporate', label: 'Corporate' },
+                    { value: 'formal', label: 'Formal' },
+                    { value: 'framed', label: 'Framed' },
+                    { value: 'retro', label: 'Retro' },
+                    { value: 'sidebar', label: 'Sidebar' },
+                    { value: 'split', label: 'Split' },
+                    { value: 'modernclean', label: 'Modern Clean' },
                   ]}
                   value={draft.template}
                   onChange={(v) => updateDraft({ template: v as any })}

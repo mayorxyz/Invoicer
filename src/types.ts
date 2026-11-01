@@ -12,7 +12,7 @@ export type TaxType = 'added' | 'included' | 'deducted';
 export type TaxApplyTo = 'all' | 'taxable_only';
 export type DiscType = 'percent' | 'fixed';
 export type PaymentMethod = 'transfer' | 'cash' | 'card' | 'online' | 'mobile_money' | 'other';
-export type Template = 'default' | 'classic' | 'modern' | 'minimal';
+export type Template = 'default' | 'classic' | 'modern' | 'minimal' | 'corporate' | 'formal' | 'framed' | 'retro' | 'sidebar' | 'split' | 'modernclean';
 export type PaperSize = 'A4' | 'Letter';
 export type PricingMode = 'exclusive' | 'inclusive';
 export type Interval = 'weekly' | 'monthly' | 'quarterly' | 'yearly';
@@ -159,6 +159,9 @@ export interface Invoice {
   zeroRated?: boolean;
   shipToName?: string;
   shipToAddress?: string;
+  bankName?: string;
+  bankAccount?: string;
+  bankRouting?: string;
   versions: DocumentVersion[];
   createdAt: string;
   updatedAt: string;

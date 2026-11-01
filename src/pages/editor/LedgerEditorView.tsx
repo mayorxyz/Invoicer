@@ -12,6 +12,13 @@ import { PaperDefault } from '../../components/papers/Default';
 import { PaperClassic } from '../../components/papers/Classic';
 import { PaperModern } from '../../components/papers/Modern';
 import { PaperMinimal } from '../../components/papers/Minimal';
+import { PaperCorporate } from '../../components/papers/Corporate';
+import { Paperformal as PaperFormal } from '../../components/papers/formal';
+import { PaperFramed } from '../../components/papers/Framed';
+import { PaperRetro } from '../../components/papers/Retro';
+import { PaperSidebar } from '../../components/papers/Sidebar';
+import { PaperSplit } from '../../components/papers/Split';
+import { PaperModernClean } from '../../components/papers/ModernClean';
 
 const ACCENTS = [
   { value: '#1F3FD1', label: 'Deep Blue' },
@@ -35,7 +42,17 @@ export function LedgerEditorView() {
   const [downloadError, setDownloadError] = useState<string>('');
   const [accentOpen, setAccentOpen] = useState(false);
   const [template, setTemplate] = useState<Template>('default');
+  const [splitPercent, setSplitPercent] = useState(50);
+  const [isDraggingSplit, setIsDraggingSplit] = useState(false);
+  const splitContainerRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+
+  const moveSplit = (clientX: number) => {
+    const bounds = splitContainerRef.current?.getBoundingClientRect();
+    if (!bounds || bounds.width === 0) return;
+    const percent = ((clientX - bounds.left) / bounds.width) * 100;
+    setSplitPercent(Math.min(75, Math.max(25, percent)));
+  };
 
   useEffect(() => {
     if (!draft) newDraft('invoice');
@@ -243,13 +260,6 @@ export function LedgerEditorView() {
               </>
             )}
           </div>
-          <button
-            onClick={() => updateSettings({ theme: state.settings.theme === 'dark' ? 'light' : 'dark' })}
-            className="p-1.5 hover:bg-background rounded-lg transition-colors"
-            aria-label="Toggle theme"
-          >
-            <Icon name={state.settings.theme === 'dark' ? 'sun' : 'moon'} size={16} />
-          </button>
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase font-bold text-muted hidden sm:inline-block">Template</span>
             <Select
@@ -262,6 +272,13 @@ export function LedgerEditorView() {
               <option value="classic">Classic</option>
               <option value="modern">Modern</option>
               <option value="minimal">Minimal</option>
+              <option value="corporate">Corporate</option>
+              <option value="formal">Formal</option>
+              <option value="framed">Framed</option>
+              <option value="retro">Retro</option>
+              <option value="sidebar">Sidebar</option>
+              <option value="split">Split</option>
+              <option value="modernclean">Modern Clean</option>
             </Select>
           </div>
           <div className="ml-auto flex items-center gap-1.5">
@@ -294,10 +311,14 @@ export function LedgerEditorView() {
 
       {/* Main */}
       <div className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden pane">
-        <div className="lg:flex lg:h-full min-w-0">
+        <div
+          ref={splitContainerRef}
+          className="lg:grid lg:h-full min-w-0"
+          style={{ gridTemplateColumns: `${splitPercent}fr 12px ${100 - splitPercent}fr` }}
+        >
           {/* Form pane */}
           <div
-            className={`pane lg:w-1/2 lg:h-full lg:overflow-y-auto no-bar lg:border-r border-rule min-w-0 p-3 sm:p-4 md:p-6 lg:p-8 space-y-4 md:space-y-5 print-hide ${
+            className={`pane lg:h-full lg:overflow-y-auto no-bar min-w-0 p-3 sm:p-4 md:p-6 lg:p-8 space-y-4 md:space-y-5 print-hide ${
               mobileTab === 'preview' ? 'hidden lg:block' : ''
             }`}
           >
@@ -319,10 +340,43 @@ export function LedgerEditorView() {
             />
           </div>
 
+          <div
+            role="separator"
+            aria-label="Resize editor and preview panels"
+            aria-orientation="vertical"
+            aria-valuemin={25}
+            aria-valuemax={75}
+            aria-valuenow={Math.round(splitPercent)}
+            tabIndex={0}
+            className={`hidden lg:flex items-center justify-center cursor-col-resize touch-none select-none hover:bg-background-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
+              isDraggingSplit ? 'bg-background-subtle' : ''
+            }`}
+            onPointerDown={event => {
+              event.preventDefault();
+              event.currentTarget.setPointerCapture(event.pointerId);
+              setIsDraggingSplit(true);
+              moveSplit(event.clientX);
+            }}
+            onPointerMove={event => {
+              if (isDraggingSplit) moveSplit(event.clientX);
+            }}
+            onPointerUp={() => setIsDraggingSplit(false)}
+            onPointerCancel={() => setIsDraggingSplit(false)}
+            onKeyDown={event => {
+              if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                event.preventDefault();
+                const delta = event.key === 'ArrowLeft' ? -2 : 2;
+                setSplitPercent(current => Math.min(75, Math.max(25, current + delta)));
+              }
+            }}
+          >
+            <span className="h-10 w-1 rounded-full bg-border" />
+          </div>
+
           {/* Preview pane */}
           <div
             ref={previewRef}
-            className={`pane lg:w-1/2 lg:h-full lg:overflow-y-auto scroll-thin min-w-0 p-3 sm:p-4 md:p-6 lg:p-8 print-hide ${
+            className={`pane lg:h-full lg:overflow-y-auto scroll-thin min-w-0 p-3 sm:p-4 md:p-6 lg:p-8 print-hide ${
               mobileTab === 'form' ? 'hidden lg:block' : ''
             }`}
             style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 6%, var(--background))' }}
@@ -330,6 +384,13 @@ export function LedgerEditorView() {
             {template === 'default' ? <PaperDefault {...paperProps} />
               : template === 'classic' ? <PaperClassic {...paperProps} />
               : template === 'modern' ? <PaperModern {...paperProps} />
+              : template === 'corporate' ? <PaperCorporate {...paperProps} />
+              : template === 'formal' ? <PaperFormal {...paperProps} />
+              : template === 'framed' ? <PaperFramed {...paperProps} />
+              : template === 'retro' ? <PaperRetro {...paperProps} />
+              : template === 'sidebar' ? <PaperSidebar {...paperProps} />
+              : template === 'split' ? <PaperSplit {...paperProps} />
+              : template === 'modernclean' ? <PaperModernClean {...paperProps} />
               : <PaperMinimal {...paperProps} />}
           </div>
         </div>

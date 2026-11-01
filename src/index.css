@@ -137,6 +137,15 @@
   height: 8px;
 }
 
+.select-options {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.select-options::-webkit-scrollbar {
+  display: none;
+}
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }

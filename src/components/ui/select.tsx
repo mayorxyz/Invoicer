@@ -9,8 +9,9 @@ export function Select({
   'aria-label': ariaLabel,
 }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   const [open, setOpen] = useState(false);
-  const [pos, setPos] = useState({ top: 0, left: 0, width: 160 });
+  const [pos, setPos] = useState({ top: 0, left: 0, width: 160, maxHeight: 288 });
   const btn = useRef<HTMLButtonElement>(null);
+  const listbox = useRef<HTMLDivElement>(null);
 
   const options = useMemo<Opt[]>(
     () =>
@@ -26,14 +27,18 @@ export function Select({
   useEffect(() => {
     if (!open) return;
     const close = () => setOpen(false);
+    const handleScroll = (event: Event) => {
+      if (listbox.current?.contains(event.target as Node)) return;
+      close();
+    };
     const key = (e: KeyboardEvent) => e.key === 'Escape' && close();
     window.addEventListener('resize', close);
     window.addEventListener('keydown', key);
-    window.addEventListener('scroll', close, true);
+    window.addEventListener('scroll', handleScroll, true);
     return () => {
       window.removeEventListener('resize', close);
       window.removeEventListener('keydown', key);
-      window.removeEventListener('scroll', close, true);
+      window.removeEventListener('scroll', handleScroll, true);
     };
   }, [open]);
 
@@ -41,8 +46,19 @@ export function Select({
     if (disabled) return;
     const r = btn.current?.getBoundingClientRect();
     if (r) {
-      const below = window.innerHeight - r.bottom;
-      setPos({ top: below < 260 ? Math.max(8, r.top - 4 - Math.min(288, options.length * 36 + 8)) : r.bottom + 4, left: r.left, width: Math.max(r.width, 140) });
+      const viewportPadding = 8;
+      const gap = 4;
+      const width = Math.min(Math.max(r.width, 140), window.innerWidth - viewportPadding * 2);
+      const desiredHeight = Math.min(288, options.length * 36 + 8);
+      const availableBelow = Math.max(0, window.innerHeight - r.bottom - gap - viewportPadding);
+      const availableAbove = Math.max(0, r.top - gap - viewportPadding);
+      const placeBelow = availableBelow >= desiredHeight || availableBelow >= availableAbove;
+      const maxHeight = Math.max(80, Math.min(desiredHeight, placeBelow ? availableBelow : availableAbove));
+      const left = Math.min(Math.max(viewportPadding, r.left), window.innerWidth - width - viewportPadding);
+      const top = placeBelow
+        ? Math.min(r.bottom + gap, window.innerHeight - viewportPadding - maxHeight)
+        : Math.max(viewportPadding, r.top - gap - maxHeight);
+      setPos({ top, left, width, maxHeight });
     }
     setOpen(o => !o);
   };
@@ -87,9 +103,10 @@ export function Select({
         <>
           <div className="fixed inset-0 z-[100]" onClick={() => setOpen(false)} />
           <div
+            ref={listbox}
             role="listbox"
-            className="fixed z-[101] bg-surface border border-border rounded-xl shadow-2xl overflow-y-auto py-1 max-h-72"
-            style={{ top: pos.top, left: pos.left, width: pos.width }}
+            className="select-options fixed z-[101] bg-surface border border-border rounded-xl shadow-2xl overflow-y-auto overscroll-contain py-1"
+            style={{ top: pos.top, left: pos.left, width: pos.width, maxHeight: pos.maxHeight }}
           >
             {options.map(o => {
               const active = o.value === String(value ?? '');
