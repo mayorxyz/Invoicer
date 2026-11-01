@@ -120,7 +120,7 @@ export function PaperSplit({
           <span className="text-xl sm:text-2xl font-bold tracking-tight text-ink">
             {MODE_LABELS[draft.mode] || 'Invoice'} Total
           </span>
-          <span className="text-xl sm:text-2xl font-bold font-mono text-ink">{m(t.total)}</span>
+          <span className="text-xl sm:text-2xl font-bold font-mono text-ink">{m(Math.max(0, t.balance))}</span>
         </div>
 
         {/* Items Table (header repeats on every page, rows never split) */}
@@ -172,9 +172,7 @@ export function PaperSplit({
             {t.invoiceDiscount > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
             {t.taxAdded > 0 && <div className="flex justify-between py-0.5"><span className="font-medium text-ink">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
             {t.shipping > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Shipping</span><span className="text-ink">{m(t.shipping)}</span></div>}
-            {t.paid > 0 && (
-              <p className="pt-1 text-right text-slate">Amount Paid: -{m(t.paid)} (Balance Due: {m(Math.max(0, t.balance))})</p>
-            )}
+            {t.paid > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Amount Previously Paid</span><span className="text-ink">-{m(t.paid)}</span></div>}
           </div>
         </div>
 

@@ -187,22 +187,16 @@ export function PaperRetro({
               <td className="py-1.5 px-2.5 text-right whitespace-nowrap">{m(t.shipping)}</td>
             </tr>
           )}
+          {t.paid > 0 && (
+            <tr className={totalRow} data-pdf-break style={avoidBreak}>
+              <td colSpan={3} className={labelCell}>Amount Previously Paid</td>
+              <td className="py-1.5 px-2.5 text-right whitespace-nowrap">-{m(t.paid)}</td>
+            </tr>
+          )}
           <tr className={`${totalRow} text-sm`} data-pdf-break style={avoidBreak}>
             <td colSpan={3} className={labelCell}>Total</td>
-            <td className="py-1.5 px-2.5 text-right whitespace-nowrap">{m(t.total)}</td>
+            <td className="py-1.5 px-2.5 text-right whitespace-nowrap">{m(Math.max(0, t.balance))}</td>
           </tr>
-          {t.paid > 0 && (
-            <>
-              <tr className={totalRow} data-pdf-break style={avoidBreak}>
-                <td colSpan={3} className={labelCell}>Amount Paid</td>
-                <td className="py-1.5 px-2.5 text-right whitespace-nowrap">-{m(t.paid)}</td>
-              </tr>
-              <tr className={`${totalRow} text-sm`} data-pdf-break style={avoidBreak}>
-                <td colSpan={3} className={labelCell}>Balance due</td>
-                <td className="py-1.5 px-2.5 text-right whitespace-nowrap">{m(Math.max(0, t.balance))}</td>
-              </tr>
-            </>
-          )}
         </tbody>
       </table>
 

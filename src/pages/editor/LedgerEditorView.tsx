@@ -399,7 +399,7 @@ export function LedgerEditorView() {
         </div>
       </div>
 
-      <footer className="hidden lg:block shrink-0 bg-surface border-t border-rule px-6 py-3 print-hide">
+      <footer className="hidden lg:block shrink-0 bg-surface border-t border-rule px-6 py-2 print-hide">
         {bar}
       </footer>
     </div>

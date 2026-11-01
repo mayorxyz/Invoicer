@@ -194,19 +194,14 @@ export function PaperSidebar({
                   {t.invoiceDiscount > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
                   {t.taxAdded > 0 && <div className="flex justify-between py-0.5"><span className="font-medium text-ink">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
                   {t.shipping > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Shipping</span><span className="text-ink">{m(t.shipping)}</span></div>}
+                  {t.paid > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Amount Previously Paid</span><span className="text-ink">-{m(t.paid)}</span></div>}
                 </div>
               </div>
 
               <div className="flex justify-between items-center gap-4 pt-2 border-t border-border/60">
                 <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-ink">Total</span>
-                <span className="text-xl sm:text-2xl font-bold font-mono text-ink">{m(t.total)}</span>
+                <span className="text-xl sm:text-2xl font-bold font-mono text-ink">{m(Math.max(0, t.balance))}</span>
               </div>
-
-              {t.paid > 0 && (
-                <div className="flex justify-end font-mono text-xs text-slate">
-                  <span>Amount Paid: -{m(t.paid)} (Balance Due: {m(Math.max(0, t.balance))})</span>
-                </div>
-              )}
 
               {signature && (
                 <div className="flex justify-end pt-1">

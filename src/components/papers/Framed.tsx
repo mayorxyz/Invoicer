@@ -213,20 +213,14 @@ export function PaperFramed({
             {t.invoiceDiscount > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
             {t.taxAdded > 0 && <div className="flex justify-between py-0.5"><span className="font-serif italic font-bold text-ink">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
             {t.shipping > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Shipping</span><span className="text-ink">{m(t.shipping)}</span></div>}
+            {t.paid > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Amount Previously Paid</span><span className="text-ink">-{m(t.paid)}</span></div>}
           </div>
         </div>
 
         {/* Invoice Total */}
         <div data-pdf-break style={avoidBreak} className="flex justify-between items-center gap-4 pt-3 border-t border-border/60">
           <div className="font-serif italic text-2xl font-bold tracking-tight text-ink">Invoice Total</div>
-          <div className="text-2xl font-mono font-bold text-ink">{m(t.total)}</div>
-        </div>
-
-        {t.paid > 0 && (
-          <div data-pdf-break style={avoidBreak} className="flex justify-end font-mono text-xs text-slate -mt-3">
-            <span>Amount Paid: -{m(t.paid)} (Balance Due: {m(Math.max(0, t.balance))})</span>
-          </div>
-        )}
+          <div className="text-2xl font-mono font-bold text-ink">{m(Math.max(0, t.balance))}</div>        </div>
 
         {/* Terms | Banking + Signature */}
         <div

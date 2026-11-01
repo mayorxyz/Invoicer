@@ -51,7 +51,7 @@ export function Paperformal({
       {/* Top Accent Bar with Stripes / Header Block */}
       <div className="w-full text-white p-10 sm:p-14 relative" style={{ backgroundColor: accent }}>
         <div className="max-w-3xl mx-auto text-center space-y-3">
-          {business.logo && <img src={business.logo} alt="Logo" className="h-12 mx-auto mb-4 object-contain brightness-0 invert" />}
+          {business.logo && <img src={business.logo} alt="Logo" className="h-12 mx-auto mb-4 object-contain" />}
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight break-words">{business.name || 'John Smith'}</h1>
           {business.address && <p className="text-sm opacity-90 whitespace-pre-line break-words leading-relaxed">{business.address}</p>}
           {(business.email || business.phone) && (
@@ -149,12 +149,13 @@ export function Paperformal({
               {t.invoiceDiscount > 0 && <div className="flex justify-between py-1"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
               {t.taxAdded > 0 && <div className="flex justify-between py-1"><span className="text-slate">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
               {t.shipping > 0 && <div className="flex justify-between py-1"><span className="text-slate">Shipping</span><span className="text-ink">{m(t.shipping)}</span></div>}
+              {t.paid > 0 && <div className="flex justify-between py-1"><span className="text-slate">Amount Previously Paid</span><span className="text-ink">-{m(t.paid)}</span></div>}
             </div>
           </div>
 
           <div className="flex justify-between items-center gap-4 px-5 py-3 rounded-lg text-white font-bold text-lg sm:text-xl" style={{ backgroundColor: accent }}>
-            <span className="tracking-widest uppercase font-mono">TOTAL</span>
-            <span className="font-mono">{m(t.total)}</span>
+            <span className="tracking-widest uppercase font-mono">{t.paid > 0 ? 'BALANCE DUE' : 'TOTAL'}</span>
+            <span className="font-mono">{m(t.paid > 0 ? Math.max(0, t.balance) : t.total)}</span>
           </div>
         </div>
 

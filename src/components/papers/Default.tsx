@@ -145,7 +145,9 @@ export function PaperDefault({
           {t.shipping > 0 && (
             <div className="flex justify-between gap-3"><span className="text-muted">Shipping:</span><span className="text-foreground">{m(t.shipping)}</span></div>
           )}
-          <div className="flex justify-between gap-3 border-t border-rule pt-2 font-bold text-sm text-foreground"><span>Total:</span><span>{m(t.total)}</span></div>
+          {t.paid > 0 && (
+            <div className="flex justify-between gap-3 border-t border-rule pt-2 font-bold text-sm text-foreground"><span>Total:</span><span>{m(t.total)}</span></div>
+          )}
           {t.paid > 0 && (
             <div className="flex justify-between gap-3"><span className="text-muted">Amount Paid:</span><span className="text-foreground">-{m(t.paid)}</span></div>
           )}
@@ -153,8 +155,8 @@ export function PaperDefault({
             className="invoice-accent flex justify-between gap-3 font-bold text-base p-2.5 rounded-lg"
             style={{ backgroundColor: tint(10), color: accent, border: `1px solid ${tint(20)}` }}
           >
-            <span>Balance Due:</span>
-            <span>{m(Math.max(0, t.balance))}</span>
+            <span>{t.paid > 0 ? 'Balance Due:' : 'Total:'}</span>
+            <span>{m(t.paid > 0 ? Math.max(0, t.balance) : t.total)}</span>
           </div>
         </div>
       </div>
