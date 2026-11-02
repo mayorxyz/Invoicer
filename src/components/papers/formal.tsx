@@ -43,6 +43,8 @@ export function Paperformal({
   const hasItems = !(draft.items.length === 0 || draft.items.every((i: any) => !i.desc && i.price === 0));
   const hasBank = !!(draft.bankName || draft.bankAccount || draft.bankRouting);
   const hasLeftCol = !!(draft.notes || draft.terms || hasBank);
+  const hasSignature = !!signature;
+  const hasBottomSection = hasLeftCol || hasSignature;
 
   const metaRow = 'flex justify-between gap-6 py-0.5';
 
@@ -159,52 +161,54 @@ export function Paperformal({
           </div>
         </div>
 
-        {/* Notes / Terms / Bank | Signature (no forced bottom push) */}
-        <div
-          data-pdf-break
-          style={avoidBreak}
-          className={`grid grid-cols-1 ${hasLeftCol ? 'sm:grid-cols-[1fr_auto]' : ''} gap-x-10 gap-y-6 pt-4 border-t border-border/60 items-end`}
-        >
-          {hasLeftCol && (
-            <div className="min-w-0 space-y-3">
-              {draft.notes && (
-                <div>
-                  <p className="font-bold uppercase tracking-wider text-slate text-[10px] mb-1 font-mono">Notes</p>
-                  <p className="text-xs text-slate whitespace-pre-line break-words">{draft.notes}</p>
-                </div>
-              )}
-              {draft.terms && (
-                <div>
-                  <p className="font-bold uppercase tracking-wider text-slate text-[10px] mb-1 font-mono">Terms & Conditions</p>
-                  <p className="text-xs text-slate whitespace-pre-line break-words">{draft.terms}</p>
-                </div>
-              )}
-              {hasBank && (
-                <div className="text-xs space-y-0.5 text-slate">
-                  {draft.bankName && (
-                    <>
-                      <p className="font-bold uppercase tracking-wider text-[10px] font-mono">Name of Bank</p>
-                      <p className="font-mono break-words">{draft.bankName}</p>
-                    </>
-                  )}
-                  {draft.bankAccount && <p className="font-mono break-words">Account number: {draft.bankAccount}</p>}
-                  {draft.bankRouting && <p className="font-mono break-words">Routing: {draft.bankRouting}</p>}
-                </div>
-              )}
-            </div>
-          )}
+        {/* Notes / Terms / Bank | Signature */}
+        {hasBottomSection && (
+          <div
+            data-pdf-break
+            style={avoidBreak}
+            className={`grid grid-cols-1 ${hasLeftCol && hasSignature ? 'sm:grid-cols-[1fr_auto]' : ''} gap-x-10 gap-y-6 pt-4 border-t border-border/60 items-end`}
+          >
+            {hasLeftCol && (
+              <div className="min-w-0 space-y-3">
+                {draft.notes && (
+                  <div>
+                    <p className="font-bold uppercase tracking-wider text-slate text-[10px] mb-1 font-mono">Notes</p>
+                    <p className="text-xs text-slate whitespace-pre-line break-words">{draft.notes}</p>
+                  </div>
+                )}
+                {draft.terms && (
+                  <div>
+                    <p className="font-bold uppercase tracking-wider text-slate text-[10px] mb-1 font-mono">Terms & Conditions</p>
+                    <p className="text-xs text-slate whitespace-pre-line break-words">{draft.terms}</p>
+                  </div>
+                )}
+                {hasBank && (
+                  <div className="text-xs space-y-0.5 text-slate">
+                    {draft.bankName && (
+                      <>
+                        <p className="font-bold uppercase tracking-wider text-[10px] font-mono">Name of Bank</p>
+                        <p className="font-mono break-words">{draft.bankName}</p>
+                      </>
+                    )}
+                    {draft.bankAccount && <p className="font-mono break-words">Account number: {draft.bankAccount}</p>}
+                    {draft.bankRouting && <p className="font-mono break-words">Routing: {draft.bankRouting}</p>}
+                  </div>
+                )}
+              </div>
+            )}
 
-          <div className="w-56 text-center sm:justify-self-end">
-            <div className="h-14 flex items-end justify-center mb-1">
-              {signature && <img src={signature} alt="Signature" className="max-h-14 max-w-full object-contain" />}
-            </div>
-            <div className="border-t border-ink pt-1 text-[11px] font-bold uppercase tracking-wider text-ink break-words">
-              {business.name || 'John Smith'}
-            </div>
+            {hasSignature && (
+              <div className="w-56 text-center sm:justify-self-end">
+                <div className="h-14 flex items-end justify-center mb-1">
+                  <img src={signature} alt="Signature" className="max-h-14 max-w-full object-contain" />
+                </div>
+                <div className="border-t border-ink pt-1 text-[11px] font-bold uppercase tracking-wider text-ink break-words">
+                  {business.name || 'John Smith'}
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-
-        
+        )}
 
         {photos.length > 0 && (
           <div className="border-t border-border pt-3" style={avoidBreak}>

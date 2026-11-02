@@ -94,7 +94,7 @@ export function Select({
           if (e.key === 'ArrowDown') { e.preventDefault(); step(1); }
           if (e.key === 'ArrowUp') { e.preventDefault(); step(-1); }
         }}
-        className={`inline-flex items-center justify-between gap-2 min-h-[40px] border border-border rounded-md bg-surface text-foreground px-3 text-sm font-medium text-left cursor-pointer hover:border-[var(--border-strong)] focus:border-[var(--accent)] disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+        className={`inline-flex items-center justify-between gap-2 border border-border rounded-md bg-surface text-foreground px-2.5 text-xs font-medium text-left cursor-pointer hover:border-[var(--border-strong)] focus:border-[var(--accent)] disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       >
         <span className="truncate">{current?.label ?? ''}</span>
         <Icon name="caret-down" size={12} />

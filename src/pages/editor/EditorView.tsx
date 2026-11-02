@@ -178,8 +178,6 @@ export function EditorView() {
                 <Segmented
                   options={[
                     { value: 'default', label: 'Default' },
-                    { value: 'classic', label: 'Classic' },
-                    { value: 'modern', label: 'Modern' },
                     { value: 'minimal', label: 'Minimal' },
                     { value: 'corporate', label: 'Corporate' },
                     { value: 'formal', label: 'Formal' },

@@ -14,6 +14,30 @@ export const INPUT =
 
 const MODE_LABEL: Record<string, string> = { invoice: 'Invoice', quote: 'Estimate', receipt: 'Receipt' };
 
+function AutoGrowTextarea({ className = '', value, ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const ref = React.useRef<HTMLTextAreaElement>(null);
+  const resize = React.useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  }, []);
+  React.useLayoutEffect(resize, [value, resize]);
+  return (
+    <textarea
+      {...props}
+      ref={ref}
+      value={value}
+      rows={1}
+      onInput={e => {
+        resize();
+        props.onInput?.(e);
+      }}
+      className={`${className} overflow-hidden`}
+    />
+  );
+}
+
 function Field({ label, children, className = '' }: { label: string; children: React.ReactNode; className?: string }) {
   return (
     <div className={`min-w-0 w-full ${className}`}>
@@ -288,7 +312,7 @@ export function EditorForm({
                   </button>
                 </div>
                 <div className="form-item-details min-w-0">
-                  <textarea
+                  <AutoGrowTextarea
                     value={item.customFields?.[0]?.value || ''}
                     onChange={e => {
                       const cf = item.customFields || [];
@@ -298,7 +322,6 @@ export function EditorForm({
                       updateItem(item.id, { customFields: next });
                     }}
                     placeholder="Additional details (optional)"
-                    rows={1}
                     className={`${INPUT} text-muted resize-none`}
                   />
                 </div>

@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useStore } from '../../store/useStore';
 import { Icon } from '../../components/ui/Icon';
-import { PaperClassic } from '../../components/papers/Classic';
-import { PaperModern } from '../../components/papers/Modern';
 import { PaperMinimal } from '../../components/papers/Minimal';
 import { PaperDefault } from '../../components/papers/Default';
 import { PaperCorporate } from '../../components/papers/Corporate';
@@ -195,8 +193,6 @@ export function PreviewStage({
     if (paper) return paper;
     const common = { accent, signature, photos, ...extra };
     switch (draft.template) {
-      case 'classic': return <PaperClassic {...common} />;
-      case 'modern': return <PaperModern {...common} />;
       case 'minimal': return <PaperMinimal {...common} />;
       case 'corporate': return <PaperCorporate {...common} />;
       case 'formal': return <PaperFormal {...common} />;

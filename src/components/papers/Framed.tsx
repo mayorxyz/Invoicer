@@ -220,13 +220,13 @@ export function PaperFramed({
         {/* Invoice Total */}
         <div data-pdf-break style={avoidBreak} className="flex justify-between items-center gap-4 pt-3 border-t border-border/60">
           <div className="font-serif italic text-2xl font-bold tracking-tight text-ink">Invoice Total</div>
-          <div className="text-2xl font-mono font-bold text-ink">{m(Math.max(0, t.balance))}</div>        </div>
+          <div className="text-2xl font-mono font-bold text-ink">{m(Math.max(0, t.balance))}</div>       </div>
 
         {/* Terms | Banking + Signature */}
         <div
           data-pdf-break
           style={avoidBreak}
-          className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-x-10 gap-y-5 pt-4 border-t border-border/40 items-end"
+          className={`grid grid-cols-1 ${signature ? 'sm:grid-cols-[1fr_auto]' : ''} gap-x-10 gap-y-5 pt-4 border-t border-border/40 items-end`}
         >
           <div className="min-w-0 space-y-2 text-xs">
             <div>
@@ -250,15 +250,13 @@ export function PaperFramed({
             )}
           </div>
 
-          <div className="w-56 text-center sm:justify-self-end">
-            <div className="h-14 flex items-end justify-center">
-              {signature ? (
+          {signature && (
+            <div className="w-56 text-center sm:justify-self-end">
+              <div className="h-14 flex items-end justify-center">
                 <img src={signature} alt="Signature" className="max-h-14 max-w-full object-contain" />
-              ) : (
-                <span className="font-serif italic text-2xl tracking-tighter">Signature</span>
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {photos.length > 0 && (

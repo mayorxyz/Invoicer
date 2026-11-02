@@ -96,7 +96,7 @@ export function PaperDefault({
                 <tr key={item.id} className="border-b border-rule/50">
                   <td className="py-3 px-2 md:px-4">
                     <div className="font-semibold text-foreground break-words">{item.desc || 'Untitled Item'}</div>
-                    {item.customFields?.[0]?.value && <div className="text-[11px] text-muted mt-0.5 break-words">{item.customFields[0].value}</div>}
+                    {item.customFields?.[0]?.value && <div className="text-[11px] text-muted mt-0.5 whitespace-pre-line break-words">{item.customFields[0].value}</div>}
                   </td>
                   <td className="py-3 px-2 md:px-4 text-center text-muted font-mono">{item.qty}</td>
                   <td className="py-3 px-2 md:px-4 text-right text-muted font-mono whitespace-nowrap">{m(toMinor(item.price, draft.currency))}</td>

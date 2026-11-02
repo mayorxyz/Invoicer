@@ -9,8 +9,6 @@ import { downloadInvoicePdf } from '../../lib/downloadInvoicePdf';
 import { EditorForm } from './EditorForm';
 import { Select } from '../../components/ui/Select';
 import { PaperDefault } from '../../components/papers/Default';
-import { PaperClassic } from '../../components/papers/Classic';
-import { PaperModern } from '../../components/papers/Modern';
 import { PaperMinimal } from '../../components/papers/Minimal';
 import { PaperCorporate } from '../../components/papers/Corporate';
 import { Paperformal as PaperFormal } from '../../components/papers/formal';
@@ -182,8 +180,6 @@ export function LedgerEditorView() {
 
   const paperProps = { draft, business, totals: t, accent, shipToEnabled, signature, photos, paymentTerms, poNumber };
   const previewPaper = template === 'default' ? <PaperDefault {...paperProps} />
-    : template === 'classic' ? <PaperClassic {...paperProps} />
-    : template === 'modern' ? <PaperModern {...paperProps} />
     : template === 'corporate' ? <PaperCorporate {...paperProps} />
     : template === 'formal' ? <PaperFormal {...paperProps} />
     : template === 'framed' ? <PaperFramed {...paperProps} />
@@ -280,11 +276,9 @@ export function LedgerEditorView() {
               aria-label="Template"
               value={template}
               onChange={e => setTemplate(e.target.value as Template)}
-              className="h-7 min-w-[92px] text-xs border border-rule rounded-lg bg-surface text-foreground px-2 outline-none focus:ring-1 focus:ring-accent"
+              className="h-7 text-xs border border-rule rounded-lg bg-surface text-foreground px-2 outline-none focus:ring-1 focus:ring-accent"
             >
               <option value="default">Default</option>
-              <option value="classic">Classic</option>
-              <option value="modern">Modern</option>
               <option value="minimal">Minimal</option>
               <option value="corporate">Corporate</option>
               <option value="formal">Formal</option>

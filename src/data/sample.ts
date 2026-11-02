@@ -166,7 +166,7 @@ export function generateSampleDocuments(clients: Client[]): Invoice[] {
       notes: 'Thank you for your business!',
       terms: 'Payment due within 30 days.',
       payLink: '',
-      template: 'classic',
+      template: 'minimal',
       accent: '#1F3FD1',
       paperSize: 'A4',
       documentLanguage: 'en',

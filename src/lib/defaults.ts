@@ -26,7 +26,7 @@ export const DEFAULT_BUSINESS: BusinessProfile = {
   defaultDueDays: 14,
   defaultNotes: 'Thank you for your business!',
   defaultTerms: 'Payment is due within the specified period.',
-  defaultTemplate: 'classic',
+  defaultTemplate: 'minimal',
   defaultAccent: '#1F3FD1',
   defaultPaperSize: 'A4',
   defaultLanguage: 'en',

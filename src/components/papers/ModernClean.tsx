@@ -195,7 +195,7 @@ export function PaperModernClean({
         style={avoidBreak}
         className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-4 pt-4 border-t border-border/40 items-end"
       >
-        <p className="font-serif italic text-4xl sm:text-5xl text-slate/80 select-none leading-none">Thank you</p>
+        <p className="font-serif italic text-xl sm:text-2xl text-slate/80 select-none leading-none">Thank you</p>
 
         <div className="min-w-0 space-y-2 text-xs">
           <div>
