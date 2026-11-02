@@ -8,6 +8,8 @@ import { PhotoUploader } from './PhotoUploader';
 import type { Draft, Business } from './editorTypes';
 import { Select } from '../../components/ui/Select';
 import { DatePicker } from '../../components/ui/DatePicker';
+import { CURRENCY_LIST } from '../../data/currencies';
+import { ALL_COUNTRIES } from '../../data/countries';
 
 export const INPUT =
   'w-full min-w-0 min-h-[40px] bg-surface border border-border rounded-md px-3 py-2 text-sm font-medium hover:border-[var(--border-strong)] focus:border-[var(--accent)] disabled:opacity-50 disabled:cursor-not-allowed';
@@ -111,7 +113,7 @@ export function EditorForm({
         <div className="flex items-center gap-2 min-w-0 flex-wrap">
           <span className="hidden sm:inline text-xs uppercase font-bold tracking-wider text-muted">Type</span>
           <div className="inline-flex bg-background rounded-lg p-0.5 border border-rule flex-wrap">
-            {(['invoice', 'quote', 'receipt'] as Mode[]).map(mode => (
+            {(['invoice', 'quote', 'receipt'] as const).map(mode => (
               <button
                 key={mode}
                 onClick={() => updateDraft({ mode })}
@@ -129,12 +131,13 @@ export function EditorForm({
           <Select
             value={draft.currency}
             onChange={e => updateDraft({ currency: e.target.value })}
-            className="w-auto font-mono text-xs font-semibold py-1.5 min-w-[80px]"
+            className="w-auto font-mono text-xs font-semibold py-1.5 min-w-[140px]"
           >
-            <option value="NGN">₦ NGN</option>
-            <option value="USD">$ USD</option>
-            <option value="EUR">€ EUR</option>
-            <option value="GBP">£ GBP</option>
+            {CURRENCY_LIST.map(curr => (
+              <option key={curr.code} value={curr.code}>
+                {curr.symbol} {curr.code} — {curr.name}
+              </option>
+            ))}
           </Select>
         </div>
       </div>

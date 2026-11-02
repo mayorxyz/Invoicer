@@ -172,7 +172,7 @@ export function PaperSplit({
             {t.invoiceDiscount > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
             {t.taxAdded > 0 && <div className="flex justify-between py-0.5"><span className="font-medium text-ink">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
             {t.shipping > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Shipping</span><span className="text-ink">{m(t.shipping)}</span></div>}
-            {t.paid > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Amount Previously Paid</span><span className="text-ink">-{m(t.paid)}</span></div>}
+            {t.paid > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Paid</span><span className="text-ink">-{m(t.paid)}</span></div>}
           </div>
         </div>
 

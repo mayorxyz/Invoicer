@@ -189,7 +189,7 @@ export function PaperRetro({
           )}
           {t.paid > 0 && (
             <tr className={totalRow} data-pdf-break style={avoidBreak}>
-              <td colSpan={3} className={labelCell}>Amount Previously Paid</td>
+              <td colSpan={3} className={labelCell}>Paid</td>
               <td className="py-1.5 px-2.5 text-right whitespace-nowrap">-{m(t.paid)}</td>
             </tr>
           )}
