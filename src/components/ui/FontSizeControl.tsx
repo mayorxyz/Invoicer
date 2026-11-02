@@ -53,16 +53,41 @@ export function useFontScale(): number {
 
 /** Tailwind sizes used inside templates -> px at 10.5pt (100%). */
 const SIZES: [string, number][] = [
-  ['text-[9px]', 9], ['text-[10px]', 10], ['text-[11px]', 11], ['text-[12px]', 12],
-  ['text-[13px]', 13], ['text-[14px]', 14],
-  ['text-xs', 12], ['text-sm', 14], ['text-base', 16], ['text-lg', 18],
-  ['text-xl', 20], ['text-2xl', 24], ['text-3xl', 30], ['text-4xl', 36],
+  ['text-\\[8px\\]', 8],
+  ['text-\\[9px\\]', 9],
+  ['text-\\[10px\\]', 10],
+  ['text-\\[11px\\]', 11],
+  ['text-\\[12px\\]', 12],
+  ['text-\\[13px\\]', 13],
+  ['text-\\[14px\\]', 14],
+  ['text-xs', 12],
+  ['text-sm', 14],
+  ['text-base', 16],
+  ['text-lg', 18],
+  ['text-xl', 20],
+  ['text-2xl', 24],
+  ['text-3xl', 30],
+  ['text-4xl', 36],
 ];
 
-/** Scoped to .paper-fs, so the app UI is never affected. */
-export const fontScaleCSS = SIZES
-  .map(([c, px]) => `.paper-fs [class*="${c}"]{font-size:calc(${px}px * var(--paper-fs,1)) !important}`)
-  .join('\n');
+/** Scoped to .paper-fs, reliably scaling all font sizes and line heights proportionally. */
+export const fontScaleCSS = `
+  .paper-fs {
+    font-size: calc(13px * var(--paper-fs, 1)) !important;
+  }
+  .paper-fs .print-paper {
+    font-size: calc(13px * var(--paper-fs, 1)) !important;
+  }
+  .paper-fs table, .paper-fs th, .paper-fs td {
+    font-size: inherit;
+  }
+  ${SIZES.map(([c, px]) => `
+    .paper-fs .${c},
+    .paper-fs [class*="${c.replace('\\', '')}"] {
+      font-size: calc(${px}px * var(--paper-fs, 1)) !important;
+    }
+  `).join('\n')}
+`;
 
 export function FontSizeControl() {
   const value = useFontSize();

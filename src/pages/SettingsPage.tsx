@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useStore } from '../store/useStore';
 import { PageHeader } from '../components/ui/PageHeader';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
@@ -24,7 +24,8 @@ const sections = [
 ];
 
 export function SettingsPage() {
-  const { state, updateSettings, updateBusiness, dismissDemo, loadSampleData, wipeAll } = useStore();
+  const { state, updateSettings, updateBusiness, dismissDemo, loadSampleData, wipeAll, importData } = useStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const [activeSection, setActiveSection] = useState('business');
   const [wipeConfirmOpen, setWipeConfirmOpen] = useState(false);
@@ -145,18 +146,30 @@ export function SettingsPage() {
             <div>
               <label className="block text-xs font-semibold text-foreground mb-2">Accent Color</label>
               <div className="flex gap-2.5 flex-wrap">
-                {ACCENT_PALETTE.map(color => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={() => updateSettings({ accent: color })}
-                    className={`w-9 h-9 rounded-lg transition-all ${
-                      state.settings.accent === color ? 'ring-2 ring-offset-2 ring-accent scale-105' : 'hover:scale-100'
-                    }`}
-                    style={{ backgroundColor: color }}
-                    aria-label={`Select accent color ${color}`}
-                  />
-                ))}
+                {ACCENT_PALETTE.map(color => {
+                  const isNone = color === '#111827';
+                  const isSelected = state.settings.accent === color;
+                  return (
+                    <button
+                      key={color}
+                      type="button"
+                      onClick={() => updateSettings({ accent: color })}
+                      className={`w-9 h-9 rounded-lg transition-all relative flex items-center justify-center overflow-hidden ${
+                        isSelected ? 'ring-2 ring-offset-2 ring-accent scale-105' : 'hover:scale-100'
+                      }`}
+                      style={{
+                        backgroundColor: isNone ? 'var(--surface, #ffffff)' : color,
+                        border: isNone ? '1.5px solid var(--border, #cbd5e1)' : 'none',
+                      }}
+                      title={isNone ? 'None (Monochrome)' : color}
+                      aria-label={`Select accent color ${isNone ? 'None' : color}`}
+                    >
+                      {isNone && (
+                        <div className="absolute w-full h-[1.5px] bg-muted/80 rotate-45 pointer-events-none" />
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -189,47 +202,14 @@ export function SettingsPage() {
               <p className="text-xs text-muted leading-relaxed">
                 Data is stored locally in this browser session. Export backups regularly to prevent potential loss.
               </p>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const data = JSON.stringify(state, null, 2);
-                    const blob = new Blob([data], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `backup-${new Date().toISOString().split('T')[0]}.json`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    updateSettings({ lastBackupDate: new Date().toISOString() });
-                    toast('success', 'Backup downloaded successfully');
-                  }}
-                  className="h-9 px-4 bg-accent text-accent-contrast rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-                >
-                  <Icon name="download" size={14} />
-                  <span>Download Backup</span>
-                </button>
-
-                {!state.settings.demoDismissed && (
-                  <button
-                    type="button"
-                    onClick={dismissDemo}
-                    className="h-9 px-4 bg-surface border border-border text-foreground rounded-lg text-xs font-semibold hover:bg-background-subtle transition-colors"
-                  >
-                    Clear Sample Data
-                  </button>
-                )}
-
-                {state.settings.demoDismissed && state.invoices.length === 0 && (
-                  <button
-                    type="button"
-                    onClick={loadSampleData}
-                    className="h-9 px-4 bg-surface border border-border text-foreground rounded-lg text-xs font-semibold hover:bg-background-subtle transition-colors"
-                  >
-                    Load Sample Data
-                  </button>
-                )}
-              </div>
+                <DataBackupControls
+                  state={state}
+                  updateSettings={updateSettings}
+                  importData={importData}
+                  dismissDemo={dismissDemo}
+                  loadSampleData={loadSampleData}
+                  toast={toast}
+                />
             </div>
 
             <div className="bg-danger/5 border border-danger/20 rounded-xl p-3.5 md:p-4 flex flex-col gap-3">
@@ -370,6 +350,113 @@ export function SettingsPage() {
         confirmLabel="Delete Everything"
         variant="danger"
       />
+    </div>
+  );
+}
+
+function DataBackupControls({
+  state,
+  updateSettings,
+  importData,
+  dismissDemo,
+  loadSampleData,
+  toast,
+}: {
+  state: any;
+  updateSettings: (s: any) => void;
+  importData: (json: string) => boolean;
+  dismissDemo: () => void;
+  loadSampleData: () => void;
+  toast: (type: 'success' | 'error' | 'info' | 'warning', message: string) => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDownload = () => {
+    const data = JSON.stringify(state, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    updateSettings({ lastBackupDate: new Date().toISOString() });
+    toast('success', 'Backup downloaded successfully');
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target?.result as string;
+        const success = importData(text);
+        if (success) {
+          toast('success', 'Backup restored successfully! All data loaded.');
+        } else {
+          toast('error', 'Invalid backup file format.');
+        }
+      } catch (err) {
+        toast('error', 'Failed to read backup file.');
+      }
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+    reader.readAsText(file);
+  };
+
+  return (
+    <div className="flex flex-col gap-3">
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept=".json,application/json"
+        className="hidden"
+      />
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={handleDownload}
+          className="h-9 px-4 bg-accent text-accent-contrast rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+        >
+          <Icon name="download" size={14} />
+          <span>Download Backup</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="h-9 px-4 bg-surface border border-border text-foreground rounded-lg text-xs font-semibold hover:bg-background-subtle transition-colors flex items-center justify-center gap-2"
+        >
+          <Icon name="upload" size={14} />
+          <span>Restore Backup</span>
+        </button>
+
+        {!state.settings.demoDismissed && (
+          <button
+            type="button"
+            onClick={dismissDemo}
+            className="h-9 px-4 bg-surface border border-border text-foreground rounded-lg text-xs font-semibold hover:bg-background-subtle transition-colors"
+          >
+            Clear Sample Data
+          </button>
+        )}
+
+        {state.settings.demoDismissed && state.invoices.length === 0 && (
+          <button
+            type="button"
+            onClick={loadSampleData}
+            className="h-9 px-4 bg-surface border border-border text-foreground rounded-lg text-xs font-semibold hover:bg-background-subtle transition-colors"
+          >
+            Load Sample Data
+          </button>
+        )}
+      </div>
+      <p className="text-[11px] text-muted">
+        Backups include all your documents, expenses, catalog items, clients, and time tracker history.
+      </p>
     </div>
   );
 }

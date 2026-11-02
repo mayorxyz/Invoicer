@@ -10,9 +10,13 @@ import { Select } from '../../components/ui/Select';
 import { DatePicker } from '../../components/ui/DatePicker';
 import { CURRENCY_LIST } from '../../data/currencies';
 import { ALL_COUNTRIES } from '../../data/countries';
+import { useStore } from '../../store/useStore';
 
 export const INPUT =
   'w-full min-w-0 min-h-[40px] bg-surface border border-border rounded-md px-3 py-2 text-sm font-medium hover:border-[var(--border-strong)] focus:border-[var(--accent)] disabled:opacity-50 disabled:cursor-not-allowed';
+
+const COMPACT_SELECT =
+  'bg-background border border-rule rounded-md px-2 py-1.5 text-xs font-medium text-muted hover:text-foreground focus:border-[var(--accent)] outline-none cursor-pointer';
 
 const MODE_LABEL: Record<string, string> = { invoice: 'Invoice', quote: 'Estimate', receipt: 'Receipt' };
 
@@ -86,6 +90,8 @@ export interface EditorFormProps {
   onPaymentTermsChange: (terms: string) => void;
   onIssueDateChange: (date: string) => void;
   poNumber: string;
+  selectedClientId?: string;
+  setSelectedClientId?: (id: string | undefined) => void;
 }
 
 export function EditorForm({
@@ -103,9 +109,61 @@ export function EditorForm({
   };
 
   const removeItem = (id: string) => {
-    if (draft.items.length > 1) updateDraft({ items: draft.items.filter(i => i.id !== id) });
+  if (draft.items.length > 1) {
+    updateDraft({ items: draft.items.filter(i => i.id !== id) });
+  } else {
+    updateDraft({
+      items: [{ id, desc: '', qty: 1, unit: 'each', price: 0, taxable: true, taxIds: [], customFields: [] }],
+    });
+  }
+};
+
+  const { state } = useStore();
+  const savedClients = state.clients || [];
+  // Adjust 'products' or 'items' based on your actual store schema for catalog items
+  const catalogItems = state.savedItems || [];
+  
+
+  const pickSavedClient = (id: string) => {
+    if (!id) {
+      updateDraft({ clientId: undefined });
+      return;
+    }
+    const c = savedClients.find((x: any) => x.id === id);
+    if (!c) return;
+    updateDraft({
+      clientId: c.id,
+      client: {
+        ...draft.client,
+        name: c.name ?? '',
+        email: c.email ?? '',
+        phone: c.phone ?? '',
+        address: c.address ?? '',
+      },
+    });
   };
 
+  const addSavedItemRow = (savedItemId: string) => {
+  if (!savedItemId) return;
+  const item = catalogItems.find((x: any) => x.id === savedItemId);
+  if (!item) return;
+
+  const newItem: Item = {
+    id: uuid(),
+    desc: item.desc || item.name || '',
+    qty: 1,
+    unit: item.unit || 'each',
+    price: item.price || 0,
+    taxable: item.taxable ?? true,
+    taxIds: item.taxIds || [],
+  };
+
+  const first = draft.items[0];
+  const onlyBlankRow = draft.items.length === 1 && !first.desc && !first.price;
+  updateDraft({
+    items: onlyBlankRow ? [{ ...newItem, id: first.id }] : [...draft.items, newItem],
+  });
+};
   return (
     <div className="w-full min-w-0 space-y-4">
       {/* Type & currency */}
@@ -248,15 +306,32 @@ export function EditorForm({
         n={3}
         title="Client & Recipient"
         action={
-          <label className="flex items-center gap-2 cursor-pointer shrink-0">
-            <input type="checkbox" checked={shipToEnabled} onChange={e => setShipToEnabled(e.target.checked)} className="w-4 h-4 rounded" style={{ accentColor: 'var(--accent)' }} />
-            <span className="text-xs font-medium text-muted">Ship To</span>
-          </label>
+          <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">
+            {savedClients.length > 0 && (
+              <Select
+                value={draft.clientId ?? ''}
+                onChange={e => pickSavedClient(e.target.value)}
+                className={`${COMPACT_SELECT} min-w-[160px]`}
+              >
+                <option value="">Select Client…</option>
+                {savedClients.map((c: any) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}{c.email ? ` (${c.email})` : ''}
+                  </option>
+                ))}
+              </Select>
+            )}
+            <label className="flex items-center gap-2 cursor-pointer shrink-0">
+              <input type="checkbox" checked={shipToEnabled} onChange={e => setShipToEnabled(e.target.checked)} className="w-4 h-4 rounded" style={{ accentColor: 'var(--accent)' }} />
+              <span className="text-xs font-medium text-muted">Ship To</span>
+            </label>
+          </div>
         }
       >
         <div className={`form-client-grid grid grid-cols-1 gap-5 w-full min-w-0 ${shipToEnabled ? 'has-ship-to' : ''}`}>
           <div className="space-y-3 min-w-0">
             <h4 className="text-xs uppercase font-bold tracking-wide" style={{ color: 'var(--accent)' }}>Bill To</h4>
+
             <Field label="Client / Company Name *">
               <input type="text" value={draft.client.name} onChange={e => updateDraft({ client: { ...draft.client, name: e.target.value } })} placeholder="Global Services Ltd" className={INPUT} />
             </Field>
@@ -292,10 +367,26 @@ export function EditorForm({
         n={4}
         title="Line Items & Services"
         action={
-          <button onClick={addItem} className="flex items-center gap-1 text-xs font-semibold shrink-0" style={{ color: 'var(--accent)' }}>
-            <Icon name="plus" size={16} />
-            Add
-          </button>
+          <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">
+            {catalogItems.length > 0 && (
+              <Select
+                value=""
+                onChange={e => addSavedItemRow(e.target.value)}
+                className={`${COMPACT_SELECT} min-w-[180px]`}
+              >
+                <option value="">+ Quick add item…</option>
+                {catalogItems.map((si: any) => (
+                  <option key={si.id} value={si.id}>
+                    {si.name || si.desc}
+                  </option>
+                ))}
+              </Select>
+            )}
+            <button onClick={addItem} className="flex items-center gap-1 text-xs font-semibold shrink-0" style={{ color: 'var(--accent)' }}>
+              <Icon name="plus" size={16} />
+              Add
+            </button>
+          </div>
         }
       >
         <div className="space-y-3 w-full min-w-0">

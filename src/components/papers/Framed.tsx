@@ -88,6 +88,7 @@ export function PaperFramed({
 
   return (
     <div
+      data-template="framed"
       className="print-paper relative bg-surface shadow-xl w-full flex flex-col text-[13px] leading-snug text-foreground overflow-visible"
       style={frameStyle}
     >

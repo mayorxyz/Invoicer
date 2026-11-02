@@ -50,6 +50,8 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   'download': PhosphorIcons.Download,
   'upload': PhosphorIcons.Upload,
   'printer': PhosphorIcons.Printer,
+  'floppy-disk': PhosphorIcons.FloppyDisk,
+  'save': PhosphorIcons.FloppyDisk,
   'magnifying-glass': PhosphorIcons.MagnifyingGlass,
   'funnel': PhosphorIcons.Funnel,
   'dots-three': PhosphorIcons.DotsThree,

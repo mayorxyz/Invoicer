@@ -127,12 +127,13 @@ export function PaperTypography({ children }: { children: React.ReactNode }) {
   const font = FONT_STYLES.find((f) => f.id === styleId)!;
 
   useEffect(() => {
-    if (!document.getElementById('paper-typography-css')) {
-      const s = document.createElement('style');
+    let s = document.getElementById('paper-typography-css') as HTMLStyleElement | null;
+    if (!s) {
+      s = document.createElement('style');
       s.id = 'paper-typography-css';
-      s.textContent = `${fontScaleCSS}\n${fontStyleCSS}`;
       document.head.appendChild(s);
     }
+    s.textContent = `${fontScaleCSS}\n${fontStyleCSS}`;
   }, []);
 
   useEffect(() => {
@@ -146,13 +147,13 @@ export function PaperTypography({ children }: { children: React.ReactNode }) {
     document.head.appendChild(l);
   }, [font]);
 
-  const classes = [scale !== 100 ? 'paper-fs' : '', font.stack ? 'paper-ff' : ''].filter(Boolean).join(' ');
+  const classes = ['paper-fs', font.stack ? 'paper-ff' : ''].filter(Boolean).join(' ');
   const style = {
-    ...(scale !== 100 ? { '--paper-fs': scale / 100 } : {}),
+    '--paper-fs': scale / 100,
     ...(font.stack ? { '--paper-ff': font.stack } : {}),
   } as React.CSSProperties;
 
-  return <div className={classes || undefined} style={style}>{children}</div>;
+  return <div className={classes} style={style}>{children}</div>;
 }
 
 export function FontStyleControl() {

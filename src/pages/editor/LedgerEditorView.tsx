@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useStore } from '../../store/useStore';
 import { Icon } from '../../components/ui/Icon';
 import { totals, formatMoney, fromMinor } from '../../lib/money';
@@ -22,12 +22,12 @@ import { FontSizeControl } from '../../components/ui/FontSizeControl';
 import { FontStyleControl } from '../../components/ui/FontStyleControl';
 
 const ACCENTS = [
+  { value: '#111827', label: 'None (Monochrome)', isNone: true },
   { value: '#1F3FD1', label: 'Deep Blue' },
   { value: '#059669', label: 'Emerald' },
   { value: '#D97706', label: 'Amber' },
   { value: '#DC2626', label: 'Crimson' },
   { value: '#7C3AED', label: 'Violet' },
-  { value: '#111827', label: 'Onyx' },
 ];
 
 const termDays = (terms: string) =>
@@ -45,6 +45,7 @@ export function LedgerEditorView() {
   const [template, setTemplate] = useState<Template>('default');
   const [splitPercent, setSplitPercent] = useState(50);
   const [isDraggingSplit, setIsDraggingSplit] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
   const splitContainerRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -58,6 +59,23 @@ export function LedgerEditorView() {
   useEffect(() => {
     if (!draft) newDraft('invoice');
   }, []);
+
+  const handleSave = useCallback(() => {
+    saveDraft();
+    setJustSaved(true);
+    setTimeout(() => setJustSaved(false), 2000);
+  }, [saveDraft]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSave]);
 
   if (!draft) return null;
 
@@ -161,22 +179,7 @@ export function LedgerEditorView() {
     }
   };
 
-  const handleSaveExport = () => {
-    saveDraft();
-    const exportData = {
-      type: draft.mode,
-      number: draft.number,
-      total: fromMinor(t.total, draft.currency),
-      date: draft.issueDate,
-    };
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${draft.mode}_${draft.number || 'document'}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+
 
   const paperProps = { draft, business, totals: t, accent, shipToEnabled, signature, photos, paymentTerms, poNumber };
   const previewPaper = template === 'default' ? <PaperDefault {...paperProps} />
@@ -215,9 +218,14 @@ export function LedgerEditorView() {
           </button>
           {downloadError && <span className="text-xs text-danger">{downloadError}</span>}
         </div>
-        <button onClick={handleSaveExport} className="inline-flex items-center justify-center gap-1.5 sm:gap-2 text-white rounded-lg text-[11px] sm:text-xs font-semibold px-2 sm:px-3 h-8 sm:h-10 shadow-md hover:opacity-90 transition-opacity" style={{ backgroundColor: 'var(--accent)' }}>
-          <Icon name="download" size={14} />
-          <span>Save</span>
+        <button
+          onClick={handleSave}
+          className="inline-flex items-center justify-center gap-1.5 sm:gap-2 text-white rounded-lg text-[11px] sm:text-xs font-semibold px-2 sm:px-3 h-8 sm:h-10 shadow-md hover:opacity-90 transition-all active:scale-95"
+          style={{ backgroundColor: justSaved ? '#16a34a' : 'var(--accent)' }}
+          title="Save document (Ctrl+S)"
+        >
+          <Icon name={justSaved ? 'check' : 'floppy-disk'} size={14} />
+          <span>{justSaved ? 'Saved!' : 'Save'}</span>
         </button>
       </div>
     </div>
@@ -246,26 +254,47 @@ export function LedgerEditorView() {
               className="flex items-center gap-1.5 h-7 px-2 rounded-lg border border-rule text-xs font-medium hover:bg-background"
               aria-label="Accent colour"
             >
-              <span className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: accent }} />
+              <span
+                className="w-3.5 h-3.5 rounded-full relative flex items-center justify-center overflow-hidden"
+                style={{
+                  backgroundColor: accent === '#111827' ? 'var(--surface, #ffffff)' : accent,
+                  border: accent === '#111827' ? '1px solid var(--border, #94a3b8)' : 'none',
+                }}
+              >
+                {accent === '#111827' && (
+                  <span className="absolute w-full h-[1px] bg-foreground rotate-45 pointer-events-none" />
+                )}
+              </span>
               <span className="hidden sm:inline">Accent</span>
             </button>
             {accentOpen && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setAccentOpen(false)} />
                 <div className="absolute left-0 top-9 z-20 bg-surface border border-rule rounded-xl shadow-lg p-2 flex gap-2">
-                  {ACCENTS.map(c => (
-                    <button
-                      key={c.value}
-                      onClick={() => { updateSettings({ accent: c.value }); setAccentOpen(false); }}
-                      className="w-6 h-6 rounded-full transition-transform hover:scale-110"
-                      style={{
-                        backgroundColor: c.value,
-                        boxShadow: accent === c.value ? `0 0 0 2px var(--surface, #fff), 0 0 0 4px ${c.value}` : 'none',
-                      }}
-                      title={c.label}
-                      aria-label={c.label}
-                    />
-                  ))}
+                  {ACCENTS.map(c => {
+                    const isSelected = accent === c.value;
+                    return (
+                      <button
+                        key={c.value}
+                        onClick={() => { updateSettings({ accent: c.value }); setAccentOpen(false); }}
+                        className="w-6 h-6 rounded-full transition-transform hover:scale-110 relative flex items-center justify-center overflow-hidden"
+                        style={{
+                          backgroundColor: c.isNone ? 'var(--surface, #ffffff)' : c.value,
+                          border: c.isNone ? '1.5px solid var(--border, #cbd5e1)' : 'none',
+                          boxShadow: isSelected ? `0 0 0 2px var(--surface, #fff), 0 0 0 4px ${c.isNone ? '#111827' : c.value}` : 'none',
+                        }}
+                        title={c.label}
+                        aria-label={c.label}
+                      >
+                        {c.isNone && (
+                          <div
+                            className="absolute w-full h-[1.5px] bg-muted/80 rotate-45 pointer-events-none"
+                            style={{ backgroundColor: isSelected ? '#111827' : '#64748b' }}
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </>
             )}

@@ -52,6 +52,7 @@ export function PaperRetro({
 
   return (
     <div
+      data-template="retro"
       className="print-paper relative shadow-xl w-full flex flex-col text-[12px] leading-snug text-black overflow-visible px-6 py-6 sm:px-10 sm:py-8 gap-5"
       style={{ backgroundColor: accent, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', ...keepColors }}
     >

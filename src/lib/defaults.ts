@@ -50,7 +50,7 @@ export const DEFAULT_SETTINGS: Settings = {
 export const APP_NAME = 'Invoicer';
 
 export const ACCENT_PALETTE = [
-  '#1F3FD1', '#059669', '#D97706', '#DC2626', '#7C3AED',
+  '#111827', '#1F3FD1', '#059669', '#D97706', '#DC2626', '#7C3AED',
   '#0891B2', '#BE185D', '#4F46E5',
 ];
 

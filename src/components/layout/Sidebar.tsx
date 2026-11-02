@@ -23,7 +23,7 @@ const SIDEBAR_WIDTH = {
 } as const;
 
 export function Sidebar() {
-  const { state, view, setView, toggleSidebar } = useStore();
+  const { state, view, setView, toggleSidebar, updateSettings } = useStore();
 
   const collapsed = state.settings.sidebarCollapsed;
   const business = state.businesses[0];
@@ -51,6 +51,7 @@ export function Sidebar() {
       document.body.appendChild(link);
       link.click();
       link.remove();
+      updateSettings({ lastBackupDate: new Date().toISOString().slice(0, 10) });
 
       // Allow the browser to begin downloading before releasing the URL.
       window.setTimeout(() => {
@@ -59,7 +60,7 @@ export function Sidebar() {
     } catch (error) {
       console.error('Failed to export backup:', error);
     }
-  }, [state]);
+  }, [state, updateSettings]);
 
   const renderTooltip = (
     content: string,
