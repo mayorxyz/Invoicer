@@ -90,7 +90,7 @@ export function ClientDialog({ open, onClose, onSave, initialData }: ClientDialo
         </div>
       }
     >
-      <form id="client-dialog-form" onSubmit={handleSubmit} className="space-y-3.5 md:space-y-4 max-h-[70vh] overflow-y-auto px-1" onKeyDown={handleKeyDown}>
+      <form id="client-dialog-form" onSubmit={handleSubmit} className="space-y-3.5 md:space-y-4 px-1" onKeyDown={handleKeyDown}>
         <div>
           <label className="block text-xs md:text-sm font-medium text-foreground mb-1">
             Name <span className="text-danger">*</span>
@@ -128,7 +128,7 @@ export function ClientDialog({ open, onClose, onSave, initialData }: ClientDialo
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-3 py-2 bg-background border border-border rounded-md text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-accent border-border"
+              className="w-full px-3 py-2 bg-background border border-border rounded-md text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
               placeholder="+1 (555) 000-0000"
             />
           </div>
@@ -151,7 +151,7 @@ export function ClientDialog({ open, onClose, onSave, initialData }: ClientDialo
             type="text"
             value={taxId}
             onChange={(e) => setTaxId(e.target.value)}
-            className="w-full px-3 py-2 bg-background border border-border rounded-md text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-accent border-border"
+            className="w-full px-3 py-2 bg-background border border-border rounded-md text-xs md:text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
             placeholder="TAX-12345678"
           />
         </div>

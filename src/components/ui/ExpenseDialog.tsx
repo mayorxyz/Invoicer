@@ -4,7 +4,7 @@ import { Button } from './Button';
 import { today } from '../../lib/dates';
 import type { Expense } from '../../types';
 import { Select } from './Select';
-
+import { CURRENCY_LIST } from '../../data/currencies';
 
 interface ExpenseDialogProps {
   open: boolean;
@@ -160,12 +160,13 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
             <Select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-              className="w-full text-sm"
+              className="w-full text-sm font-mono"
             >
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
-              <option value="GBP">GBP</option>
-              <option value="NGN">NGN</option>
+              {CURRENCY_LIST.map((curr) => (
+                <option key={curr.code} value={curr.code}>
+                  {curr.symbol} {curr.code} — {curr.name}
+                </option>
+              ))}
             </Select>
           </div>
         </div>
