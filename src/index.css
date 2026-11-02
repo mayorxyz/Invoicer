@@ -82,6 +82,25 @@
     transition: border-color 150ms ease, box-shadow 150ms ease;
   }
 
+  input[type="date"] {
+    color-scheme: light;
+    font-variant-numeric: tabular-nums;
+  }
+
+  [data-theme="dark"] input[type="date"] {
+    color-scheme: dark;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.72;
+    transition: opacity 150ms ease;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+  }
+
   input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--accent);
@@ -131,6 +150,93 @@
   outline-offset: 2px;
 }
 
+/* Let editor attachments respond to the resized pane width, not viewport width. */
+.editor-form-pane {
+  container-type: inline-size;
+}
+
+.form-grid-two,
+.form-meta-grid,
+.form-client-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.form-span-two,
+.form-meta-span {
+  grid-column: span 1;
+}
+
+.form-item-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.form-item-desc,
+.form-item-qty,
+.form-item-rate,
+.form-item-details {
+  grid-column: span 12;
+}
+
+@container (min-width: 380px) {
+  .form-grid-two,
+  .form-meta-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form-span-two,
+  .form-meta-span {
+    grid-column: span 2;
+  }
+
+  .form-item-qty,
+  .form-item-rate {
+    grid-column: span 6;
+  }
+}
+
+@container (min-width: 600px) {
+  .form-item-desc {
+    grid-column: span 6;
+  }
+
+  .form-item-qty {
+    grid-column: span 2;
+  }
+
+  .form-item-rate {
+    grid-column: span 4;
+  }
+}
+
+@container (min-width: 720px) {
+  .form-meta-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .form-meta-span {
+    grid-column: span 4;
+  }
+
+  .form-client-grid.has-ship-to {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.attachment-layout {
+  container-type: inline-size;
+}
+
+.attachment-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@container (min-width: 440px) {
+  .attachment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -173,6 +279,24 @@
 
 .skip-link:focus {
   top: 0;
+}
+
+.ledger-ed .preview-stage {
+  padding: 20px 12px 40px;
+  border-radius: 0;
+  background-color: color-mix(in srgb, var(--accent) 4%, var(--background));
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--text) 9%, transparent) 1px,
+    transparent 1.5px
+  );
+  background-size: 18px 18px;
+}
+.ledger-ed .sheet {
+  border-radius: 3px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--text) 8%, transparent),
+    0 2px 4px rgba(0, 0, 0, 0.25),
+    0 24px 48px -12px rgba(0, 0, 0, 0.55);
 }
 
 /* Animations */

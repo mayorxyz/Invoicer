@@ -41,6 +41,8 @@ export async function downloadInvoicePdf(
     getComputedStyle(source).getPropertyValue('--accent').trim() ||
     getComputedStyle(paperElement).getPropertyValue('--accent').trim();
 
+  const typography = source.closest('.paper-fs, .paper-ff') as HTMLElement | null;
+
   const background = '#FFFFFF';
   const foreground = '#111827';
 
@@ -56,6 +58,13 @@ export async function downloadInvoicePdf(
   container.style.cssText =
     `position:fixed;left:-9999px;top:0;width:${A4_W}px;background:${background};color:${foreground};z-index:-1;pointer-events:none;`;
   if (accent) container.style.setProperty('--accent', accent);
+  if (typography) {
+    typography.classList.forEach((c) => container.classList.add(c));
+    ['--paper-fs', '--paper-ff'].forEach((prop) => {
+      const value = typography.style.getPropertyValue(prop);
+      if (value) container.style.setProperty(prop, value);
+    });
+  }
   Object.entries(LIGHT_VARS).forEach(([k, v]) => container.style.setProperty(k, v));
   container.setAttribute('data-theme', 'light');
   container.appendChild(clone);

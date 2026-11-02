@@ -62,10 +62,10 @@ export function PhotoUploader({ photos, onChange }: PhotoUploaderProps) {
   };
   
   return (
-    <div className="border border-rule rounded-md p-3 bg-background/30 space-y-2">
-      <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-foreground">Photo / Receipt Attachments</label>
-        <label className="text-xs font-medium px-2.5 py-1 bg-background border border-rule rounded-md cursor-pointer hover:bg-background/80 transition-colors">
+    <div className="border border-rule rounded-md p-3 bg-background/30 space-y-2 w-full min-w-0">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <label className="text-xs font-semibold text-foreground truncate">Photo / Receipt Attachments</label>
+        <label className="text-xs font-medium px-2.5 py-1 bg-background border border-rule rounded-md cursor-pointer hover:bg-background/80 transition-colors shrink-0">
           <input
             ref={fileInputRef}
             type="file"
@@ -79,13 +79,13 @@ export function PhotoUploader({ photos, onChange }: PhotoUploaderProps) {
       </div>
       
       {error && (
-        <p className="text-xs text-danger">{error}</p>
+        <p className="text-xs text-danger break-words">{error}</p>
       )}
       
       {photos.length > 0 && (
-        <div className="flex flex-wrap gap-2 pt-2">
+        <div className="flex flex-wrap gap-2 pt-2 w-full min-w-0">
           {photos.map((photo, index) => (
-            <div key={index} className="relative group">
+            <div key={index} className="relative group shrink-0">
               <img
                 src={photo}
                 alt={`Attachment ${index + 1}`}

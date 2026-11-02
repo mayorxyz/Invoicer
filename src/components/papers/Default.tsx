@@ -10,7 +10,7 @@ export function PaperDefault({
   const tint = (pct: number) => `color-mix(in srgb, ${accent} ${pct}%, transparent)`;
 
   return (
-    <div className="print-paper max-w-[800px] mx-auto bg-surface border border-rule rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-4 sm:p-6 md:p-10 space-y-6 md:space-y-8 text-foreground">
+    <div className="print-paper w-full bg-surface px-10 space-y-8 text-foreground">
       {/* Header */}
       <div className="invoice-header flex flex-row justify-between items-start gap-4 md:gap-6 border-b border-rule pb-5 md:pb-6">
         <div className="from-block min-w-0 max-w-[58%] space-y-2 md:space-y-3">
@@ -51,7 +51,7 @@ export function PaperDefault({
       </div>
 
       {/* Recipients */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
+      <div data-pdf-break className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
         <div className="border-l-2 pl-3 py-0.5 min-w-0" style={{ borderColor: accent }}>
           <div className="text-[10px] uppercase font-bold tracking-wider text-muted mb-1">Bill To</div>
           {draft.client.name ? (
@@ -76,7 +76,7 @@ export function PaperDefault({
       </div>
 
       {/* Items */}
-      <div className="overflow-x-auto">
+      <div>
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-rule">
@@ -109,7 +109,7 @@ export function PaperDefault({
       </div>
 
       {/* Totals */}
-      <div className="border-t border-rule pt-4 flex flex-col md:flex-row print:flex-row gap-6 break-inside-avoid totals-block">
+      <div data-pdf-break className="border-t border-rule pt-4 flex flex-col md:flex-row print:flex-row gap-6 break-inside-avoid totals-block">
         <div className="flex-1 min-w-0 text-xs space-y-4 notes-block md:pr-2">
           <div className="space-y-1">
             <div className="text-[10px] uppercase font-bold tracking-wider text-muted">Notes & Terms</div>
@@ -162,7 +162,7 @@ export function PaperDefault({
       </div>
 
       {photos.length > 0 && (
-        <div className="border-t border-rule pt-4">
+        <div data-pdf-break className="border-t border-rule pt-4">
           <div className="text-[10px] uppercase font-bold tracking-wider text-muted mb-3">Attached Photos / Receipts</div>
           <div className="flex flex-wrap gap-3">
             {photos.map((photo, idx) => (

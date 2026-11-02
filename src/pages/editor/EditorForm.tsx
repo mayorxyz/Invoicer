@@ -7,15 +7,16 @@ import { SignaturePad } from './SignaturePad';
 import { PhotoUploader } from './PhotoUploader';
 import type { Draft, Business } from './editorTypes';
 import { Select } from '../../components/ui/Select';
+import { DatePicker } from '../../components/ui/DatePicker';
 
 export const INPUT =
-  'w-full min-w-0 bg-surface border border-rule rounded-lg px-3 py-2 text-base sm:text-sm outline-none transition-shadow focus:border-[var(--accent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--accent)_20%,transparent)]';
+  'w-full min-w-0 min-h-[40px] bg-surface border border-border rounded-md px-3 py-2 text-sm font-medium hover:border-[var(--border-strong)] focus:border-[var(--accent)] disabled:opacity-50 disabled:cursor-not-allowed';
 
 const MODE_LABEL: Record<string, string> = { invoice: 'Invoice', quote: 'Estimate', receipt: 'Receipt' };
 
 function Field({ label, children, className = '' }: { label: string; children: React.ReactNode; className?: string }) {
   return (
-    <div className={`min-w-0 ${className}`}>
+    <div className={`min-w-0 w-full ${className}`}>
       <label className="text-xs font-medium text-muted mb-1 block truncate">{label}</label>
       {children}
     </div>
@@ -26,9 +27,9 @@ function Card({
   n, title, action, children,
 }: { n: number; title: string; action?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <section className="bg-surface border border-rule rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-      <header className="px-4 py-3 md:px-5 border-b border-rule flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
+    <section className="bg-surface border border-rule rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04)] w-full min-w-0">
+      <header className="px-4 py-3 md:px-5 border-b border-rule flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <span
             className="w-5 h-5 shrink-0 rounded-full grid place-items-center text-[11px] font-mono font-bold"
             style={{ background: 'color-mix(in srgb, var(--accent) 14%, transparent)', color: 'var(--accent)' }}
@@ -39,7 +40,7 @@ function Card({
         </div>
         {action}
       </header>
-      <div className="p-4 md:p-5">{children}</div>
+      <div className="p-4 md:p-5 min-w-0">{children}</div>
     </section>
   );
 }
@@ -80,12 +81,12 @@ export function EditorForm({
   };
 
   return (
-    <>
+    <div className="w-full min-w-0 space-y-4">
       {/* Type & currency */}
-      <div className="bg-surface border border-rule rounded-2xl p-3 md:p-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2 min-w-0">
+      <div className="bg-surface border border-rule rounded-2xl p-3 md:p-4 flex flex-wrap items-center justify-between gap-3 w-full min-w-0">
+        <div className="flex items-center gap-2 min-w-0 flex-wrap">
           <span className="hidden sm:inline text-xs uppercase font-bold tracking-wider text-muted">Type</span>
-          <div className="inline-flex bg-background rounded-lg p-0.5 border border-rule">
+          <div className="inline-flex bg-background rounded-lg p-0.5 border border-rule flex-wrap">
             {(['invoice', 'quote', 'receipt'] as Mode[]).map(mode => (
               <button
                 key={mode}
@@ -99,12 +100,12 @@ export function EditorForm({
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           <span className="hidden sm:inline text-xs uppercase font-bold tracking-wider text-muted">Currency</span>
           <Select
             value={draft.currency}
             onChange={e => updateDraft({ currency: e.target.value })}
-            className="w-auto font-mono text-xs font-semibold py-1.5"
+            className="w-auto font-mono text-xs font-semibold py-1.5 min-w-[80px]"
           >
             <option value="NGN">₦ NGN</option>
             <option value="USD">$ USD</option>
@@ -116,8 +117,8 @@ export function EditorForm({
 
       {/* 1 Sender */}
       <Card n={1} title="Sender (From)">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 p-3 border border-dashed border-rule rounded-xl bg-background/40">
+        <div className="space-y-4 w-full min-w-0">
+          <div className="flex items-center gap-3 p-3 border border-dashed border-rule rounded-xl bg-background/40 flex-wrap">
             <div className="w-14 h-14 shrink-0 border border-rule bg-surface rounded-lg grid place-items-center overflow-hidden">
               {business.logo ? (
                 <img src={business.logo} alt="Logo" className="w-full h-full object-contain" />
@@ -125,10 +126,10 @@ export function EditorForm({
                 <Icon name="image" size={22} className="text-muted" />
               )}
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-[140px]">
               <div className="text-xs font-semibold">Company Logo</div>
               <p className="text-xs text-muted">PNG, JPG or SVG, max 2MB</p>
-              <div className="flex items-center gap-3 mt-1.5">
+              <div className="flex items-center gap-3 mt-1.5 flex-wrap">
                 <label className="text-xs font-semibold px-3 py-1.5 rounded-lg cursor-pointer text-white" style={{ backgroundColor: 'var(--accent)' }}>
                   <input
                     type="file"
@@ -152,8 +153,8 @@ export function EditorForm({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Business / Sender Name *" className="col-span-2">
+          <div className="form-grid-two grid gap-3 w-full min-w-0">
+            <Field label="Business / Sender Name *" className="form-span-two">
               <input type="text" value={business.name} onChange={e => setBiz({ name: e.target.value })} placeholder="Acme Corporation" className={INPUT} />
             </Field>
             <Field label="Email">
@@ -162,10 +163,10 @@ export function EditorForm({
             <Field label="Phone">
               <input type="text" value={business.phone} onChange={e => setBiz({ phone: e.target.value })} placeholder="+1 (555) 000-0000" className={INPUT} />
             </Field>
-            <Field label="Tax / Business ID" className="col-span-2">
+            <Field label="Tax / Business ID" className="form-span-two">
               <input type="text" value={business.taxId || ''} onChange={e => setBiz({ taxId: e.target.value })} placeholder="TAX-99823412" className={`${INPUT} font-mono`} />
             </Field>
-            <Field label="Street Address" className="col-span-2">
+            <Field label="Street Address" className="form-span-two">
               <textarea value={business.address} onChange={e => setBiz({ address: e.target.value })} placeholder="123 Innovation Way, Suite 400" rows={2} className={`${INPUT} resize-none`} />
             </Field>
           </div>
@@ -174,12 +175,12 @@ export function EditorForm({
 
       {/* 2 Meta */}
       <Card n={2} title="Document Meta">
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+        <div className="form-meta-grid grid gap-3 w-full min-w-0">
           <Field label="Doc Number *">
             <input type="text" value={draft.number} onChange={e => updateDraft({ number: e.target.value })} className={`${INPUT} font-mono font-semibold`} />
           </Field>
           <Field label="Issue Date">
-            <input type="date" value={draft.issueDate} onChange={e => onIssueDateChange(e.target.value)} className={`${INPUT} font-mono`} />
+            <DatePicker value={draft.issueDate} onChange={onIssueDateChange} ariaLabel="Issue date" className={INPUT} />
           </Field>
           <Field label="Payment Terms">
             <Select value={paymentTerms} onChange={e => onPaymentTermsChange(e.target.value)} className={INPUT}>
@@ -191,9 +192,9 @@ export function EditorForm({
             </Select>
           </Field>
           <Field label="Due Date">
-            <input type="date" value={draft.dueDate} onChange={e => updateDraft({ dueDate: e.target.value })} className={`${INPUT} font-mono`} />
+            <DatePicker value={draft.dueDate} onChange={date => updateDraft({ dueDate: date })} ariaLabel="Due date" className={INPUT} />
           </Field>
-          <Field label="PO Number (Optional)" className="col-span-2">
+          <Field label="PO Number (Optional)" className="form-meta-span">
             <input
               type="text"
               value={poNumber}
@@ -226,13 +227,13 @@ export function EditorForm({
           </label>
         }
       >
-        <div className={`grid grid-cols-1 gap-5 ${shipToEnabled ? 'xl:grid-cols-2' : ''}`}>
+        <div className={`form-client-grid grid grid-cols-1 gap-5 w-full min-w-0 ${shipToEnabled ? 'has-ship-to' : ''}`}>
           <div className="space-y-3 min-w-0">
             <h4 className="text-xs uppercase font-bold tracking-wide" style={{ color: 'var(--accent)' }}>Bill To</h4>
             <Field label="Client / Company Name *">
               <input type="text" value={draft.client.name} onChange={e => updateDraft({ client: { ...draft.client, name: e.target.value } })} placeholder="Global Services Ltd" className={INPUT} />
             </Field>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="form-grid-two grid gap-3">
               <Field label="Email">
                 <input type="email" value={draft.client.email} onChange={e => updateDraft({ client: { ...draft.client, email: e.target.value } })} placeholder="accounts@client.com" className={INPUT} />
               </Field>
@@ -270,23 +271,23 @@ export function EditorForm({
           </button>
         }
       >
-        <div className="space-y-3">
+        <div className="space-y-3 w-full min-w-0">
           {draft.items.map((item, idx) => (
-            <div key={item.id} className="border border-rule rounded-xl p-3 bg-background/30">
-              <div className="grid grid-cols-12 gap-2">
-                <div className="col-span-12 md:col-span-6 min-w-0">
+            <div key={item.id} className="border border-rule rounded-xl p-3 bg-background/30 w-full min-w-0">
+              <div className="form-item-grid grid gap-2 w-full min-w-0">
+                <div className="form-item-desc min-w-0">
                   <input type="text" value={item.desc} onChange={e => updateItem(item.id, { desc: e.target.value })} placeholder={`Item ${idx + 1} / Service Name`} className={`${INPUT} font-semibold`} />
                 </div>
-                <div className="col-span-4 md:col-span-2 min-w-0">
+                <div className="form-item-qty min-w-0">
                   <input type="number" value={item.qty} onChange={e => updateItem(item.id, { qty: parseFloat(e.target.value) || 0 })} placeholder="Qty" min="0" step="any" className={`${INPUT} font-mono`} />
                 </div>
-                <div className="col-span-8 md:col-span-4 flex gap-1.5 min-w-0">
+                <div className="form-item-rate flex gap-1.5 min-w-0">
                   <input type="number" value={item.price} onChange={e => updateItem(item.id, { price: parseFloat(e.target.value) || 0 })} placeholder="Rate" min="0" step="any" className={`${INPUT} font-mono flex-1`} />
-                  <button onClick={() => removeItem(item.id)} className="shrink-0 w-9 grid place-items-center text-muted hover:text-danger rounded-lg hover:bg-danger-bg transition-colors" title="Delete row" aria-label="Delete row">
+                  <button onClick={() => removeItem(item.id)} className="shrink-0 w-9 h-[40px] grid place-items-center text-muted hover:text-danger rounded-lg hover:bg-danger-bg transition-colors" title="Delete row" aria-label="Delete row">
                     <Icon name="trash" size={16} />
                   </button>
                 </div>
-                <div className="col-span-12">
+                <div className="form-item-details min-w-0">
                   <textarea
                     value={item.customFields?.[0]?.value || ''}
                     onChange={e => {
@@ -313,9 +314,9 @@ export function EditorForm({
 
       {/* 5 Financial */}
       <Card n={5} title="Financial Details & Adjustments">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="form-grid-two grid gap-3 w-full min-w-0">
           <Field label="Discount">
-            <div className="flex gap-1.5">
+            <div className="flex gap-1.5 w-full min-w-0">
               <input type="number" value={draft.discVal} onChange={e => updateDraft({ discVal: parseFloat(e.target.value) || 0 })} placeholder="0" className={`${INPUT} font-mono flex-1`} />
               <Select value={draft.discType} onChange={e => updateDraft({ discType: e.target.value as 'percent' | 'fixed' })} className="w-auto min-w-0 bg-surface border border-rule rounded-lg px-3 py-2 text-sm outline-none focus:border-[var(--accent)]">
                 <option value="percent">%</option>
@@ -380,7 +381,7 @@ export function EditorForm({
               className={`${INPUT} font-mono`}
             />
           </Field>
-          <Field label="Routing Number">
+          <Field label="Routing Number" className="form-span-two">
             <input
               type="text"
               value={draft.bankRouting || ''}
@@ -394,16 +395,16 @@ export function EditorForm({
 
       {/* 6 Notes */}
       <Card n={6} title="Notes, Signature & Photos">
-        <div className="space-y-4">
+        <div className="attachment-layout space-y-4 w-full min-w-0">
           <Field label="Notes / Terms & Conditions">
             <textarea value={draft.notes} onChange={e => updateDraft({ notes: e.target.value })} placeholder="Thank you for your business! Payment is due within 30 days via bank transfer..." rows={3} className={`${INPUT} resize-none`} />
           </Field>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SignaturePad value={signature} onChange={setSignature} onClear={() => setSignature('')} />
-            <PhotoUploader photos={photos} onChange={setPhotos} />
+          <div className="attachment-grid gap-4 w-full min-w-0">
+            <div className="min-w-0"><SignaturePad value={signature} onChange={setSignature} onClear={() => setSignature('')} /></div>
+            <div className="min-w-0"><PhotoUploader photos={photos} onChange={setPhotos} /></div>
           </div>
         </div>
       </Card>
-    </>
+    </div>
   );
 }
