@@ -52,12 +52,12 @@ export function PaperCorporate({
   const metaRow = 'flex justify-between @sm:justify-end gap-6';
 
   return (
-      <div
-        data-template="corporate"
-        data-pdf-flow
-        className="print-paper relative overflow-visible"
-        style={{ ...paperRootStyle(draft), fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
-      >
+    <div
+      data-template="corporate"
+      data-pdf-flow
+      className="print-paper relative overflow-visible block"
+      style={{ ...paperRootStyle(draft), fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+    >
       {/* Preview-only page guides: hidden in print and skipped by html2canvas/html2pdf */}
       {showPageGuides && (
         <div
@@ -91,10 +91,10 @@ export function PaperCorporate({
         </div>
       </div>
 
-      <div className="px-6 py-6 @sm:px-10 @sm:py-8 flex flex-col gap-6">
+      {/* Content Container - block flow with tight padding */}
+      <div className="px-6 pt-5 pb-6 @sm:px-10 @sm:pt-6 @sm:pb-8 space-y-6">
         {/* From / Bill To / Ship To / Total */}
         <div
-          data-pdf-break
           style={avoidBreak}
           className={`grid grid-cols-1 ${shipToEnabled ? '@sm:grid-cols-4' : '@sm:grid-cols-3'} gap-5 pb-5 border-b border-border/60 text-xs`}
         >
@@ -130,7 +130,7 @@ export function PaperCorporate({
           </div>
         </div>
 
-        {/* Items Table (header repeats on every page, rows never split) */}
+        {/* Items Table */}
         <div className="overflow-x-auto print:overflow-visible">
           <table className="w-full text-xs table-fixed border-collapse">
             <colgroup>
@@ -172,7 +172,7 @@ export function PaperCorporate({
           </table>
         </div>
 
-        {/* Totals: one block, directly under the table */}
+        {/* Totals */}
         <div data-pdf-break style={avoidBreak} className="flex justify-end">
           <div className="w-full @sm:w-72 text-xs font-mono">
             <div className="flex justify-between py-1"><span style={{ color: corporateTextColor }} className="font-bold">SUBTOTAL</span><span className="text-ink">{m(t.subtotal)}</span></div>
@@ -192,7 +192,7 @@ export function PaperCorporate({
           </div>
         </div>
 
-        {/* Terms | Bank + Signature (no forced bottom push, no empty columns) */}
+        {/* Terms | Bank + Signature */}
         <div
           data-pdf-break
           style={avoidBreak}

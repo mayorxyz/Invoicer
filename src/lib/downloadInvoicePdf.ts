@@ -167,13 +167,14 @@ export async function downloadInvoicePdf(
       )
     );
 
-    // Non-bleed: push totals/last child to bottom of available space
-    if (!bleed) {
-      const totalsBlock = clone.querySelector('.totals-block') as HTMLElement | null;
-      const lastChild = clone.lastElementChild as HTMLElement | null;
-      const pushDown = totalsBlock && lastChild === totalsBlock ? totalsBlock : lastChild;
-      if (pushDown) pushDown.style.marginTop = 'auto';
-    }
+    // Non-bleed: push totals/last child to bottom of available space.
+// Corporate's last child is its entire content area, so don't push it down.
+if (!bleed && source.getAttribute('data-template') !== 'corporate') {
+  const totalsBlock = clone.querySelector('.totals-block') as HTMLElement | null;
+  const lastChild = clone.lastElementChild as HTMLElement | null;
+  const pushDown = totalsBlock && lastChild === totalsBlock ? totalsBlock : lastChild;
+  if (pushDown) pushDown.style.marginTop = 'auto';
+}
 
     // Bleed: push footer to the absolute bottom of the last page and pad to full A4 height
     const footerEl = clone.querySelector('[data-pdf-footer]') as HTMLElement | null;

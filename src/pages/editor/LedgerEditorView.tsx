@@ -183,8 +183,6 @@ export function LedgerEditorView() {
     }
   };
 
-
-
   const paperProps = { draft, business, totals: t, accent, shipToEnabled, signature, photos, paymentTerms, poNumber };
   const previewPaper = template === 'default' ? <PaperDefault {...paperProps} />
     : template === 'corporate' ? <PaperCorporate {...paperProps} />
@@ -251,8 +249,8 @@ export function LedgerEditorView() {
 
       {/* Toolbar */}
       <div className="shrink-0 bg-surface border-b border-rule print-hide">
-        <div className="h-10 px-3 md:px-6 flex items-center gap-2 relative">
-          <div className="relative">
+        <div className="h-11 px-3 md:px-6 flex items-center gap-2 relative overflow-x-auto no-bar whitespace-nowrap">
+          <div className="relative shrink-0">
             <button
               onClick={() => setAccentOpen(o => !o)}
               className="flex items-center gap-1.5 h-7 px-2 rounded-lg border border-rule text-xs font-medium hover:bg-background"
@@ -303,7 +301,7 @@ export function LedgerEditorView() {
               </>
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <span className="text-[10px] uppercase font-bold text-muted hidden sm:inline-block">Template</span>
             <Select
               aria-label="Template"
@@ -322,9 +320,9 @@ export function LedgerEditorView() {
               <option value="modernclean">Modern Clean</option>
             </Select>
           </div>
-          <FontStyleControl />
-          <FontSizeControl />
-          <div className="ml-auto flex items-center gap-1.5">
+          <div className="shrink-0"><FontStyleControl /></div>
+          <div className="shrink-0"><FontSizeControl /></div>
+          <div className="ml-auto flex items-center gap-1.5 shrink-0">
             <button onClick={handleLoadSample} className="text-xs font-semibold px-2.5 h-7 border border-rule hover:bg-background rounded-lg transition-colors whitespace-nowrap">
               Sample
             </button>
