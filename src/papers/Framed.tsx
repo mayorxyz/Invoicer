@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { resolveAccent, accentFill, accentLine, contrastText } from '../lib/accent';
 
 type FramedProps = PaperProps & {
   shipToEnabled?: boolean;
@@ -59,7 +60,7 @@ export function PaperFramed({
 
   const business = state.businesses[0] || {};
   const t = totals(draft);
-  const accent = accentProp || state.settings?.accent || draft.accent || '#1e1b18';
+  const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
   const fmt = (d: string) => (d ? formatDateLocale(d, 'en-US', 'MM/dd/yyyy') : '');
   const isReceipt = draft.mode === 'receipt';
@@ -77,7 +78,7 @@ export function PaperFramed({
   const frameStyle: React.CSSProperties = pdfFrame
     ? { fontFamily: 'var(--font-sans)', ...keepColors }
     : {
-        borderColor: accent,
+        borderColor: accentLine(accent),
         borderStyle: 'solid',
         borderWidth: '8px',
         boxDecorationBreak: 'clone',
@@ -107,8 +108,8 @@ export function PaperFramed({
 
       {/* Header bar (inside the frame, first page only) */}
       <div
-        className="w-full text-white px-6 py-5 sm:px-8 sm:py-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-        style={{ backgroundColor: accent, ...keepColors, ...avoidBreak }}
+        className="w-full px-6 py-5 sm:px-8 sm:py-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        style={{ backgroundColor: accentFill(accent), color: contrastText(accent), ...keepColors, ...avoidBreak }}
       >
         <div className="text-xl sm:text-2xl font-mono font-bold tracking-tight break-words">#{draft.number}</div>
 

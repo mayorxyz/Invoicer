@@ -1,4 +1,5 @@
 import { formatMoney } from '../lib/money';
+import { accentLine } from '../lib/accent';
 
 export interface PaperProps {
   draft?: any;
@@ -107,9 +108,9 @@ export function TotalsRows({ d, t, accent }: any) {
       {d.shipping > 0 && row('Shipping', m(Math.round(d.shipping * 100)))}
       <div className="flex justify-between text-sm pt-2 border-t border-border font-semibold"><span>Total</span><span className="tabular">{m(t.total)}</span></div>
       {t.paid > 0 && row('Paid', `-${m(t.paid)}`)}
-      <div className="flex justify-between text-lg pt-2 border-t-2 font-semibold" style={{ borderColor: accent }}>
+      <div className="flex justify-between text-lg pt-2 border-t-2 font-semibold" style={{ borderColor: accentLine(accent) }}>
         <span>{d.mode === 'receipt' ? 'Paid in full' : 'Balance due'}</span>
-        <span className="tabular" style={{ color: accent }}>{m(Math.max(0, t.balance))}</span>
+        <span className="tabular" style={{ color: '#1e293b' }}>{m(Math.max(0, t.balance))}</span>
       </div>
     </div>
   );

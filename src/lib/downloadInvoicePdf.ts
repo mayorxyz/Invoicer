@@ -90,28 +90,44 @@ export async function downloadInvoicePdf(
     const hasFrame = frameW > 0 && cs.borderTopStyle !== 'none';
 
     // Color parser to handle rgb(), hex, and color(srgb ...) values
-    const toRgb = (color: string): [number, number, number] => {
+    const toRgba = (color: string): [number, number, number, number] => {
       const c = document.createElement('canvas');
       c.width = c.height = 1;
       const x = c.getContext('2d')!;
+      x.clearRect(0, 0, 1, 1);
       x.fillStyle = color;
       x.fillRect(0, 0, 1, 1);
       const d = x.getImageData(0, 0, 1, 1).data;
-      return [d[0], d[1], d[2]];
+      return [d[0], d[1], d[2], d[3]];
     };
-    const frameRgb = hasFrame ? toRgb(cs.borderTopColor) : [0, 0, 0];
+    const toRgb = (color: string): [number, number, number] => {
+      const [r, g, b] = toRgba(color);
+      return [r, g, b];
+    };
+    const isTransparentColor = (color: string): boolean => {
+      const trimmed = color.trim();
+      if (!trimmed || trimmed === 'transparent') return true;
+      return toRgba(trimmed)[3] === 0;
+    };
+    const frameHasPaint = hasFrame && !isTransparentColor(cs.borderTopColor);
+    const frameRgb = frameHasPaint ? toRgb(cs.borderTopColor) : [0, 0, 0];
 
     // Handle repeating header/footer bars for bleed templates
     const hdrEl = clone.querySelector('[data-pdf-header]') as HTMLElement | null;
     const ftrEl = clone.querySelector('[data-pdf-footer]') as HTMLElement | null;
-    const repeatBars = bleed && !!hdrEl && !!ftrEl;
+    let repeatBars = bleed && !!hdrEl && !!ftrEl;
     let barMm = 0;
     let barRgb: [number, number, number] = [0, 0, 0];
     if (repeatBars && hdrEl) {
-      barMm = (hdrEl.getBoundingClientRect().height * 210) / A4_W;
-      barRgb = toRgb(getComputedStyle(hdrEl).backgroundColor);
-      hdrEl.style.display = 'none';
-      ftrEl!.style.display = 'none';
+      const barColor = getComputedStyle(hdrEl).backgroundColor;
+      if (isTransparentColor(barColor)) {
+        repeatBars = false;
+      } else {
+        barMm = (hdrEl.getBoundingClientRect().height * 210) / A4_W;
+        barRgb = toRgb(barColor);
+        hdrEl.style.display = 'none';
+        ftrEl!.style.display = 'none';
+      }
     }
 
     Object.assign(clone.style, {
@@ -294,7 +310,7 @@ export async function downloadInvoicePdf(
         pdf.rect(0, pdfH - barMm, pdfW, barMm, 'F');
       }
 
-      if (hasFrame) {
+      if (frameHasPaint) {
         const pdfH = pdf.internal.pageSize.getHeight();
         const lwMm = (frameW * 210) / A4_W;
         pdf.setDrawColor(frameRgb[0], frameRgb[1], frameRgb[2]);

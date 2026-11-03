@@ -1,13 +1,18 @@
 import { formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import type { PaperProps } from './shared';
+import { resolveAccent, accentFill, accentLine } from '../lib/accent';
 
 export function PaperDefault({
   draft, business, totals: t, accent, shipToEnabled, signature, photos = [], paymentTerms, poNumber,
 }: PaperProps) {
   const m = (n: number) => formatMoney(n, draft.currency);
   const fmtDate = (d: string) => formatDateLocale(d, 'en-US', 'MMM dd, yyyy');
-  const tint = (pct: number) => `color-mix(in srgb, ${accent} ${pct}%, transparent)`;
+  const resolvedAccent = resolveAccent(accent, undefined, draft?.accent);
+  const tint = (pct: number) =>
+    accentFill(resolvedAccent) === 'transparent'
+      ? 'transparent'
+      : `color-mix(in srgb, ${resolvedAccent} ${pct}%, transparent)`;
 
   return (
     <div className="print-paper w-full bg-surface px-10 space-y-8 text-foreground">
@@ -37,7 +42,7 @@ export function PaperDefault({
           {business.taxId && <div className="from-value text-[11px] font-mono">TAX ID: {business.taxId}</div>}
         </div>
         <div className="invoice-meta ml-auto shrink-0 text-right space-y-2">
-          <div className="invoice-accent text-xl sm:text-2xl md:text-3xl font-black tracking-tight uppercase" style={{ color: accent }}>
+          <div className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight uppercase" style={{ color: '#1e293b' }}>
             {draft.mode === 'invoice' ? 'INVOICE' : draft.mode === 'quote' ? 'ESTIMATE' : 'RECEIPT'}
           </div>
           <div className="text-[11px] md:text-xs font-mono space-y-1">
@@ -52,7 +57,7 @@ export function PaperDefault({
 
       {/* Recipients */}
       <div data-pdf-break className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
-        <div className="border-l-2 pl-3 py-0.5 min-w-0" style={{ borderColor: accent }}>
+        <div className="border-l-2 pl-3 py-0.5 min-w-0" style={{ borderColor: accentLine(resolvedAccent) }}>
           <div className="text-[10px] uppercase font-bold tracking-wider text-muted mb-1">Bill To</div>
           {draft.client.name ? (
             <div className="font-bold text-foreground break-words">{draft.client.name}</div>
@@ -152,8 +157,8 @@ export function PaperDefault({
             <div className="flex justify-between gap-3"><span className="text-muted">Amount Paid:</span><span className="text-foreground">-{m(t.paid)}</span></div>
           )}
           <div
-            className="invoice-accent flex justify-between gap-3 font-bold text-base p-2.5 rounded-lg"
-            style={{ backgroundColor: tint(10), color: accent, border: `1px solid ${tint(20)}` }}
+            className="flex justify-between gap-3 font-bold text-base p-2.5 rounded-lg"
+            style={{ backgroundColor: tint(10), color: '#1e293b', border: `1px solid ${accentLine(tint(20))}` }}
           >
             <span>{t.paid > 0 ? 'Balance Due:' : 'Total:'}</span>
             <span>{m(t.paid > 0 ? Math.max(0, t.balance) : t.total)}</span>

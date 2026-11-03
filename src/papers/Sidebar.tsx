@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { resolveAccent, accentFill, contrastText } from '../lib/accent';
 
 type SidebarProps = PaperProps & {
   shipToEnabled?: boolean;
@@ -33,7 +34,7 @@ export function PaperSidebar({
 
   const business = state.businesses[0] || {};
   const t = totals(draft);
-  const accent = accentProp || state.settings?.accent || draft.accent || '#dc2626';
+  const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
   const fmt = (d: string) => (d ? formatDateLocale(d, 'en-US', 'MM/dd/yyyy') : '');
   const isReceipt = draft.mode === 'receipt';
@@ -69,8 +70,8 @@ export function PaperSidebar({
 
       {/* Top Banner */}
       <div
-        className="w-full text-white px-6 py-5 sm:px-10 sm:py-6 space-y-1"
-        style={{ backgroundColor: accent, ...keepColors, ...avoidBreak }}
+        className="w-full px-6 py-5 sm:px-10 sm:py-6 space-y-1"
+        style={{ backgroundColor: accentFill(accent), color: contrastText(accent), ...keepColors, ...avoidBreak }}
       >
         <h1 className="text-3xl sm:text-4xl font-light uppercase tracking-wide leading-none break-words">
           {MODE_LABELS[draft.mode] || 'Invoice'}
@@ -85,12 +86,12 @@ export function PaperSidebar({
           {/* Left Sidebar */}
           <div style={avoidBreak} className="space-y-3.5 sm:pr-5 pb-4 sm:pb-0 text-xs font-mono min-w-0">
             <div>
-              <p className={label} style={{ color: accent }}>INVOICE #</p>
+              <p className={label} style={{ color: '#1e293b' }}>INVOICE #</p>
               <p className="text-ink font-semibold break-words">{draft.number}</p>
             </div>
 
             <div className="space-y-0.5">
-              <p className={label} style={{ color: accent }}>From</p>
+              <p className={label} style={{ color: '#1e293b' }}>From</p>
               {business.logo && <img src={business.logo} alt="Logo" className="h-8 mb-1 object-contain" />}
               <p className="font-semibold text-ink break-words">{business.name || 'John Smith'}</p>
               {business.address && <p className="text-slate whitespace-pre-line break-words">{business.address}</p>}
@@ -100,7 +101,7 @@ export function PaperSidebar({
             </div>
 
             <div className="space-y-0.5">
-              <p className={label} style={{ color: accent }}>Bill To</p>
+              <p className={label} style={{ color: '#1e293b' }}>Bill To</p>
               <p className="font-semibold text-ink break-words">{draft.client?.name || 'Client Name'}</p>
               {draft.client?.address && <p className="text-slate whitespace-pre-line break-words">{draft.client.address}</p>}
               {draft.client?.email && <p className="text-slate break-words">{draft.client.email}</p>}
@@ -109,7 +110,7 @@ export function PaperSidebar({
 
             {shipToEnabled && (
               <div className="space-y-0.5">
-                <p className={label} style={{ color: accent }}>Ship To</p>
+                <p className={label} style={{ color: '#1e293b' }}>Ship To</p>
                 <p className="font-semibold text-ink break-words">{draft.shipToName || 'Recipient Name'}</p>
                 {draft.shipToAddress && <p className="text-slate whitespace-pre-line break-words">{draft.shipToAddress}</p>}
               </div>
@@ -117,28 +118,28 @@ export function PaperSidebar({
 
             {poNumber && (
               <div>
-                <p className={label} style={{ color: accent }}>P.O.#</p>
+                <p className={label} style={{ color: '#1e293b' }}>P.O.#</p>
                 <p className="text-ink break-words">{poNumber}</p>
               </div>
             )}
 
             {!isReceipt && (
               <div>
-                <p className={label} style={{ color: accent }}>Due Date</p>
+                <p className={label} style={{ color: '#1e293b' }}>Due Date</p>
                 <p className="text-ink">{fmt(draft.dueDate)}</p>
               </div>
             )}
 
             {paymentTerms && !isReceipt && (
               <div>
-                <p className={label} style={{ color: accent }}>Terms</p>
+                <p className={label} style={{ color: '#1e293b' }}>Terms</p>
                 <p className="text-ink break-words">{paymentTerms}</p>
               </div>
             )}
 
             {extraFields.map((f: any) => (
               <div key={f.label}>
-                <p className={label} style={{ color: accent }}>{f.label}</p>
+                <p className={label} style={{ color: '#1e293b' }}>{f.label}</p>
                 <p className="text-ink break-words">{f.value}</p>
               </div>
             ))}
@@ -156,7 +157,7 @@ export function PaperSidebar({
                   <col style={{ width: '6.5rem' }} />
                 </colgroup>
                 <thead style={{ display: 'table-header-group' }}>
-                  <tr className="border-b border-border/60 font-bold uppercase font-mono tracking-wider" style={{ color: accent }}>
+                  <tr className="border-b border-border/60 font-bold uppercase font-mono tracking-wider text-ink">
                     <th className="py-2 px-2 text-left">Qty</th>
                     <th className="py-2 px-2 text-left">Description</th>
                     <th className="py-2 px-2 text-right">Unit Price</th>
@@ -224,7 +225,7 @@ export function PaperSidebar({
         >
           <div className="min-w-0 space-y-2 text-xs">
             <div>
-              <p className="font-bold uppercase tracking-wider text-[11px] mb-0.5 font-mono" style={{ color: accent }}>Terms & Conditions</p>
+              <p className="font-bold uppercase tracking-wider text-[11px] mb-0.5 font-mono" style={{ color: '#1e293b' }}>Terms & Conditions</p>
               <p className="text-slate whitespace-pre-line break-words">{termsText}</p>
             </div>
             {draft.terms && draft.notes && (

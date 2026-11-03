@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { resolveAccent, accentLine } from '../lib/accent';
 
 type ModernCleanProps = PaperProps & {
   shipToEnabled?: boolean;
@@ -33,7 +34,7 @@ export function PaperModernClean({
 
   const business = state.businesses[0] || {};
   const t = totals(draft);
-  const accent = accentProp || state.settings?.accent || draft.accent || '#1e3a8a';
+  const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
   const fmt = (d: string) => (d ? formatDateLocale(d, 'en-US', 'MM/dd/yyyy') : '');
   const isReceipt = draft.mode === 'receipt';
@@ -67,7 +68,7 @@ export function PaperModernClean({
       {/* Title + Logo + Business Details */}
       <div data-pdf-break style={avoidBreak} className="space-y-3">
         <div className="flex justify-between items-start gap-4">
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight uppercase leading-none break-words" style={{ color: accent }}>
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight uppercase leading-none break-words" style={{ color: '#1e293b' }}>
             {MODE_LABELS[draft.mode] || 'Invoice'}
           </h1>
           {business.logo && (
@@ -127,7 +128,7 @@ export function PaperModernClean({
             <col style={{ width: '7rem' }} />
           </colgroup>
           <thead style={{ display: 'table-header-group' }}>
-            <tr className="border-y-2 font-bold uppercase font-mono tracking-wider" style={{ borderColor: accent, color: accent }}>
+            <tr className="border-y-2 font-bold uppercase font-mono tracking-wider text-ink" style={{ borderColor: accentLine(accent) }}>
               <th className="py-2 px-2 text-left">Qty</th>
               <th className="py-2 px-2 text-left">Description</th>
               <th className="py-2 px-2 text-right">Unit Price</th>
@@ -199,7 +200,7 @@ export function PaperModernClean({
 
         <div className="min-w-0 space-y-2 text-xs">
           <div>
-            <p className="font-bold uppercase tracking-wider text-[11px] mb-0.5 font-mono" style={{ color: accent }}>Terms & Conditions</p>
+            <p className="font-bold uppercase tracking-wider text-[11px] mb-0.5 font-mono" style={{ color: '#1e293b' }}>Terms & Conditions</p>
             <p className="text-slate whitespace-pre-line break-words">{termsText}</p>
           </div>
           {draft.terms && draft.notes && (

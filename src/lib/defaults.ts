@@ -27,16 +27,16 @@ export const DEFAULT_BUSINESS: BusinessProfile = {
   defaultNotes: 'Thank you for your business!',
   defaultTerms: 'Payment is due within the specified period.',
   defaultTemplate: 'minimal',
-  defaultAccent: '#1F3FD1',
+  defaultAccent: 'none',
   defaultPaperSize: 'A4',
   defaultLanguage: 'en',
 };
 
 export const DEFAULT_SETTINGS: Settings = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   language: 'en',
   theme: 'system',
-  accent: '#1F3FD1',
+  accent: 'none',
   locale: 'en-US',
   dateFormat: 'yyyy-MM-dd',
   firstDayOfWeek: 1,
@@ -49,9 +49,19 @@ export const DEFAULT_SETTINGS: Settings = {
 
 export const APP_NAME = 'Invoicer';
 
+export const ACCENT_NONE = 'none';
+
 export const ACCENT_PALETTE = [
-  '#111827', '#1F3FD1', '#059669', '#D97706', '#DC2626', '#7C3AED',
-  '#0891B2', '#BE185D', '#4F46E5',
+  ACCENT_NONE,
+  '#111827',
+  '#1F3FD1',
+  '#059669',
+  '#D97706',
+  '#DC2626',
+  '#7C3AED',
+  '#0891B2',
+  '#BE185D',
+  '#4F46E5',
 ];
 
 export const UNITS = ['hrs', 'days', 'pcs', 'kg', 'm', 'service', 'lot', 'box', 'each'];

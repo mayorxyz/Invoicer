@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { resolveAccent, accentLine } from '../lib/accent';
 
 type MinimalProps = PaperProps & {
   shipToEnabled?: boolean;
@@ -24,7 +25,7 @@ export function PaperMinimal({
 
   const business = state.businesses[0] || {};
   const t = totals(draft);
-  const accent = accentProp || state.settings?.accent || draft.accent || '#000000';
+  const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
   const fmt = (d: string) => (d ? formatDateLocale(d, 'en-US', 'MMM dd, yyyy') : '');
   const isReceipt = draft.mode === 'receipt';
@@ -32,15 +33,15 @@ export function PaperMinimal({
   const poNumber = poProp ?? draft.customFields?.find((f: any) => f.label === 'PO Number')?.value ?? '';
   const extraFields = (draft.customFields || []).filter((f: any) => f.label !== 'PO Number' && f.value);
 
-  const meta: [string, string][] = [
+  const meta = ([
     ['Date', fmt(draft.issueDate)],
     ...(isReceipt ? [] : ([
-      ...(paymentTerms ? [['Terms', paymentTerms]] : []),
+      ...(paymentTerms ? ([['Terms', paymentTerms]] as [string, string][]) : []),
       ['Due', fmt(draft.dueDate)],
     ] as [string, string][])),
     ...(poNumber ? ([['PO #', poNumber]] as [string, string][]) : []),
     ...extraFields.map((f: any) => [f.label, f.value] as [string, string]),
-  ].filter(([, v]) => v);
+  ] as [string, string][]).filter(([, v]) => v);
 
   return (
     <div className="print-paper bg-surface shadow-xl p-8 sm:p-16 min-h-[297mm] w-full flex flex-col leading-relaxed text-foreground overflow-visible" style={{ fontFamily: 'var(--font-sans)' }}>
@@ -128,9 +129,9 @@ export function PaperMinimal({
             <span className="tabular font-mono whitespace-nowrap text-ink">{m(t.total)}</span>
           </div>
           {t.paid > 0 && <Row k="Paid" v={`-${m(t.paid)}`} />}
-          <div className="flex justify-between gap-3 text-lg sm:text-xl pt-3 border-t-2 font-semibold" data-accent="border" style={{ borderColor: accent }}>
-            <span style={{ color: accent }}>{isReceipt ? 'Paid' : 'Balance due'}</span>
-            <span className="tabular font-mono whitespace-nowrap" data-accent="text" style={{ color: accent }}>
+          <div className="flex justify-between gap-3 text-lg sm:text-xl pt-3 border-t-2 font-semibold" data-accent="border" style={{ borderColor: accentLine(accent) }}>
+            <span style={{ color: '#1e293b' }}>{isReceipt ? 'Paid' : 'Balance due'}</span>
+            <span className="tabular font-mono whitespace-nowrap" data-accent="text" style={{ color: '#1e293b' }}>
               {m(Math.max(0, t.balance))}
             </span>
           </div>

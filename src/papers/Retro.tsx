@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { resolveAccent, accentFill, contrastText } from '../lib/accent';
 
 type RetroProps = PaperProps & {
   shipToEnabled?: boolean;
@@ -33,7 +34,7 @@ export function PaperRetro({
 
   const business = state.businesses[0] || {};
   const t = totals(draft);
-  const accent = accentProp || state.settings?.accent || draft.accent || '#ff7a59';
+  const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
   const fmt = (d: string) => (d ? formatDateLocale(d, 'en-US', 'MM/dd/yyyy') : '');
   const isReceipt = draft.mode === 'receipt';
@@ -55,8 +56,8 @@ export function PaperRetro({
         data-template="retro"
         data-pdf-bleed
         data-pdf-paper-bg
-        className="print-paper relative shadow-xl w-full flex flex-col text-[12px] leading-snug text-black overflow-visible px-6 py-6 sm:px-10 sm:py-8 gap-5"
-        style={{ backgroundColor: accent, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', ...keepColors }}
+        className="print-paper relative shadow-xl w-full flex flex-col text-[12px] leading-snug overflow-visible px-6 py-6 sm:px-10 sm:py-8 gap-5"
+        style={{ backgroundColor: accentFill(accent), color: contrastText(accent), fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', ...keepColors }}
       >
       {/* Preview-only page guides: hidden in print and skipped by html2canvas/html2pdf */}
       {showPageGuides && (
@@ -99,7 +100,7 @@ export function PaperRetro({
         className={`grid grid-cols-1 ${shipToEnabled ? 'sm:grid-cols-[1fr_1fr_1fr_auto]' : 'sm:grid-cols-[1fr_1fr_auto]'} gap-y-4 gap-x-8 text-xs`}
       >
         <div className="min-w-0 space-y-0.5">
-          <p className="uppercase text-black/70">from</p>
+          <p className="uppercase opacity-70">from</p>
           {business.address && <p className="whitespace-pre-line break-words">{business.address}</p>}
           {business.email && <p className="break-words">{business.email}</p>}
           {business.phone && <p>{business.phone}</p>}
@@ -107,7 +108,7 @@ export function PaperRetro({
         </div>
 
         <div className="min-w-0 space-y-0.5">
-          <p className="uppercase text-black/70">issued to</p>
+          <p className="uppercase opacity-70">issued to</p>
           <p className="font-bold break-words">{draft.client?.name || 'Client Name'}</p>
           {draft.client?.address && <p className="whitespace-pre-line break-words">{draft.client.address}</p>}
           {draft.client?.email && <p className="break-words">{draft.client.email}</p>}
@@ -116,7 +117,7 @@ export function PaperRetro({
 
         {shipToEnabled && (
           <div className="min-w-0 space-y-0.5">
-            <p className="uppercase text-black/70">ship to</p>
+            <p className="uppercase opacity-70">ship to</p>
             <p className="font-bold break-words">{draft.shipToName || 'Recipient Name'}</p>
             {draft.shipToAddress && <p className="whitespace-pre-line break-words">{draft.shipToAddress}</p>}
           </div>
@@ -124,7 +125,7 @@ export function PaperRetro({
 
         {!isReceipt && (
           <div className="min-w-0 space-y-0.5 sm:text-right">
-            <p className="uppercase text-black/70">payment due</p>
+            <p className="uppercase opacity-70">payment due</p>
             <p className="font-bold">{fmt(draft.dueDate)}</p>
           </div>
         )}
@@ -158,7 +159,7 @@ export function PaperRetro({
                 <tr key={item.id} className="border-b border-black/30" data-pdf-break style={avoidBreak}>
                   <td className={`${cell} align-top`}>
                     <div className="break-words">{item.desc || 'Untitled Item'}</div>
-                    {detail && <div className="text-[10px] text-black/70 whitespace-pre-line break-words">{detail}</div>}
+                    {detail && <div className="text-[10px] opacity-70 whitespace-pre-line break-words">{detail}</div>}
                   </td>
                   <td className={`${cell} align-top whitespace-nowrap`}>{m(toMinor(item.price, draft.currency))}</td>
                   <td className={`${cell} align-top`}>{item.qty}</td>

@@ -10,7 +10,7 @@ import { totals, formatMoney } from '../../lib/money';
 import { today, addDays } from '../../lib/dates';
 import { getCountry, MODE_LABELS } from '../../data/countries';
 import { CURRENCY_LIST } from '../../data/currencies';
-import { ACCENT_PALETTE, UNITS } from '../../lib/defaults';
+import { ACCENT_PALETTE, ACCENT_NONE, UNITS } from '../../lib/defaults';
 import type { Mode, Status, PaperSize } from '../../types';
 import { PreviewStage } from './PreviewStage';
 import { PaperDefault } from '../../papers/Default';
@@ -194,14 +194,32 @@ export function EditorView() {
               <div>
                 <label className="text-[13px] font-medium text-ink mb-2 block">Accent color</label>
                 <div className="flex gap-2 flex-wrap">
-                  {ACCENT_PALETTE.map(color => (
-                    <button
-                      key={color}
-                      onClick={() => updateDraft({ accent: color })}
-                      className={`w-8 h-8 rounded-full border-2 transition-all ${draft.accent === color ? 'border-ink scale-110' : 'border-transparent'}`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
+                  {ACCENT_PALETTE.map(color => {
+                    const isNone = color === ACCENT_NONE;
+                    const isSelected = draft.accent === color;
+                    return (
+                      <button
+                        key={color}
+                        onClick={() => updateDraft({ accent: color })}
+                        className={`w-8 h-8 rounded-full border-2 relative flex items-center justify-center overflow-hidden transition-all ${
+                          isSelected
+                            ? isNone
+                              ? 'border-slate scale-110'
+                              : 'border-ink scale-110'
+                            : isNone
+                              ? 'border-slate/50'
+                              : 'border-transparent'
+                        }`}
+                        style={isNone ? { backgroundColor: 'transparent' } : { backgroundColor: color }}
+                        title={isNone ? 'None' : color === '#111827' ? 'Black' : color}
+                        aria-label={`Select accent color ${isNone ? 'None' : color === '#111827' ? 'Black' : color}`}
+                      >
+                        {isNone && (
+                          <span className="absolute w-full h-[1.5px] bg-slate rotate-45 pointer-events-none" />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
               <div>

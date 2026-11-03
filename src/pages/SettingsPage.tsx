@@ -5,7 +5,7 @@ import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { useToast } from '../components/ui/Toast';
 import { Icon } from '../components/ui/Icon';
 import { Select } from '../components/ui/Select';
-import { ACCENT_PALETTE } from '../lib/defaults';
+import { ACCENT_PALETTE, ACCENT_NONE } from '../lib/defaults';
 import { CURRENCY_LIST } from '../data/currencies';
 import { ALL_COUNTRIES } from '../data/countries';
 import { SUPPORTED_LANGUAGES } from '../i18n';
@@ -147,22 +147,23 @@ export function SettingsPage() {
               <label className="block text-xs font-semibold text-foreground mb-2">Accent Color</label>
               <div className="flex gap-2.5 flex-wrap">
                 {ACCENT_PALETTE.map(color => {
-                  const isNone = color === '#111827';
+                  const isNone = color === ACCENT_NONE;
+                  const isBlack = color === '#111827';
                   const isSelected = state.settings.accent === color;
                   return (
                     <button
                       key={color}
                       type="button"
                       onClick={() => updateSettings({ accent: color })}
-                      className={`w-9 h-9 rounded-lg transition-all relative flex items-center justify-center overflow-hidden ${
+                      className={`w-9 h-9 rounded-full transition-all relative flex items-center justify-center overflow-hidden ${
                         isSelected ? 'ring-2 ring-offset-2 ring-accent scale-105' : 'hover:scale-100'
                       }`}
                       style={{
-                        backgroundColor: isNone ? 'var(--surface, #ffffff)' : color,
+                        backgroundColor: isNone ? 'transparent' : color,
                         border: isNone ? '1.5px solid var(--border, #cbd5e1)' : 'none',
                       }}
-                      title={isNone ? 'None (Monochrome)' : color}
-                      aria-label={`Select accent color ${isNone ? 'None' : color}`}
+                      title={isNone ? 'None' : isBlack ? 'Black' : color}
+                      aria-label={`Select accent color ${isNone ? 'None' : isBlack ? 'Black' : color}`}
                     >
                       {isNone && (
                         <div className="absolute w-full h-[1.5px] bg-muted/80 rotate-45 pointer-events-none" />

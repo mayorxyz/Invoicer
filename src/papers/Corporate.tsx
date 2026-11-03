@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { resolveAccent, accentFill, accentLine, contrastText } from '../lib/accent';
 
 type CorporateProps = PaperProps & {
   shipToEnabled?: boolean;
@@ -16,6 +17,7 @@ type CorporateProps = PaperProps & {
 };
 
 const avoidBreak: React.CSSProperties = { breakInside: 'avoid', pageBreakInside: 'avoid' };
+const corporateTextColor = '#801515';
 
 export function PaperCorporate({
   signature = '',
@@ -32,7 +34,7 @@ export function PaperCorporate({
 
   const business = state.businesses[0] || {};
   const t = totals(draft);
-  const accent = accentProp || state.settings?.accent || draft.accent || '#801515';
+  const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
   const fmt = (d: string) => (d ? formatDateLocale(d, 'en-US', 'MM/dd/yyyy') : '');
   const isReceipt = draft.mode === 'receipt';
@@ -69,8 +71,8 @@ export function PaperCorporate({
 
       {/* Top Banner */}
       <div
-        className="w-full text-white px-6 py-6 sm:px-10 sm:py-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-        style={{ backgroundColor: accent, ...avoidBreak }}
+        className="w-full px-6 py-6 sm:px-10 sm:py-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        style={{ backgroundColor: accentFill(accent), color: contrastText(accent), ...avoidBreak }}
       >
         <h1 className="text-3xl sm:text-4xl font-light tracking-wide uppercase leading-none">
           {MODE_LABELS[draft.mode] || 'Invoice'}
@@ -123,7 +125,7 @@ export function PaperCorporate({
 
           <div className="min-w-0 space-y-0.5 sm:text-right">
             <p className="font-bold uppercase tracking-wider text-slate">Invoice Total</p>
-            <p className="text-2xl font-bold font-mono tracking-tight break-words" style={{ color: accent }}>{m(t.total)}</p>
+            <p className="text-2xl font-bold font-mono tracking-tight break-words" style={{ color: corporateTextColor }}>{m(t.total)}</p>
           </div>
         </div>
 
@@ -137,7 +139,7 @@ export function PaperCorporate({
               <col style={{ width: '7rem' }} />
             </colgroup>
             <thead style={{ display: 'table-header-group' }}>
-              <tr className="border-b-2 font-mono tracking-wider" style={{ borderColor: accent, color: accent }}>
+              <tr className="border-b-2 font-mono tracking-wider" style={{ borderColor: accentLine(accent), color: corporateTextColor }}>
                 <th className="py-2 px-2 text-left uppercase">Description</th>
                 <th className="py-2 px-2 text-right uppercase">Unit Price</th>
                 <th className="py-2 px-2 text-center uppercase">Qty</th>
@@ -172,11 +174,11 @@ export function PaperCorporate({
         {/* Totals: one block, directly under the table */}
         <div data-pdf-break style={avoidBreak} className="flex justify-end">
           <div className="w-full sm:w-72 text-xs font-mono">
-            <div className="flex justify-between py-1"><span style={{ color: accent }} className="font-bold">SUBTOTAL</span><span className="text-ink">{m(t.subtotal)}</span></div>
+            <div className="flex justify-between py-1"><span style={{ color: corporateTextColor }} className="font-bold">SUBTOTAL</span><span className="text-ink">{m(t.subtotal)}</span></div>
             {t.invoiceDiscount > 0 && <div className="flex justify-between py-1"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
-            {t.taxAdded > 0 && <div className="flex justify-between py-1"><span style={{ color: accent }} className="font-bold">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
+            {t.taxAdded > 0 && <div className="flex justify-between py-1"><span className="font-bold">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
             {t.shipping > 0 && <div className="flex justify-between py-1"><span className="text-slate">Shipping</span><span className="text-ink">{m(t.shipping)}</span></div>}
-            <div className="flex justify-between items-baseline gap-4 mt-1 pt-2 border-t-2" style={{ borderColor: accent, color: accent }}>
+            <div className="flex justify-between items-baseline gap-4 mt-1 pt-2 border-t-2" style={{ borderColor: accentLine(accent), color: corporateTextColor }}>
               <span className="text-base font-bold uppercase tracking-wider">Total</span>
               <span className="text-lg font-bold">{m(t.total)}</span>
             </div>

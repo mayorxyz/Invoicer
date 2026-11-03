@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { resolveAccent, accentFill, contrastText } from '../lib/accent';
 
 type ModernProps = PaperProps & {
   shipToEnabled?: boolean;
@@ -32,7 +33,7 @@ export function Paperformal({
 
   const business = state.businesses[0] || {};
   const t = totals(draft);
-  const accent = accentProp || state.settings?.accent || draft.accent || '#1e293b';
+  const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
   const fmt = (d: string) => (d ? formatDateLocale(d, 'en-US', 'MM/dd/yyyy') : '');
   const isReceipt = draft.mode === 'receipt';
@@ -56,7 +57,7 @@ export function Paperformal({
         style={{ fontFamily: 'var(--font-sans)' }}
       >
       {/* Top Accent Bar with Stripes / Header Block */}
-      <div className="w-full text-white p-10 sm:p-14 relative" style={{ backgroundColor: accent }}>
+      <div className="w-full p-10 sm:p-14 relative" style={{ backgroundColor: accentFill(accent), color: contrastText(accent) }}>
         <div className="max-w-3xl mx-auto text-center space-y-3">
           {business.logo && <img src={business.logo} alt="Logo" className="h-12 mx-auto mb-4 object-contain" />}
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight break-words">{business.name || 'John Smith'}</h1>
@@ -118,7 +119,7 @@ export function Paperformal({
               <col style={{ width: '7.5rem' }} />
             </colgroup>
             <thead style={{ display: 'table-header-group' }}>
-              <tr className="text-white uppercase font-mono tracking-wider" style={{ backgroundColor: accent }}>
+              <tr className="uppercase font-mono tracking-wider" style={{ backgroundColor: accentFill(accent), color: contrastText(accent) }}>
                 <th className="py-2 px-3 text-center">Qty</th>
                 <th className="py-2 px-3 text-left">Description</th>
                 <th className="py-2 px-3 text-right">Unit Price</th>
@@ -162,7 +163,7 @@ export function Paperformal({
             </div>
           </div>
 
-          <div className="flex justify-between items-center gap-4 px-5 py-3 rounded-lg text-white font-bold text-lg sm:text-xl" style={{ backgroundColor: accent }}>
+          <div className="flex justify-between items-center gap-4 px-5 py-3 rounded-lg font-bold text-lg sm:text-xl" style={{ backgroundColor: accentFill(accent), color: contrastText(accent) }}>
             <span className="tracking-widest uppercase font-mono">{t.paid > 0 ? 'BALANCE DUE' : 'TOTAL'}</span>
             <span className="font-mono">{m(t.paid > 0 ? Math.max(0, t.balance) : t.total)}</span>
           </div>

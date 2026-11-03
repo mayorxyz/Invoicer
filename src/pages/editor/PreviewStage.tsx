@@ -11,6 +11,7 @@ import { PaperSidebar } from '../../papers/Sidebar';
 import { PaperSplit } from '../../papers/Split';
 import { PaperModernClean } from '../../papers/ModernClean';
 import { totals } from '../../lib/money';
+import { resolveAccent } from '../../lib/accent';
 import { useFontScale } from '../../components/ui/FontSizeControl';
 import { PaperTypography, useFontStyle } from '../../components/ui/FontStyleControl';
 
@@ -117,7 +118,7 @@ export function PreviewStage({
   const paperWidth = isA4 ? 794 : 816;
   const PAGE_H = isA4 ? 1123 : 1056;
   const INNER_H = PAGE_H - PAGE_PAD * 2;
-  const accent = state.settings.accent || draft?.accent;
+  const accent = resolveAccent(undefined, state.settings.accent, draft?.accent);
   const totalPages = starts.length;
 
   useLayoutEffect(() => {

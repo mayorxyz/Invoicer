@@ -20,9 +20,12 @@ import { PaperModernClean } from '../../papers/ModernClean';
 import { PreviewStage } from './PreviewStage';
 import { FontSizeControl } from '../../components/ui/FontSizeControl';
 import { FontStyleControl } from '../../components/ui/FontStyleControl';
+import { ACCENT_NONE } from '../../lib/defaults';
+import { resolveAccent } from '../../lib/accent';
 
 const ACCENTS = [
-  { value: '#111827', label: 'None (Monochrome)', isNone: true },
+  { value: ACCENT_NONE, label: 'None', isNone: true },
+  { value: '#111827', label: 'Black' },
   { value: '#1F3FD1', label: 'Deep Blue' },
   { value: '#059669', label: 'Emerald' },
   { value: '#D97706', label: 'Amber' },
@@ -79,7 +82,8 @@ export function LedgerEditorView() {
 
   if (!draft) return null;
 
-  const accent = state.settings.accent || '#1F3FD1';
+  const accent = resolveAccent(undefined, state.settings.accent, draft.accent);
+  const uiAccent = accent === ACCENT_NONE ? '#111827' : accent;
   const business = state.businesses[0];
   const t = totals(draft);
   const setBiz = (patch: Record<string, unknown>) => useStore.getState().updateBusiness(patch as any);
@@ -232,7 +236,7 @@ export function LedgerEditorView() {
   );
 
   return (
-    <div className="ledger-ed flex flex-col h-full min-h-0 bg-background" style={{ ['--accent' as any]: accent }}>
+    <div className="ledger-ed flex flex-col h-full min-h-0 bg-background" style={{ ['--accent' as any]: uiAccent }}>
       <style>{`
         .ledger-ed .border-rule { border-color: color-mix(in srgb, currentColor 11%, transparent); }
         .ledger-ed .bg-rule { background-color: color-mix(in srgb, currentColor 14%, transparent); }
@@ -257,11 +261,11 @@ export function LedgerEditorView() {
               <span
                 className="w-3.5 h-3.5 rounded-full relative flex items-center justify-center overflow-hidden"
                 style={{
-                  backgroundColor: accent === '#111827' ? 'var(--surface, #ffffff)' : accent,
-                  border: accent === '#111827' ? '1px solid var(--border, #94a3b8)' : 'none',
+                  backgroundColor: accent === ACCENT_NONE ? 'transparent' : accent,
+                  border: accent === ACCENT_NONE ? '1px solid var(--border, #94a3b8)' : 'none',
                 }}
               >
-                {accent === '#111827' && (
+                {accent === ACCENT_NONE && (
                   <span className="absolute w-full h-[1px] bg-foreground rotate-45 pointer-events-none" />
                 )}
               </span>

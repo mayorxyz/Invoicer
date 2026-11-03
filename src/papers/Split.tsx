@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { resolveAccent, accentFill } from '../lib/accent';
 
 type SplitProps = PaperProps & {
   shipToEnabled?: boolean;
@@ -33,7 +34,7 @@ export function PaperSplit({
 
   const business = state.businesses[0] || {};
   const t = totals(draft);
-  const accent = accentProp || state.settings?.accent || draft.accent || '#3b82f6';
+  const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
   const fmt = (d: string) => (d ? formatDateLocale(d, 'en-US', 'MM/dd/yyyy') : '');
   const isReceipt = draft.mode === 'receipt';
@@ -67,7 +68,7 @@ export function PaperSplit({
       )}
 
       {/* Top Accent Bar */}
-      <div data-pdf-header className="w-full h-3 sm:h-4" style={{ backgroundColor: accent, ...keepColors, ...avoidBreak }} />
+      <div data-pdf-header className="w-full h-3 sm:h-4" style={{ backgroundColor: accentFill(accent), ...keepColors, ...avoidBreak }} />
 
       <div className="px-6 py-5 sm:px-10 sm:py-6 flex flex-col gap-5">
         {/* Business Header */}
@@ -228,7 +229,7 @@ export function PaperSplit({
       </div>
 
       {/* Bottom Accent Bar */}
-      <div data-pdf-footer className="w-full h-3 sm:h-4" style={{ backgroundColor: accent, ...keepColors, ...avoidBreak }} />
+      <div data-pdf-footer className="w-full h-3 sm:h-4" style={{ backgroundColor: accentFill(accent), ...keepColors, ...avoidBreak }} />
     </div>
   );
 }

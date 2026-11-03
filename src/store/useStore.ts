@@ -143,7 +143,7 @@ function dismissDemoOnWrite(state: AppState): AppState {
 
 export const useStore = create<Store>((set, get) => ({
   state: {
-    schemaVersion: 2, invoices: [], clients: [], savedItems: [], expenses: [], timeEntries: [],
+    schemaVersion: 3, invoices: [], clients: [], savedItems: [], expenses: [], timeEntries: [],
     businesses: [DEFAULT_BUSINESS], activeBusinessId: DEFAULT_BUSINESS.id, settings: DEFAULT_SETTINGS,
   },
   draft: null,
@@ -450,7 +450,7 @@ export const useStore = create<Store>((set, get) => ({
   wipeAll: () => {
     storage.wipeAll();
     const fresh: AppState = {
-      schemaVersion: 2, invoices: [], clients: [], savedItems: [], expenses: [], timeEntries: [],
+      schemaVersion: 3, invoices: [], clients: [], savedItems: [], expenses: [], timeEntries: [],
       businesses: [DEFAULT_BUSINESS], activeBusinessId: DEFAULT_BUSINESS.id, settings: DEFAULT_SETTINGS,
     };
     set({ state: fresh, draft: null });

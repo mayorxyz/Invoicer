@@ -1,8 +1,26 @@
 import type { AppState, Invoice, Client, SavedItem, Expense, TimeEntry, BusinessProfile, Settings } from '../types';
 import { DEFAULT_BUSINESS, DEFAULT_SETTINGS } from './defaults';
 
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 const KEY = 'invoicer_v2';
+const OLD_NONE_ACCENT = '#111827';
+
+function migrateAccentV2(state: AppState): AppState {
+  if (state.schemaVersion >= SCHEMA_VERSION) return state;
+  return {
+    ...state,
+    schemaVersion: SCHEMA_VERSION,
+    settings: state.settings
+      ? { ...state.settings, accent: state.settings.accent === OLD_NONE_ACCENT ? 'none' : state.settings.accent }
+      : state.settings,
+    invoices: (state.invoices || []).map((inv) =>
+      inv.accent === OLD_NONE_ACCENT ? { ...inv, accent: 'none' } : inv,
+    ),
+    businesses: (state.businesses || []).map((b) =>
+      b.defaultAccent === OLD_NONE_ACCENT ? { ...b, defaultAccent: 'none' } : b,
+    ),
+  };
+}
 
 function read<T>(fallback: T): T {
   try {
@@ -21,13 +39,19 @@ function write(value: unknown): boolean {
 }
 
 export function loadState(): AppState {
-  return read<AppState>({
+  const state = read<AppState>({
     schemaVersion: SCHEMA_VERSION,
     invoices: [], clients: [], savedItems: [], expenses: [], timeEntries: [],
     businesses: [DEFAULT_BUSINESS],
     activeBusinessId: DEFAULT_BUSINESS.id,
     settings: DEFAULT_SETTINGS,
   });
+  if (state.schemaVersion < SCHEMA_VERSION) {
+    const migrated = migrateAccentV2(state);
+    write(migrated);
+    return migrated;
+  }
+  return state;
 }
 
 export function saveState(state: AppState): boolean {
@@ -46,7 +70,7 @@ export function importBackup(json: string): AppState | null {
     if (!data.schemaVersion || data.schemaVersion < 2) {
       return migrateV1(data);
     }
-    return data as AppState;
+    return migrateAccentV2(data as AppState);
   } catch { return null; }
 }
 
@@ -54,6 +78,14 @@ function migrateV1(old: Record<string, unknown>): AppState {
   const invoices = (Array.isArray(old.invoices) ? old.invoices : []) as Invoice[];
   const clients = (Array.isArray(old.clients) ? old.clients : []) as Client[];
   const savedItems = (Array.isArray(old.savedItems) ? old.savedItems : []) as SavedItem[];
+
+  // Migrate accent '#111827' to 'none' for settings and all invoices
+  const oldSettings = old.settings as Record<string, unknown> | undefined;
+  const newSettings = {
+    ...DEFAULT_SETTINGS,
+    ...oldSettings,
+    accent: oldSettings?.accent === '#111827' ? 'none' : (oldSettings?.accent as string),
+  } as Settings;
 
   // Migrate invoices from v1 (kobo, vatOn, whtRate) to v2 (minor units, taxes[])
   const migratedInvoices = invoices.map(inv => {
@@ -70,8 +102,13 @@ function migrateV1(old: Record<string, unknown>): AppState {
       taxIds: item.taxable ? ['vat'] : [],
       customFields: [],
     }));
-    return {
+    // Migrate accent '#111827' to 'none'
+    const newInv: Invoice = {
       ...inv,
+      accent: v1.accent === '#111827' ? 'none' : (v1.accent as string),
+    };
+    return {
+      ...newInv,
       taxes,
       pricingMode: 'exclusive' as const,
       paymentInstructions: [],
@@ -94,7 +131,7 @@ function migrateV1(old: Record<string, unknown>): AppState {
     timeEntries: [],
     businesses: [DEFAULT_BUSINESS],
     activeBusinessId: DEFAULT_BUSINESS.id,
-    settings: DEFAULT_SETTINGS,
+    settings: newSettings,
   };
 }
 
