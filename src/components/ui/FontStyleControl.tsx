@@ -121,7 +121,7 @@ const fontStyleCSS = '.paper-ff, .paper-ff *:not(.font-mono){font-family:var(--p
  * Wrap every rendered paper (preview sheets, measuring copy, PDF export) in this.
  * With both options on default it adds no classes and changes nothing.
  */
-export function PaperTypography({ children }: { children: React.ReactNode }) {
+export function PaperTypography({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
   const scale = useFontScale();
   const styleId = useFontStyle();
   const font = FONT_STYLES.find((f) => f.id === styleId)!;
@@ -148,12 +148,13 @@ export function PaperTypography({ children }: { children: React.ReactNode }) {
   }, [font]);
 
   const classes = ['paper-fs', font.stack ? 'paper-ff' : ''].filter(Boolean).join(' ');
-  const style = {
+  const paperStyle = {
+    ...style,
     '--paper-fs': scale / 100,
     ...(font.stack ? { '--paper-ff': font.stack } : {}),
   } as React.CSSProperties;
 
-  return <div className={classes} style={style}>{children}</div>;
+  return <div className={classes} style={paperStyle}>{children}</div>;
 }
 
 export function FontStyleControl() {

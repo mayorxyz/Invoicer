@@ -1,6 +1,7 @@
 import { formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import type { PaperProps } from './shared';
+import { paperRootStyle } from './shared';
 import { resolveAccent, accentFill, accentLine } from '../lib/accent';
 
 export function PaperDefault({
@@ -15,19 +16,19 @@ export function PaperDefault({
       : `color-mix(in srgb, ${resolvedAccent} ${pct}%, transparent)`;
 
   return (
-    <div className="print-paper w-full bg-surface px-10 space-y-8 text-foreground">
+    <div className="print-paper w-full px-10 space-y-8" style={paperRootStyle(draft)}>
       {/* Header */}
-      <div className="invoice-header flex flex-row justify-between items-start gap-4 md:gap-6 border-b border-rule pb-5 md:pb-6">
-        <div className="from-block min-w-0 max-w-[58%] space-y-2 md:space-y-3">
+      <div className="invoice-header flex flex-row justify-between items-start gap-4 @md:gap-6 border-b border-[#e4e4e4] pb-5 @md:pb-6">
+        <div className="from-block min-w-0 max-w-[58%] space-y-2 @md:space-y-3">
           {business.logo ? (
-            <img src={business.logo} alt="Logo" className="h-10 md:h-12 max-w-[160px] object-contain" />
+            <img src={business.logo} alt="Logo" className="h-10 @md:h-12 max-w-[160px] object-contain" />
           ) : (
             <div className="text-xs font-mono italic text-muted print:hidden">[Company Logo]</div>
           )}
           {business.name ? (
-            <div className="from-value text-sm md:text-base font-bold break-words">{business.name}</div>
+            <div className="from-value text-sm @md:text-base font-bold break-words">{business.name}</div>
           ) : (
-            <div className="text-sm md:text-base font-bold print:hidden">Acme Corporation</div>
+            <div className="text-sm @md:text-base font-bold print:hidden">Acme Corporation</div>
           )}
           {business.address ? (
             <div className="from-value text-xs whitespace-pre-line leading-relaxed break-words">{business.address}</div>
@@ -42,10 +43,10 @@ export function PaperDefault({
           {business.taxId && <div className="from-value text-[11px] font-mono">TAX ID: {business.taxId}</div>}
         </div>
         <div className="invoice-meta ml-auto shrink-0 text-right space-y-2">
-          <div className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight uppercase" style={{ color: '#1e293b' }}>
+          <div className="text-xl @sm:text-2xl @md:text-3xl font-black tracking-tight uppercase" style={{ color: '#1e293b' }}>
             {draft.mode === 'invoice' ? 'INVOICE' : draft.mode === 'quote' ? 'ESTIMATE' : 'RECEIPT'}
           </div>
-          <div className="text-[11px] md:text-xs font-mono space-y-1">
+          <div className="text-[11px] @md:text-xs font-mono space-y-1">
             <div className="font-bold">#{draft.number}</div>
             <div>Date: {fmtDate(draft.issueDate)}</div>
             <div>Terms: {paymentTerms}</div>
@@ -56,7 +57,7 @@ export function PaperDefault({
       </div>
 
       {/* Recipients */}
-      <div data-pdf-break className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-xs">
+      <div data-pdf-break className="grid grid-cols-1 @sm:grid-cols-2 gap-5 text-xs">
         <div className="border-l-2 pl-3 py-0.5 min-w-0" style={{ borderColor: accentLine(resolvedAccent) }}>
           <div className="text-[10px] uppercase font-bold tracking-wider text-muted mb-1">Bill To</div>
           {draft.client.name ? (
@@ -85,10 +86,10 @@ export function PaperDefault({
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-rule">
-              <th className="text-left py-2.5 px-2 md:px-4 text-[10px] uppercase font-bold tracking-wider text-muted">Description</th>
-              <th className="text-center py-2.5 px-2 md:px-4 text-[10px] uppercase font-bold tracking-wider text-muted w-12 md:w-16">Qty</th>
-              <th className="text-right py-2.5 px-2 md:px-4 text-[10px] uppercase font-bold tracking-wider text-muted w-20 md:w-24">Rate</th>
-              <th className="text-right py-2.5 px-2 md:px-4 text-[10px] uppercase font-bold tracking-wider text-muted w-24 md:w-28">Amount</th>
+              <th className="text-left py-2.5 px-2 @md:px-4 text-[10px] uppercase font-bold tracking-wider text-muted">Description</th>
+              <th className="text-center py-2.5 px-2 @md:px-4 text-[10px] uppercase font-bold tracking-wider text-muted w-12 @md:w-16">Qty</th>
+              <th className="text-right py-2.5 px-2 @md:px-4 text-[10px] uppercase font-bold tracking-wider text-muted w-20 @md:w-24">Rate</th>
+              <th className="text-right py-2.5 px-2 @md:px-4 text-[10px] uppercase font-bold tracking-wider text-muted w-24 @md:w-28">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -99,13 +100,13 @@ export function PaperDefault({
             ) : (
               draft.items.map((item: any) => (
                 <tr key={item.id} className="border-b border-rule/50">
-                  <td className="py-3 px-2 md:px-4">
+                  <td className="py-3 px-2 @md:px-4">
                     <div className="font-semibold text-foreground break-words">{item.desc || 'Untitled Item'}</div>
                     {item.customFields?.[0]?.value && <div className="text-[11px] text-muted mt-0.5 whitespace-pre-line break-words">{item.customFields[0].value}</div>}
                   </td>
-                  <td className="py-3 px-2 md:px-4 text-center text-muted font-mono">{item.qty}</td>
-                  <td className="py-3 px-2 md:px-4 text-right text-muted font-mono whitespace-nowrap">{m(toMinor(item.price, draft.currency))}</td>
-                  <td className="py-3 px-2 md:px-4 text-right font-semibold text-foreground font-mono whitespace-nowrap">{m(Math.round(item.qty * toMinor(item.price, draft.currency)))}</td>
+                  <td className="py-3 px-2 @md:px-4 text-center text-muted font-mono">{item.qty}</td>
+                  <td className="py-3 px-2 @md:px-4 text-right text-muted font-mono whitespace-nowrap">{m(toMinor(item.price, draft.currency))}</td>
+                  <td className="py-3 px-2 @md:px-4 text-right font-semibold text-foreground font-mono whitespace-nowrap">{m(Math.round(item.qty * toMinor(item.price, draft.currency)))}</td>
                 </tr>
               ))
             )}
@@ -114,8 +115,8 @@ export function PaperDefault({
       </div>
 
       {/* Totals */}
-      <div data-pdf-break className="border-t border-rule pt-4 flex flex-col md:flex-row print:flex-row gap-6 break-inside-avoid totals-block">
-        <div className="flex-1 min-w-0 text-xs space-y-4 notes-block md:pr-2">
+      <div data-pdf-break className="border-t border-rule pt-4 flex flex-col @md:flex-row print:flex-row gap-6 break-inside-avoid totals-block">
+        <div className="flex-1 min-w-0 text-xs space-y-4 notes-block @md:pr-2">
           <div className="space-y-1">
             <div className="text-[10px] uppercase font-bold tracking-wider text-muted">Notes & Terms</div>
             <div className="text-[11px] text-muted whitespace-pre-line leading-relaxed break-words">{draft.notes || 'Thank you for your business!'}</div>
@@ -139,7 +140,7 @@ export function PaperDefault({
             </div>
           )}
         </div>
-        <div className="md:w-64 print:w-64 text-xs font-mono space-y-2">
+        <div className="@md:w-64 print:w-64 text-xs font-mono space-y-2">
           <div className="flex justify-between gap-3"><span className="text-muted">Subtotal:</span><span className="text-foreground">{m(t.subtotal)}</span></div>
           {t.invoiceDiscount > 0 && (
             <div className="flex justify-between gap-3"><span className="text-muted">Discount:</span><span className="text-foreground">-{m(t.invoiceDiscount)}</span></div>

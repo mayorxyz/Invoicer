@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { paperRootStyle } from './shared';
 import { resolveAccent, accentFill } from '../lib/accent';
 
 type SplitProps = PaperProps & {
@@ -46,14 +47,14 @@ export function PaperSplit({
   const termsText = draft.notes || draft.terms || 'Payment is due within 15 days';
   const hasBank = !!(draft.bankName || draft.bankAccount || draft.bankRouting);
 
-  const metaRow = 'flex justify-between sm:justify-end gap-4';
+  const metaRow = 'flex justify-between @sm:justify-end gap-4';
 
   return (
       <div
         data-template="split"
         data-pdf-bleed
-        className="print-paper relative bg-surface shadow-xl w-full flex flex-col text-[13px] leading-snug text-foreground overflow-visible"
-        style={{ fontFamily: 'var(--font-sans)', ...keepColors }}
+        className="print-paper relative bg-[#ffffff] shadow-xl w-full flex flex-col text-[13px] leading-snug overflow-visible"
+        style={{ ...paperRootStyle(draft), fontFamily: 'Arial, Helvetica, sans-serif' }}
       >
       {/* Preview-only page guides: hidden in print and skipped by html2canvas/html2pdf */}
       {showPageGuides && (
@@ -68,16 +69,16 @@ export function PaperSplit({
       )}
 
       {/* Top Accent Bar */}
-      <div data-pdf-header className="w-full h-3 sm:h-4" style={{ backgroundColor: accentFill(accent), ...keepColors, ...avoidBreak }} />
+      <div data-pdf-header className="w-full h-4" style={{ backgroundColor: accentFill(accent), ...keepColors, ...avoidBreak }} />
 
-      <div className="px-6 py-5 sm:px-10 sm:py-6 flex flex-col gap-5">
+      <div className="px-6 py-5 @sm:px-10 @sm:py-6 flex flex-col gap-5">
         {/* Business Header */}
         <div data-pdf-break style={avoidBreak} className="space-y-0.5">
           {business.logo && <img src={business.logo} alt="Logo" className="h-10 mb-1 object-contain" />}
-          <h1 className="text-xl sm:text-2xl font-bold text-ink break-words leading-tight">{business.name || 'John Smith'}</h1>
-          {business.address && <p className="text-xs text-slate whitespace-pre-line break-words">{business.address}</p>}
+          <h1 className="text-xl @sm:text-2xl font-bold text-[#1a1a1a] break-words leading-tight">{business.name || 'John Smith'}</h1>
+          {business.address && <p className="text-xs text-[#595959] whitespace-pre-line break-words">{business.address}</p>}
           {(business.email || business.phone || business.taxId) && (
-            <p className="text-xs text-slate break-words">
+            <p className="text-xs text-[#595959] break-words">
               {business.email}{business.email && business.phone ? ' • ' : ''}{business.phone}
               {business.taxId && <span className="font-mono">{(business.email || business.phone) ? ' • ' : ''}{business.taxIdLabel || 'Tax ID'}: {business.taxId}</span>}
             </p>
@@ -88,7 +89,7 @@ export function PaperSplit({
         <div
           data-pdf-break
           style={avoidBreak}
-          className={`grid grid-cols-1 ${shipToEnabled ? 'sm:grid-cols-[1fr_1fr_auto]' : 'sm:grid-cols-[1fr_auto]'} gap-y-4 gap-x-10 pb-4 border-b border-border/60 text-xs`}
+          className={`grid grid-cols-1 ${shipToEnabled ? '@sm:grid-cols-[1fr_1fr_auto]' : '@sm:grid-cols-[1fr_auto]'} gap-y-4 gap-x-10 pb-4 border-b border-border/60 text-xs`}
         >
           <div className="min-w-0 space-y-0.5">
             <p className="font-bold uppercase tracking-wider text-ink">Bill To</p>
@@ -106,7 +107,7 @@ export function PaperSplit({
             </div>
           )}
 
-          <div className="min-w-0 sm:min-w-[14rem] font-mono space-y-0.5">
+          <div className="min-w-0 @sm:min-w-[14rem] font-mono space-y-0.5">
             <div className={metaRow}><span className="text-slate">INVOICE #</span><span className="font-bold text-ink">{draft.number}</span></div>
             <div className={metaRow}><span className="text-slate">INVOICE DATE</span><span>{fmt(draft.issueDate)}</span></div>
             {poNumber && <div className={metaRow}><span className="text-slate">P.O.#</span><span className="break-words">{poNumber}</span></div>}
@@ -120,10 +121,10 @@ export function PaperSplit({
 
         {/* Invoice Total Banner */}
         <div data-pdf-break style={avoidBreak} className="flex justify-between items-center gap-4 px-4 py-3 border-y-2 border-border/80">
-          <span className="text-xl sm:text-2xl font-bold tracking-tight text-ink">
+          <span className="text-xl @sm:text-2xl font-bold tracking-tight text-ink">
             {MODE_LABELS[draft.mode] || 'Invoice'} Total
           </span>
-          <span className="text-xl sm:text-2xl font-bold font-mono text-ink">{m(Math.max(0, t.balance))}</span>
+          <span className="text-xl @sm:text-2xl font-bold font-mono text-ink">{m(Math.max(0, t.balance))}</span>
         </div>
 
         {/* Items Table (header repeats on every page, rows never split) */}
@@ -170,7 +171,7 @@ export function PaperSplit({
 
         {/* Subtotal, Taxes, Paid */}
         <div data-pdf-break style={avoidBreak} className="flex justify-end">
-          <div className="w-full sm:w-64 text-xs font-mono">
+          <div className="w-full @sm:w-64 text-xs font-mono">
             <div className="flex justify-between py-0.5"><span className="font-medium text-ink">Subtotal</span><span className="text-ink">{m(t.subtotal)}</span></div>
             {t.invoiceDiscount > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
             {t.taxAdded > 0 && <div className="flex justify-between py-0.5"><span className="font-medium text-ink">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
@@ -183,7 +184,7 @@ export function PaperSplit({
         <div
           data-pdf-break
           style={avoidBreak}
-          className={`grid grid-cols-1 ${signature ? 'sm:grid-cols-[1fr_auto]' : ''} gap-x-10 gap-y-4 pt-4 border-t border-border/40 items-end`}
+          className={`grid grid-cols-1 ${signature ? '@sm:grid-cols-[1fr_auto]' : ''} gap-x-10 gap-y-4 pt-4 border-t border-border/40 items-end`}
         >
           <div className="min-w-0 space-y-2 text-xs">
             <div>
@@ -208,7 +209,7 @@ export function PaperSplit({
           </div>
 
           {signature && (
-            <div className="w-56 sm:justify-self-end">
+            <div className="w-56 @sm:justify-self-end">
               <div className="h-14 flex items-end justify-center">
                 <img src={signature} alt="Signature" className="max-h-14 max-w-full object-contain" />
               </div>
@@ -229,7 +230,7 @@ export function PaperSplit({
       </div>
 
       {/* Bottom Accent Bar */}
-      <div data-pdf-footer className="w-full h-3 sm:h-4" style={{ backgroundColor: accentFill(accent), ...keepColors, ...avoidBreak }} />
+      <div data-pdf-footer className="w-full h-4" style={{ backgroundColor: accentFill(accent), ...keepColors, ...avoidBreak }} />
     </div>
   );
 }

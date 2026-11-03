@@ -1,5 +1,33 @@
 import { formatMoney } from '../lib/money';
-import { accentLine } from '../lib/accent';
+import type { CSSProperties } from 'react';
+
+export function paperRootStyle(draft?: any): CSSProperties {
+  const width = draft?.paperSize === 'A4' ? 794 : 816;
+  return {
+    width: `${width}px`,
+    minWidth: `${width}px`,
+    maxWidth: 'none',
+    boxSizing: 'border-box',
+    flexShrink: 0,
+    containerType: 'inline-size',
+    textSizeAdjust: '100%',
+    WebkitTextSizeAdjust: '100%',
+    backgroundColor: '#ffffff',
+    color: '#1a1a1a',
+    '--text': '#1a1a1a',
+    '--text-muted': '#595959',
+    '--surface': '#ffffff',
+    '--border': '#e4e4e4',
+    '--rule': '#e4e4e4',
+    '--color-ink': '#1a1a1a',
+    '--color-foreground': '#1a1a1a',
+    '--color-muted': '#595959',
+    '--color-slate': '#595959',
+    '--color-surface': '#ffffff',
+    '--color-border': '#e4e4e4',
+    '--color-rule': '#e4e4e4',
+  } as CSSProperties;
+}
 
 export interface PaperProps {
   draft?: any;
@@ -24,7 +52,7 @@ export function SignaturePhotos({
           <p className="eyebrow mb-2">Attachments</p>
           <div className="flex flex-wrap gap-2">
             {photos.map((p, i) => (
-              <img key={i} src={p} alt={`Attachment ${i + 1}`} className="h-24 w-24 object-cover rounded border border-border" />
+              <img key={i} src={p} alt={`Attachment ${i + 1}`} className="h-24 w-24 object-cover rounded border border-[#e4e4e4]" />
             ))}
           </div>
         </div>
@@ -46,10 +74,10 @@ export function SenderBlock({ b }: { b: any }) {
   return (
     <>
       {b.logo && <img src={b.logo} alt="" className="h-12 mb-3 object-contain" />}
-      <h1 className="text-xl font-semibold text-ink">{b.name}</h1>
-      <p className="text-sm text-slate whitespace-pre-line">{b.address}</p>
-      <p className="text-sm text-slate">{[b.email, b.phone].filter(Boolean).join(' • ')}</p>
-      {b.taxId && <p className="text-xs text-slate font-mono">{b.taxIdLabel || 'Tax ID'}: {b.taxId}</p>}
+      <h1 className="text-xl font-semibold text-[#1a1a1a]">{b.name}</h1>
+      <p className="text-sm text-[#595959]">{b.address}</p>
+      <p className="text-sm text-[#595959]">{[b.email, b.phone].filter(Boolean).join(' • ')}</p>
+      {b.taxId && <p className="text-xs text-[#595959] font-mono">{b.taxIdLabel || 'Tax ID'}: {b.taxId}</p>}
     </>
   );
 }
@@ -62,7 +90,7 @@ export function MetaBlock({ d, terms, po }: { d: any; terms: string; po: string 
     po && ['PO #', po],
     ...otherFields(d).map((f: any) => [f.label, f.value]),
   ].filter(Boolean) as string[][];
-  return <div className="text-sm tabular text-slate space-y-0.5">{rows.map(([k, v]) => <p key={k}>{k}: {v}</p>)}</div>;
+  return <div className="text-sm tabular text-[#595959] space-y-0.5">{rows.map(([k, v]) => <p key={k}>{k}: {v}</p>)}</div>;
 }
 
 export function PartiesBlock({ d, shipTo }: { d: any; shipTo: boolean }) {
@@ -106,7 +134,7 @@ export function TotalsRows({ d, t, accent }: any) {
       {t.invoiceDiscount > 0 && row('Discount', `-${m(t.invoiceDiscount)}`)}
       {t.taxAdded > 0 && row('Tax', m(t.taxAdded))}
       {d.shipping > 0 && row('Shipping', m(Math.round(d.shipping * 100)))}
-      <div className="flex justify-between text-sm pt-2 border-t border-border font-semibold"><span>Total</span><span className="tabular">{m(t.total)}</span></div>
+      <div className="flex justify-between text-sm pt-2 border-t border-[#e4e4e4] font-semibold"><span>Total</span><span className="tabular">{m(t.total)}</span></div>
       {t.paid > 0 && row('Paid', `-${m(t.paid)}`)}
       <div className="flex justify-between text-lg pt-2 border-t-2 font-semibold" style={{ borderColor: accentLine(accent) }}>
         <span>{d.mode === 'receipt' ? 'Paid in full' : 'Balance due'}</span>

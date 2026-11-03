@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { paperRootStyle } from './shared';
 import { resolveAccent, accentFill, accentLine, contrastText } from '../lib/accent';
 
 type CorporateProps = PaperProps & {
@@ -48,14 +49,14 @@ export function PaperCorporate({
   const hasSignature = !!signature;
   const hasRightCol = hasBank || hasSignature;
 
-  const metaRow = 'flex justify-between sm:justify-end gap-6';
+  const metaRow = 'flex justify-between @sm:justify-end gap-6';
 
   return (
       <div
         data-template="corporate"
         data-pdf-flow
-        className="print-paper relative bg-surface shadow-xl w-full flex flex-col text-[13px] leading-snug text-foreground overflow-visible"
-        style={{ fontFamily: 'var(--font-sans)' }}
+        className="print-paper relative overflow-visible"
+        style={{ ...paperRootStyle(draft), fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
       >
       {/* Preview-only page guides: hidden in print and skipped by html2canvas/html2pdf */}
       {showPageGuides && (
@@ -71,14 +72,14 @@ export function PaperCorporate({
 
       {/* Top Banner */}
       <div
-        className="w-full px-6 py-6 sm:px-10 sm:py-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        className="w-full px-6 py-6 @sm:px-10 @sm:py-8 flex flex-col @sm:flex-row justify-between items-start @sm:items-center gap-4"
         style={{ backgroundColor: accentFill(accent), color: contrastText(accent), ...avoidBreak }}
       >
-        <h1 className="text-3xl sm:text-4xl font-light tracking-wide uppercase leading-none">
+        <h1 className="text-3xl @sm:text-4xl font-light tracking-wide uppercase leading-none">
           {MODE_LABELS[draft.mode] || 'Invoice'}
         </h1>
 
-        <div className="w-full sm:w-auto sm:text-right font-mono text-xs space-y-0.5">
+        <div className="w-full @sm:w-auto @sm:text-right font-mono text-xs space-y-0.5">
           <div className={metaRow}><span className="opacity-80">INVOICE #</span><span className="font-semibold">{draft.number}</span></div>
           <div className={metaRow}><span className="opacity-80">INVOICE DATE</span><span>{fmt(draft.issueDate)}</span></div>
           {poNumber && <div className={metaRow}><span className="opacity-80">P.O.#</span><span>{poNumber}</span></div>}
@@ -90,12 +91,12 @@ export function PaperCorporate({
         </div>
       </div>
 
-      <div className="px-6 py-6 sm:px-10 sm:py-8 flex flex-col gap-6">
+      <div className="px-6 py-6 @sm:px-10 @sm:py-8 flex flex-col gap-6">
         {/* From / Bill To / Ship To / Total */}
         <div
           data-pdf-break
           style={avoidBreak}
-          className={`grid grid-cols-1 ${shipToEnabled ? 'sm:grid-cols-4' : 'sm:grid-cols-3'} gap-5 pb-5 border-b border-border/60 text-xs`}
+          className={`grid grid-cols-1 ${shipToEnabled ? '@sm:grid-cols-4' : '@sm:grid-cols-3'} gap-5 pb-5 border-b border-border/60 text-xs`}
         >
           <div className="min-w-0 space-y-0.5">
             <p className="font-bold uppercase tracking-wider text-slate">From</p>
@@ -123,7 +124,7 @@ export function PaperCorporate({
             </div>
           )}
 
-          <div className="min-w-0 space-y-0.5 sm:text-right">
+          <div className="min-w-0 space-y-0.5 @sm:text-right">
             <p className="font-bold uppercase tracking-wider text-slate">Invoice Total</p>
             <p className="text-2xl font-bold font-mono tracking-tight break-words" style={{ color: corporateTextColor }}>{m(t.total)}</p>
           </div>
@@ -173,7 +174,7 @@ export function PaperCorporate({
 
         {/* Totals: one block, directly under the table */}
         <div data-pdf-break style={avoidBreak} className="flex justify-end">
-          <div className="w-full sm:w-72 text-xs font-mono">
+          <div className="w-full @sm:w-72 text-xs font-mono">
             <div className="flex justify-between py-1"><span style={{ color: corporateTextColor }} className="font-bold">SUBTOTAL</span><span className="text-ink">{m(t.subtotal)}</span></div>
             {t.invoiceDiscount > 0 && <div className="flex justify-between py-1"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
             {t.taxAdded > 0 && <div className="flex justify-between py-1"><span className="font-bold">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
@@ -195,7 +196,7 @@ export function PaperCorporate({
         <div
           data-pdf-break
           style={avoidBreak}
-          className={`grid grid-cols-1 ${hasRightCol ? 'sm:grid-cols-2' : ''} gap-6 pt-4 border-t border-border/60`}
+          className={`grid grid-cols-1 ${hasRightCol ? '@sm:grid-cols-2' : ''} gap-6 pt-4 border-t border-border/60`}
         >
           <div className="min-w-0 space-y-2">
             <div>
@@ -222,7 +223,7 @@ export function PaperCorporate({
                 </div>
               )}
               {hasSignature && (
-                <div className="flex sm:justify-end">
+                <div className="flex @sm:justify-end">
                   <img src={signature} alt="Signature" className="max-h-16 max-w-[16rem] object-contain" />
                 </div>
               )}

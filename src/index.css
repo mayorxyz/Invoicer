@@ -424,11 +424,11 @@
   }
 
   .print-paper .text-muted {
-    color: #6B6F76 !important;
+    color: #595959 !important;
   }
 
   .print-paper .from-value {
-    color: #000000 !important;
+    color: #1a1a1a !important;
   }
 
   .print-paper .invoice-accent,

@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { paperRootStyle } from './shared';
 import { resolveAccent, accentLine } from '../lib/accent';
 
 type ModernCleanProps = PaperProps & {
@@ -46,12 +47,12 @@ export function PaperModernClean({
   const termsText = draft.notes || draft.terms || 'Payment is due within 15 days';
   const hasBank = !!(draft.bankName || draft.bankAccount || draft.bankRouting);
 
-  const metaRow = 'flex justify-between sm:justify-end gap-4';
+  const metaRow = 'flex justify-between @sm:justify-end gap-4';
 
   return (
     <div
-      className="print-paper relative bg-surface shadow-xl w-full flex flex-col text-[13px] leading-snug text-foreground overflow-visible px-6 py-6 sm:px-12 sm:py-8 gap-5"
-      style={{ fontFamily: 'var(--font-sans)', ...keepColors }}
+      className="print-paper relative bg-[#ffffff] shadow-xl w-full flex flex-col text-[13px] leading-snug text-[#1a1a1a] overflow-visible px-12 py-8 gap-5"
+      style={{ ...paperRootStyle(draft), fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", ...keepColors }}
     >
       {/* Preview-only page guides: hidden in print and skipped by html2canvas/html2pdf */}
       {showPageGuides && (
@@ -68,7 +69,7 @@ export function PaperModernClean({
       {/* Title + Logo + Business Details */}
       <div data-pdf-break style={avoidBreak} className="space-y-3">
         <div className="flex justify-between items-start gap-4">
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight uppercase leading-none break-words" style={{ color: '#1e293b' }}>
+          <h1 className="text-4xl @sm:text-5xl font-black tracking-tight uppercase leading-none break-words" style={{ color: '#1e293b' }}>
             {MODE_LABELS[draft.mode] || 'Invoice'}
           </h1>
           {business.logo && (
@@ -88,7 +89,7 @@ export function PaperModernClean({
       <div
         data-pdf-break
         style={avoidBreak}
-        className={`grid grid-cols-1 ${shipToEnabled ? 'sm:grid-cols-[1fr_1fr_auto]' : 'sm:grid-cols-[1fr_auto]'} gap-y-4 gap-x-10 pb-4 border-b border-border/60 text-xs`}
+        className={`grid grid-cols-1 ${shipToEnabled ? '@sm:grid-cols-[1fr_1fr_auto]' : '@sm:grid-cols-[1fr_auto]'} gap-y-4 gap-x-10 pb-4 border-b border-border/60 text-xs`}
       >
         <div className="min-w-0 space-y-0.5">
           <p className="font-bold uppercase tracking-wider text-ink">Bill To</p>
@@ -106,7 +107,7 @@ export function PaperModernClean({
           </div>
         )}
 
-        <div className="min-w-0 sm:min-w-[14rem] font-mono space-y-0.5">
+        <div className="min-w-0 @sm:min-w-[14rem] font-mono space-y-0.5">
           <div className={metaRow}><span className="text-slate">INVOICE #</span><span className="font-bold text-ink break-words">{draft.number}</span></div>
           <div className={metaRow}><span className="text-slate">INVOICE DATE</span><span>{fmt(draft.issueDate)}</span></div>
           {poNumber && <div className={metaRow}><span className="text-slate">P.O.#</span><span className="break-words">{poNumber}</span></div>}
@@ -163,7 +164,7 @@ export function PaperModernClean({
       {/* Totals + Signature: kept together directly under the table */}
       <div data-pdf-break style={avoidBreak} className="space-y-2">
         <div className="flex justify-end">
-          <div className="w-full sm:w-64 text-xs font-mono">
+          <div className="w-full @sm:w-64 text-xs font-mono">
             <div className="flex justify-between py-0.5"><span className="text-slate">Subtotal</span><span className="text-ink">{m(t.subtotal)}</span></div>
             {t.invoiceDiscount > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
             {t.taxAdded > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
@@ -194,9 +195,9 @@ export function PaperModernClean({
       <div
         data-pdf-break
         style={avoidBreak}
-        className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-4 pt-4 border-t border-border/40 items-end"
+        className="grid grid-cols-1 @sm:grid-cols-2 gap-x-10 gap-y-4 pt-4 border-t border-border/40 items-end"
       >
-        <p className="font-serif italic text-xl sm:text-2xl text-slate/80 select-none leading-none">Thank you</p>
+        <p className="font-serif italic text-xl @sm:text-2xl text-slate/80 select-none leading-none">Thank you</p>
 
         <div className="min-w-0 space-y-2 text-xs">
           <div>

@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { paperRootStyle } from './shared';
 import { resolveAccent, accentFill, contrastText } from '../lib/accent';
 
 type ModernProps = PaperProps & {
@@ -53,14 +54,14 @@ export function Paperformal({
       <div
         data-template="formal"
         data-pdf-bleed
-        className="print-paper bg-surface shadow-xl min-h-[297mm] w-full flex flex-col text-[13px] leading-relaxed text-foreground overflow-visible"
-        style={{ fontFamily: 'var(--font-sans)' }}
+        className="print-paper shadow-xl min-h-[297mm] w-full flex flex-col text-[13px] leading-relaxed overflow-visible"
+        style={{ ...paperRootStyle(draft), fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
       >
       {/* Top Accent Bar with Stripes / Header Block */}
-      <div className="w-full p-10 sm:p-14 relative" style={{ backgroundColor: accentFill(accent), color: contrastText(accent) }}>
+      <div className="w-full p-10 @sm:p-14 relative" style={{ backgroundColor: accentFill(accent), color: contrastText(accent) }}>
         <div className="max-w-3xl mx-auto text-center space-y-3">
           {business.logo && <img src={business.logo} alt="Logo" className="h-12 mx-auto mb-4 object-contain" />}
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight break-words">{business.name || 'John Smith'}</h1>
+          <h1 className="text-3xl @sm:text-4xl font-bold tracking-tight break-words">{business.name || 'John Smith'}</h1>
           {business.address && <p className="text-sm opacity-90 whitespace-pre-line break-words leading-relaxed">{business.address}</p>}
           {(business.email || business.phone) && (
             <p className="text-xs opacity-85 pt-1">
@@ -73,12 +74,12 @@ export function Paperformal({
 
       
 
-      <div className="px-6 py-6 sm:px-10 sm:py-8 flex flex-col gap-6">
+      <div className="px-6 py-6 @sm:px-10 @sm:py-8 flex flex-col gap-6">
         {/* Bill To / Ship To / Meta */}
         <div
           data-pdf-break
           style={avoidBreak}
-          className={`grid grid-cols-1 ${shipToEnabled ? 'sm:grid-cols-[1fr_1fr_auto]' : 'sm:grid-cols-[1fr_auto]'} gap-y-5 gap-x-10 pb-5 border-b border-border/60 text-xs`}
+          className={`grid grid-cols-1 ${shipToEnabled ? '@sm:grid-cols-[1fr_1fr_auto]' : '@sm:grid-cols-[1fr_auto]'} gap-y-5 gap-x-10 pb-5 border-b border-border/60 text-xs`}
         >
           <div className="min-w-0 space-y-0.5">
             <p className="font-bold uppercase tracking-wider text-slate">Bill To</p>
@@ -96,7 +97,7 @@ export function Paperformal({
             </div>
           )}
 
-          <div className="min-w-0 sm:min-w-[15rem] font-mono">
+          <div className="min-w-0 @sm:min-w-[15rem] font-mono">
             <div className={metaRow}><span className="text-slate">Document Type:</span><span className="font-bold uppercase text-ink">{MODE_LABELS[draft.mode] || 'Invoice'}</span></div>
             <div className={metaRow}><span className="text-slate">Invoice #:</span><span className="font-semibold text-ink">#{draft.number}</span></div>
             <div className={metaRow}><span className="text-slate">Invoice Date:</span><span>{fmt(draft.issueDate)}</span></div>
@@ -154,7 +155,7 @@ export function Paperformal({
         {/* Totals + banner: one block, kept together, directly under the table */}
         <div data-pdf-break style={avoidBreak} className="space-y-3">
           <div className="flex justify-end">
-            <div className="w-full sm:w-72 text-xs font-mono">
+            <div className="w-full @sm:w-72 text-xs font-mono">
               <div className="flex justify-between py-1"><span className="text-slate">Subtotal</span><span className="text-ink">{m(t.subtotal)}</span></div>
               {t.invoiceDiscount > 0 && <div className="flex justify-between py-1"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
               {t.taxAdded > 0 && <div className="flex justify-between py-1"><span className="text-slate">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
@@ -163,7 +164,7 @@ export function Paperformal({
             </div>
           </div>
 
-          <div className="flex justify-between items-center gap-4 px-5 py-3 rounded-lg font-bold text-lg sm:text-xl" style={{ backgroundColor: accentFill(accent), color: contrastText(accent) }}>
+          <div className="flex justify-between items-center gap-4 px-5 py-3 rounded-lg font-bold text-lg @sm:text-xl" style={{ backgroundColor: accentFill(accent), color: contrastText(accent) }}>
             <span className="tracking-widest uppercase font-mono">{t.paid > 0 ? 'BALANCE DUE' : 'TOTAL'}</span>
             <span className="font-mono">{m(t.paid > 0 ? Math.max(0, t.balance) : t.total)}</span>
           </div>
@@ -174,7 +175,7 @@ export function Paperformal({
           <div
             data-pdf-break
             style={avoidBreak}
-            className={`grid grid-cols-1 ${hasLeftCol && hasSignature ? 'sm:grid-cols-[1fr_auto]' : ''} gap-x-10 gap-y-6 pt-4 border-t border-border/60 items-end`}
+            className={`grid grid-cols-1 ${hasLeftCol && hasSignature ? '@sm:grid-cols-[1fr_auto]' : ''} gap-x-10 gap-y-6 pt-4 border-t border-border/60 items-end`}
           >
             {hasLeftCol && (
               <div className="min-w-0 space-y-3">
@@ -206,7 +207,7 @@ export function Paperformal({
             )}
 
             {hasSignature && (
-              <div className="w-56 text-center sm:justify-self-end">
+              <div className="w-56 text-center @sm:justify-self-end">
                 <div className="h-14 flex items-end justify-center mb-1">
                   <img src={signature} alt="Signature" className="max-h-14 max-w-full object-contain" />
                 </div>

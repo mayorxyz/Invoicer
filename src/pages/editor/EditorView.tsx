@@ -10,7 +10,7 @@ import { totals, formatMoney } from '../../lib/money';
 import { today, addDays } from '../../lib/dates';
 import { getCountry, MODE_LABELS } from '../../data/countries';
 import { CURRENCY_LIST } from '../../data/currencies';
-import { ACCENT_PALETTE, ACCENT_NONE, UNITS } from '../../lib/defaults';
+import { ACCENT_PALETTE, UNITS } from '../../lib/defaults';
 import type { Mode, Status, PaperSize } from '../../types';
 import { PreviewStage } from './PreviewStage';
 import { PaperDefault } from '../../papers/Default';
@@ -177,8 +177,7 @@ export function EditorView() {
                 <label className="text-[13px] font-medium text-ink mb-2 block">Template</label>
                 <Segmented
                   options={[
-                    { value: 'default', label: 'Default' },
-                    { value: 'minimal', label: 'Minimal' },
+                    { value: 'default', label: 'Default' },            { value: 'minimal', label: 'Minimal' },
                     { value: 'corporate', label: 'Corporate' },
                     { value: 'formal', label: 'Formal' },
                     { value: 'framed', label: 'Framed' },
@@ -197,27 +196,23 @@ export function EditorView() {
                   {ACCENT_PALETTE.map(color => {
                     const isNone = color === ACCENT_NONE;
                     const isSelected = draft.accent === color;
+                    // For None swatch, use a muted background with border
+                    const bgStyle = isNone ? { backgroundColor: '#374151', color: 'white' } : { backgroundColor: color };
                     return (
                       <button
                         key={color}
                         onClick={() => updateDraft({ accent: color })}
-                        className={`w-8 h-8 rounded-full border-2 relative flex items-center justify-center overflow-hidden transition-all ${
+                        className={`w-8 h-8 rounded-full border-2 transition-all ${
                           isSelected
                             ? isNone
                               ? 'border-slate scale-110'
                               : 'border-ink scale-110'
-                            : isNone
-                              ? 'border-slate/50'
+                            : isNone && draft.accent === ACCENT_NONE
+                              ? 'border-slate scale-110'
                               : 'border-transparent'
                         }`}
-                        style={isNone ? { backgroundColor: 'transparent' } : { backgroundColor: color }}
-                        title={isNone ? 'None' : color === '#111827' ? 'Black' : color}
-                        aria-label={`Select accent color ${isNone ? 'None' : color === '#111827' ? 'Black' : color}`}
-                      >
-                        {isNone && (
-                          <span className="absolute w-full h-[1.5px] bg-slate rotate-45 pointer-events-none" />
-                        )}
-                      </button>
+                        style={{ ...bgStyle, color: isNone ? 'white' : 'black' }}
+                      />
                     );
                   })}
                 </div>

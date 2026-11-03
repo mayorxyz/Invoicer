@@ -114,7 +114,6 @@ export function PreviewStage({
   };
 
   const isA4 = draft?.paperSize === 'A4';
-  const paperWidthClass = isA4 ? 'w-[210mm]' : 'w-[216mm]';
   const paperWidth = isA4 ? 794 : 816;
   const PAGE_H = isA4 ? 1123 : 1056;
   const INNER_H = PAGE_H - PAGE_PAD * 2;
@@ -220,7 +219,14 @@ export function PreviewStage({
     }
   };
   
+  const scale = (fitScale * zoom) / 100;
   const actualZoom = Math.max(1, Math.round(fitScale * zoom));
+  const paperTypographyStyle: React.CSSProperties = {
+    width: `${paperWidth}px`,
+    minWidth: `${paperWidth}px`,
+    maxWidth: 'none',
+    boxSizing: 'border-box',
+  };
 
   return (
     <div 
@@ -305,14 +311,16 @@ export function PreviewStage({
           <div
             ref={measureRef}
             aria-hidden
-            className={`fixed top-0 pointer-events-none invisible ${paperWidthClass}`}
-            style={{ left: '-10000px' }}
+            className="fixed top-0 pointer-events-none invisible"
+            style={{ left: '-10000px', width: `${paperWidth}px`, minWidth: `${paperWidth}px`, maxWidth: 'none', boxSizing: 'border-box' }}
           >
-            <PaperTypography>{renderSelectedTemplate()}</PaperTypography>
+            <div style={{ width: `${paperWidth}px`, transform: 'scale(1)', transformOrigin: 'top center' }}>
+              <PaperTypography style={paperTypographyStyle}>{renderSelectedTemplate()}</PaperTypography>
+            </div>
           </div>
 
           {/* Scaled Paper Sheets */}
-          <div className="mx-auto flex flex-col items-center gap-8 w-fit" style={{ zoom: (fitScale * zoom) / 100 } as React.CSSProperties}>
+          <div className="mx-auto flex flex-col items-center w-fit" style={{ gap: `${32 * scale}px` }}>
             {starts.map((start, idx) => {
               const nextStart = starts[idx + 1] ?? contentH;
               const visibleH = Math.max(0, Math.min(INNER_H, nextStart - start));
@@ -321,20 +329,36 @@ export function PreviewStage({
                   key={idx}
                   data-page={idx + 1}
                   ref={(el) => { sheetRefs.current[idx] = el; }}
-                  className={`relative shrink-0 ${paperWidthClass} bg-surface transition-shadow duration-300 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)]`}
-                  style={{ 
-                    height: `${PAGE_H}px`, 
-                    paddingTop: `${PAGE_PAD}px`,
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05), 0 10px 15px -3px rgb(0 0 0 / 0.1)'
-                  }}
+                  className="relative shrink-0"
+                  style={{ width: `${paperWidth * scale}px`, height: `${PAGE_H * scale}px`, flexShrink: 0, boxSizing: 'border-box' }}
                 >
-                  <div style={{ height: `${visibleH}px`, overflow: 'hidden' }}>
-                    <div style={{ marginTop: `-${start}px` }}><PaperTypography>{renderSelectedTemplate()}</PaperTypography></div>
-                  </div>
-                  
-                  {/* Page Indicator Badge */}
-                  <div className="absolute bottom-3 right-4 text-[10px] font-mono text-muted bg-surface/90 backdrop-blur px-2 py-0.5 rounded border border-rule/50 pointer-events-none z-20 no-print shadow-sm">
-                    Page {idx + 1} of {totalPages}
+                  <div
+                    className="absolute top-0 transition-shadow duration-300 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)]"
+                    style={{
+                      left: `${((scale - 1) * paperWidth) / 2}px`,
+                      width: `${paperWidth}px`,
+                      minWidth: `${paperWidth}px`,
+                      maxWidth: 'none',
+                      height: `${PAGE_H}px`,
+                      paddingTop: `${PAGE_PAD}px`,
+                      boxSizing: 'border-box',
+                      backgroundColor: '#ffffff',
+                      color: '#1a1a1a',
+                      transform: `scale(${scale})`,
+                      transformOrigin: 'top center',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05), 0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                    }}
+                  >
+                    <div style={{ width: `${paperWidth}px`, height: `${visibleH}px`, overflow: 'hidden', boxSizing: 'border-box' }}>
+                      <div style={{ width: `${paperWidth}px`, marginTop: `-${start}px` }}>
+                        <PaperTypography style={paperTypographyStyle}>{renderSelectedTemplate()}</PaperTypography>
+                      </div>
+                    </div>
+                    
+                    {/* Page Indicator Badge */}
+                    <div className="absolute bottom-3 right-4 text-[10px] font-mono text-muted bg-surface/90 backdrop-blur px-2 py-0.5 rounded border border-rule/50 pointer-events-none z-20 no-print shadow-sm">
+                      Page {idx + 1} of {totalPages}
+                    </div>
                   </div>
                 </div>
               );

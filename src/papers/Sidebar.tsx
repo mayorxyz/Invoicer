@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { paperRootStyle } from './shared';
 import { resolveAccent, accentFill, contrastText } from '../lib/accent';
 
 type SidebarProps = PaperProps & {
@@ -53,8 +54,8 @@ export function PaperSidebar({
       <div
         data-template="sidebar"
         data-pdf-bleed
-        className="print-paper relative bg-surface shadow-xl w-full flex flex-col text-[13px] leading-snug text-foreground overflow-visible"
-        style={{ fontFamily: 'var(--font-sans)', ...keepColors }}
+        className="print-paper relative bg-[#ffffff] shadow-xl w-full flex flex-col text-[13px] leading-snug text-[#1a1a1a] overflow-visible"
+        style={{ ...paperRootStyle(draft), fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", ...keepColors }}
       >
       {/* Preview-only page guides: hidden in print and skipped by html2canvas/html2pdf */}
       {showPageGuides && (
@@ -70,21 +71,21 @@ export function PaperSidebar({
 
       {/* Top Banner */}
       <div
-        className="w-full px-6 py-5 sm:px-10 sm:py-6 space-y-1"
+        className="w-full px-6 py-5 @sm:px-10 @sm:py-6 space-y-1"
         style={{ backgroundColor: accentFill(accent), color: contrastText(accent), ...keepColors, ...avoidBreak }}
       >
-        <h1 className="text-3xl sm:text-4xl font-light uppercase tracking-wide leading-none break-words">
+        <h1 className="text-3xl @sm:text-4xl font-light uppercase tracking-wide leading-none break-words">
           {MODE_LABELS[draft.mode] || 'Invoice'}
         </h1>
-        <div className="text-2xl sm:text-3xl font-bold font-mono break-words">{m(t.total)}</div>
+        <div className="text-2xl @sm:text-3xl font-bold font-mono break-words">{m(t.total)}</div>
         <div className="text-xs font-mono opacity-90">Invoice Date: {fmt(draft.issueDate)}</div>
       </div>
 
-      <div className="px-6 py-5 sm:px-10 sm:py-6 flex flex-col gap-5">
+      <div className="px-6 py-5 @sm:px-10 @sm:py-6 flex flex-col gap-5">
         {/* Sidebar | Main. The divider is the main column's left border, so it continues on every page. */}
-        <div className="grid grid-cols-1 sm:grid-cols-[11.5rem_1fr]">
+        <div className="grid grid-cols-1 @sm:grid-cols-[11.5rem_1fr]">
           {/* Left Sidebar */}
-          <div style={avoidBreak} className="space-y-3.5 sm:pr-5 pb-4 sm:pb-0 text-xs font-mono min-w-0">
+          <div style={avoidBreak} className="space-y-3.5 @sm:pr-5 pb-4 @sm:pb-0 text-xs font-mono min-w-0">
             <div>
               <p className={label} style={{ color: '#1e293b' }}>INVOICE #</p>
               <p className="text-ink font-semibold break-words">{draft.number}</p>
@@ -146,7 +147,7 @@ export function PaperSidebar({
           </div>
 
           {/* Right Main Content */}
-          <div className="min-w-0 sm:border-l border-border/60 sm:pl-5 flex flex-col gap-4">
+          <div className="min-w-0 @sm:border-l border-border/60 @sm:pl-5 flex flex-col gap-4">
             {/* Items Table (header repeats on every page, rows never split) */}
             <div className="overflow-x-auto print:overflow-visible">
               <table className="w-full text-xs table-fixed border-collapse">
@@ -192,7 +193,7 @@ export function PaperSidebar({
             {/* Subtotal, Taxes, Total, Paid, Signature: kept together under the table */}
             <div data-pdf-break style={avoidBreak} className="space-y-2">
               <div className="flex justify-end">
-                <div className="w-full sm:w-64 text-xs font-mono">
+                <div className="w-full @sm:w-64 text-xs font-mono">
                   <div className="flex justify-between py-0.5"><span className="font-medium text-ink">Subtotal</span><span className="text-ink">{m(t.subtotal)}</span></div>
                   {t.invoiceDiscount > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
                   {t.taxAdded > 0 && <div className="flex justify-between py-0.5"><span className="font-medium text-ink">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
@@ -202,8 +203,8 @@ export function PaperSidebar({
               </div>
 
               <div className="flex justify-between items-center gap-4 pt-2 border-t border-border/60">
-                <span className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-ink">Total</span>
-                <span className="text-xl sm:text-2xl font-bold font-mono text-ink">{m(Math.max(0, t.balance))}</span>
+                <span className="text-xl @sm:text-2xl font-bold font-mono tracking-tight text-ink">Total</span>
+                <span className="text-xl @sm:text-2xl font-bold font-mono text-ink">{m(Math.max(0, t.balance))}</span>
               </div>
 
               {signature && (
@@ -221,7 +222,7 @@ export function PaperSidebar({
         <div
           data-pdf-break
           style={avoidBreak}
-          className={`grid grid-cols-1 ${hasPhotos ? 'sm:grid-cols-2' : ''} gap-x-10 gap-y-4 pt-4 border-t border-border/40`}
+          className={`grid grid-cols-1 ${hasPhotos ? '@sm:grid-cols-2' : ''} gap-x-10 gap-y-4 pt-4 border-t border-border/40`}
         >
           <div className="min-w-0 space-y-2 text-xs">
             <div>

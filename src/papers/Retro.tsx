@@ -4,7 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
-import { resolveAccent, accentFill, contrastText } from '../lib/accent';
+import { paperRootStyle } from './shared';
 
 type RetroProps = PaperProps & {
   shipToEnabled?: boolean;
@@ -22,7 +22,6 @@ const keepColors = { WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' 
 export function PaperRetro({
   signature = '',
   photos = [],
-  accent: accentProp,
   shipToEnabled = false,
   paymentTerms = '',
   poNumber: poProp,
@@ -34,7 +33,6 @@ export function PaperRetro({
 
   const business = state.businesses[0] || {};
   const t = totals(draft);
-  const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
   const fmt = (d: string) => (d ? formatDateLocale(d, 'en-US', 'MM/dd/yyyy') : '');
   const isReceipt = draft.mode === 'receipt';
@@ -46,7 +44,7 @@ export function PaperRetro({
   const hasBank = !!(draft.bankName || draft.bankAccount || draft.bankRouting);
   const hasLeft = !!(draft.notes || draft.terms || hasBank);
 
-  const metaRow = 'flex justify-between sm:justify-end gap-4';
+  const metaRow = 'flex justify-between @sm:justify-end gap-4';
   const cell = 'py-1.5 px-2.5 border-r border-black/40';
   const totalRow = 'border-t border-black/30 font-bold';
   const labelCell = 'py-1.5 px-2.5 text-right border-r border-black/40';
@@ -56,8 +54,8 @@ export function PaperRetro({
         data-template="retro"
         data-pdf-bleed
         data-pdf-paper-bg
-        className="print-paper relative shadow-xl w-full flex flex-col text-[12px] leading-snug overflow-visible px-6 py-6 sm:px-10 sm:py-8 gap-5"
-        style={{ backgroundColor: accentFill(accent), color: contrastText(accent), fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', ...keepColors }}
+        className="print-paper relative shadow-xl w-full flex flex-col text-[12px] leading-snug overflow-visible px-6 py-6 @sm:px-10 @sm:py-8 gap-5"
+        style={{ ...paperRootStyle(draft), fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', ...keepColors }}
       >
       {/* Preview-only page guides: hidden in print and skipped by html2canvas/html2pdf */}
       {showPageGuides && (
@@ -72,9 +70,9 @@ export function PaperRetro({
       )}
 
       {/* Header: title + meta | logo + business name */}
-      <div data-pdf-break style={avoidBreak} className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-black/30 pb-4">
+      <div data-pdf-break style={avoidBreak} className="flex flex-col @sm:flex-row justify-between items-start gap-4 border-b border-black/30 pb-4">
         <div className="min-w-0">
-          <h1 className="text-4xl sm:text-5xl font-black tracking-widest uppercase leading-none mb-2 break-words">
+          <h1 className="text-4xl @sm:text-5xl font-black tracking-widest uppercase leading-none mb-2 break-words">
             {MODE_LABELS[draft.mode] || 'Invoice'}
           </h1>
           <div className="text-xs space-y-0.5">
@@ -87,8 +85,8 @@ export function PaperRetro({
           </div>
         </div>
 
-        <div className="min-w-0 sm:text-right">
-          {business.logo && <img src={business.logo} alt="Logo" className="h-10 object-contain sm:ml-auto mb-1" />}
+        <div className="min-w-0 @sm:text-right">
+          {business.logo && <img src={business.logo} alt="Logo" className="h-10 object-contain @sm:ml-auto mb-1" />}
           {business.name && <div className="font-bold text-sm tracking-wider uppercase break-words">{business.name}</div>}
         </div>
       </div>
@@ -97,7 +95,7 @@ export function PaperRetro({
       <div
         data-pdf-break
         style={avoidBreak}
-        className={`grid grid-cols-1 ${shipToEnabled ? 'sm:grid-cols-[1fr_1fr_1fr_auto]' : 'sm:grid-cols-[1fr_1fr_auto]'} gap-y-4 gap-x-8 text-xs`}
+        className={`grid grid-cols-1 ${shipToEnabled ? '@sm:grid-cols-[1fr_1fr_1fr_auto]' : '@sm:grid-cols-[1fr_1fr_auto]'} gap-y-4 gap-x-8 text-xs`}
       >
         <div className="min-w-0 space-y-0.5">
           <p className="uppercase opacity-70">from</p>
@@ -124,7 +122,7 @@ export function PaperRetro({
         )}
 
         {!isReceipt && (
-          <div className="min-w-0 space-y-0.5 sm:text-right">
+          <div className="min-w-0 space-y-0.5 @sm:text-right">
             <p className="uppercase opacity-70">payment due</p>
             <p className="font-bold">{fmt(draft.dueDate)}</p>
           </div>
@@ -209,7 +207,7 @@ export function PaperRetro({
         <div
           data-pdf-break
           style={avoidBreak}
-          className={`grid grid-cols-1 ${hasLeft && signature ? 'sm:grid-cols-[1fr_auto]' : ''} gap-x-10 gap-y-4 items-end text-[11px]`}
+          className={`grid grid-cols-1 ${hasLeft && signature ? '@sm:grid-cols-[1fr_auto]' : ''} gap-x-10 gap-y-4 items-end text-[11px]`}
         >
           {hasLeft && (
             <div className="min-w-0 space-y-2">
@@ -241,7 +239,7 @@ export function PaperRetro({
           )}
 
           {signature && (
-            <div className="w-56 sm:justify-self-end">
+            <div className="w-56 @sm:justify-self-end">
               <div className="h-14 flex items-end justify-center">
                 <img src={signature} alt="Signature" className="max-h-14 max-w-full object-contain" />
               </div>

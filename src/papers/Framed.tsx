@@ -4,6 +4,7 @@ import { totals, formatMoney, toMinor } from '../lib/money';
 import { formatDateLocale } from '../lib/dates';
 import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
+import { paperRootStyle } from './shared';
 import { resolveAccent, accentFill, accentLine, contrastText } from '../lib/accent';
 
 type FramedProps = PaperProps & {
@@ -72,18 +73,19 @@ export function PaperFramed({
   const termsText = draft.notes || draft.terms || 'Payment is due within 15 days';
   const hasBank = !!(draft.bankName || draft.bankAccount || draft.bankRouting);
 
-  const metaRow = 'flex justify-between sm:justify-end gap-6';
+  const metaRow = 'flex justify-between @sm:justify-end gap-6';
 
   // Frame: border repeats on every printed page via box-decoration-break (Chrome/Edge print).
   const frameStyle: React.CSSProperties = pdfFrame
-    ? { fontFamily: 'var(--font-sans)', ...keepColors }
+    ? { ...paperRootStyle(draft), fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", ...keepColors }
     : {
         borderColor: accentLine(accent),
+        ...paperRootStyle(draft),
         borderStyle: 'solid',
         borderWidth: '8px',
         boxDecorationBreak: 'clone',
         WebkitBoxDecorationBreak: 'clone',
-        fontFamily: 'var(--font-sans)',
+        fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         ...keepColors,
       } as React.CSSProperties;
 
@@ -91,7 +93,7 @@ export function PaperFramed({
       <div
         data-template="framed"
         data-pdf-bleed
-        className="print-paper relative bg-surface shadow-xl w-full flex flex-col text-[13px] leading-snug text-foreground overflow-visible"
+        className="print-paper relative shadow-xl w-full flex flex-col text-[13px] leading-snug overflow-visible"
         style={frameStyle}
       >
       {/* Preview-only page guides: hidden in print and skipped by html2canvas/html2pdf */}
@@ -108,12 +110,12 @@ export function PaperFramed({
 
       {/* Header bar (inside the frame, first page only) */}
       <div
-        className="w-full px-6 py-5 sm:px-8 sm:py-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        className="w-full px-6 py-5 @sm:px-8 @sm:py-6 flex flex-col @sm:flex-row justify-between items-start @sm:items-center gap-4"
         style={{ backgroundColor: accentFill(accent), color: contrastText(accent), ...keepColors, ...avoidBreak }}
       >
-        <div className="text-xl sm:text-2xl font-mono font-bold tracking-tight break-words">#{draft.number}</div>
+        <div className="text-xl @sm:text-2xl font-mono font-bold tracking-tight break-words">#{draft.number}</div>
 
-        <div className="w-full sm:w-auto sm:text-right font-mono text-xs space-y-0.5 italic">
+        <div className="w-full @sm:w-auto @sm:text-right font-mono text-xs space-y-0.5 italic">
           <div className={metaRow}><span className="opacity-80 not-italic">Invoice Date</span><span>{fmt(draft.issueDate)}</span></div>
           {poNumber && <div className={metaRow}><span className="opacity-80 not-italic">P.O.#</span><span>{poNumber}</span></div>}
           {!isReceipt && <div className={metaRow}><span className="opacity-80 not-italic">Due Date</span><span>{fmt(draft.dueDate)}</span></div>}
@@ -124,11 +126,11 @@ export function PaperFramed({
         </div>
       </div>
 
-      <div className="px-6 py-5 sm:px-8 sm:py-6 flex flex-col gap-5">
+      <div className="px-6 py-5 @sm:px-8 @sm:py-6 flex flex-col gap-5">
         {/* Business profile */}
         <div data-pdf-break style={avoidBreak} className="text-center space-y-0.5 pb-4 border-b border-border/40">
           {business.logo && <img src={business.logo} alt="Logo" className="h-9 mx-auto mb-1 object-contain" />}
-          <h1 className="text-xl sm:text-2xl font-serif font-bold italic text-ink break-words leading-tight">{business.name || 'Signature'}</h1>
+          <h1 className="text-xl @sm:text-2xl font-serif font-bold italic text-ink break-words leading-tight">{business.name || 'Signature'}</h1>
           {business.address && <p className="text-xs text-slate whitespace-pre-line break-words">{business.address}</p>}
           {(business.email || business.phone || business.taxId) && (
             <p className="text-xs text-slate break-words">
@@ -142,7 +144,7 @@ export function PaperFramed({
         <div
           data-pdf-break
           style={avoidBreak}
-          className={`grid grid-cols-1 ${shipToEnabled ? 'sm:grid-cols-2' : ''} gap-x-12 gap-y-4 pb-4 border-b border-border/40 text-xs ${shipToEnabled ? '' : 'sm:text-center'}`}
+          className={`grid grid-cols-1 ${shipToEnabled ? '@sm:grid-cols-2' : ''} gap-x-12 gap-y-4 pb-4 border-b border-border/40 text-xs ${shipToEnabled ? '' : '@sm:text-center'}`}
         >
           <div className="min-w-0 space-y-0.5">
             <p className="font-serif italic font-bold text-ink text-sm">Bill To</p>
@@ -180,8 +182,8 @@ export function PaperFramed({
               <tr className="border-b border-ink font-serif italic text-ink">
                 <th className="py-2 px-2 text-left">Qty</th>
                 <th className="py-2 px-2 text-left">Description</th>
-                <th className="py-2 px-2 text-right">Unit Price</th>
-                <th className="py-2 px-2 text-right">Amount</th>
+                <th className="py-2.5 px-2 text-right">Unit Price</th>
+                <th className="py-2.5 px-2 text-right">Amount</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/30">
@@ -211,7 +213,7 @@ export function PaperFramed({
 
         {/* Subtotal & Taxes */}
         <div data-pdf-break style={avoidBreak} className="flex justify-end">
-          <div className="w-full sm:w-64 text-xs font-mono">
+          <div className="w-full @sm:w-64 text-xs font-mono">
             <div className="flex justify-between py-0.5"><span className="font-serif italic font-bold text-ink">Subtotal</span><span className="text-ink">{m(t.subtotal)}</span></div>
             {t.invoiceDiscount > 0 && <div className="flex justify-between py-0.5"><span className="text-slate">Discount</span><span className="text-ink">-{m(t.invoiceDiscount)}</span></div>}
             {t.taxAdded > 0 && <div className="flex justify-between py-0.5"><span className="font-serif italic font-bold text-ink">Sales Tax</span><span className="text-ink">{m(t.taxAdded)}</span></div>}
@@ -229,7 +231,7 @@ export function PaperFramed({
         <div
           data-pdf-break
           style={avoidBreak}
-          className={`grid grid-cols-1 ${signature ? 'sm:grid-cols-[1fr_auto]' : ''} gap-x-10 gap-y-5 pt-4 border-t border-border/40 items-end`}
+          className={`grid grid-cols-1 ${signature ? '@sm:grid-cols-[1fr_auto]' : ''} gap-x-10 gap-y-5 pt-4 border-t border-border/40 items-end`}
         >
           <div className="min-w-0 space-y-2 text-xs">
             <div>
@@ -254,7 +256,7 @@ export function PaperFramed({
           </div>
 
           {signature && (
-            <div className="w-56 text-center sm:justify-self-end">
+            <div className="w-56 text-center @sm:justify-self-end">
               <div className="h-14 flex items-end justify-center">
                 <img src={signature} alt="Signature" className="max-h-14 max-w-full object-contain" />
               </div>
