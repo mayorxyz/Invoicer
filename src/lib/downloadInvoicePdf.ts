@@ -52,7 +52,7 @@ export async function downloadInvoicePdf(
   // Only templates that paint the page with the accent keep a colored page.
   const paperBg = source.hasAttribute('data-pdf-paper-bg') && !isTransparent ? srcBg : background;
 
-  // DEBUG LOG: Check what the export sees
+  // DEBUG LOG: Check what the export sees (Remove once verified)
   console.log('pdf bg', { srcBg, flag: source.hasAttribute('data-pdf-paper-bg'), paperBg });
 
   const A4_W = 794;
@@ -119,7 +119,7 @@ export async function downloadInvoicePdf(
       color: foreground,
       width: `${A4_W}px`,
       maxWidth: 'none',
-      // 2. Keep the clone's minimum height consistent with the printable area
+      // Keep the clone's minimum height consistent with the printable area
       minHeight: `${Math.round(((297 - 2 * (bleed ? 0 : 10)) * A4_W) / 210)}px`,
       margin: '0',
       // Keep Retro's padding by skipping the 0 ${pad}px override if it has the flag
@@ -167,6 +167,28 @@ export async function downloadInvoicePdf(
       clone.style.minHeight = `${pages * A4_H}px`;
     }
 
+    // Fit to one page: if the content is slightly too tall, render wider (up to 40%) so it reflows shorter
+    const reserveMm = repeatBars ? 2 * barMm + 6 : bleed ? 0 : 20;
+    const availMm = 297 - reserveMm;
+    let RW = A4_W;
+    let fits = false;
+    
+    // 2. Widen the ladder so more invoices qualify
+    for (const k of [1, 1.06, 1.12, 1.18, 1.25, 1.33, 1.4]) {
+      RW = A4_W * k;
+      container.style.width = `${RW}px`;
+      clone.style.width = `${RW}px`;
+      if (clone.scrollHeight <= (availMm * RW) / 210 + 1) { fits = true; break; }
+    }
+    if (!fits) {
+      RW = A4_W;
+      container.style.width = `${RW}px`;
+      clone.style.width = `${RW}px`;
+    }
+
+    // 1. Debug log to verify fit check results (Remove once verified)
+    console.log('fit', { template: source.getAttribute('data-template'), fits, RW, h: clone.scrollHeight, availMm });
+
     const fullHeight = Math.ceil(clone.scrollHeight);
 
     const canvas = await html2canvas(clone, {
@@ -174,9 +196,9 @@ export async function downloadInvoicePdf(
       useCORS: true,
       allowTaint: true,
       backgroundColor: paperBg,
-      width: A4_W,
+      width: RW,
       height: fullHeight,
-      windowWidth: A4_W,
+      windowWidth: RW,
       windowHeight: fullHeight,
       logging: false,
       onclone: clonedDoc => {
@@ -195,8 +217,7 @@ export async function downloadInvoicePdf(
     const marginMm = bleed ? 0 : 10;
     const gapMm = bleed ? 8 : 0;
 
-    const scale = canvas.width / A4_W;
-    // 1. Non-bleed templates also lose room to the 8mm-style reserve. Match pagePx to marginMm.
+    const scale = canvas.width / RW;
     const pagePx = Math.floor(((297 - 2 * marginMm) * canvas.width) / pdfW);
     const cloneTop = clone.getBoundingClientRect().top;
 
@@ -212,24 +233,21 @@ export async function downloadInvoicePdf(
       .filter(b => b > 0)
       .sort((a, b) => a - b);
 
-    // Calculate fit-to-one-page scaling
-    const availMm = bleed ? 297 : 297 - 2 * marginMm;
-    const fullMm = (canvas.height * pdfW) / canvas.width;
-    const fitOne = !repeatBars && fullMm > availMm && fullMm <= availMm * 1.15;
-    const fitF = fitOne ? availMm / fullMm : 1;
-
-    // Updated page loop with bleed gap logic, repeating bars, and fit-to-one-page
+    // Updated page loop with bleed gap logic, repeating bars, and reflow-to-fit
     let y = 0, page = 0;
     while (y < canvas.height - 2 && page < 20) {
       const topMm = repeatBars ? barMm + (page > 0 ? 6 : 0) : bleed ? (page > 0 ? gapMm : 0) : marginMm;
-      const slicePx = repeatBars
+      
+      // 4. Make sure the page-1 slice math can't reject a successful fit
+      const slicePx = fits && page === 0
+        ? canvas.height
+        : repeatBars
         ? Math.floor(((297 - topMm - barMm - 6) * canvas.width) / pdfW)
         : bleed
         ? Math.floor(((297 - topMm - gapMm) * canvas.width) / pdfW)
         : pagePx;
 
-      // Use effective slice height (full height if fitting to one page)
-      const sliceEff = fitOne ? canvas.height : slicePx;
+      const sliceEff = slicePx;
 
       let end = Math.min(y + sliceEff, canvas.height);
       if (canvas.height - y > sliceEff) {
@@ -241,6 +259,9 @@ export async function downloadInvoicePdf(
       const bottomMm = repeatBars ? barMm : bleed ? 0 : marginMm;
       const lastPx = Math.floor(((297 - topMm - bottomMm) * canvas.width) / pdfW);
       if (canvas.height - y <= lastPx) end = canvas.height;
+
+      // 3. Force everything onto one page if the fit check succeeded
+      if (fits && page === 0) end = canvas.height;
 
       const h = end - y;
       if (h <= 0) break;
@@ -262,16 +283,8 @@ export async function downloadInvoicePdf(
         pdf.rect(0, 0, pdfW, pdf.internal.pageSize.getHeight(), 'F');
       }
 
-      // Scaled image drawing for fit-to-one-page
-      const drawW = pdfW * fitF;
-      pdf.addImage(
-        pc.toDataURL('image/jpeg', 0.95),
-        'JPEG',
-        (pdfW - drawW) / 2,
-        topMm,
-        drawW,
-        ((h * pdfW) / canvas.width) * fitF
-      );
+      // Standard image drawing (no scaling needed since reflow handles the height)
+      pdf.addImage(pc.toDataURL('image/jpeg', 0.95), 'JPEG', 0, topMm, pdfW, (h * pdfW) / canvas.width);
 
       // Draw repeating header and footer bars natively on every page
       if (repeatBars) {
