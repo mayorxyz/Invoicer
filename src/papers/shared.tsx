@@ -1,4 +1,4 @@
-import { formatMoney } from '../../lib/money';
+import { formatMoney } from '../lib/money';
 
 export interface PaperProps {
   draft?: any;

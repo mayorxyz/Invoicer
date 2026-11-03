@@ -1,8 +1,8 @@
 import React from 'react';
-import { useStore } from '../../store/useStore';
-import { totals, formatMoney, toMinor } from '../../lib/money';
-import { formatDateLocale } from '../../lib/dates';
-import { MODE_LABELS } from '../../data/countries';
+import { useStore } from '../store/useStore';
+import { totals, formatMoney, toMinor } from '../lib/money';
+import { formatDateLocale } from '../lib/dates';
+import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
 
 type ModernProps = PaperProps & {
@@ -49,7 +49,12 @@ export function Paperformal({
   const metaRow = 'flex justify-between gap-6 py-0.5';
 
   return (
-    <div className="print-paper bg-surface shadow-xl min-h-[297mm] w-full flex flex-col text-[13px] leading-relaxed text-foreground overflow-visible" style={{ fontFamily: 'var(--font-sans)' }}>
+      <div
+        data-template="formal"
+        data-pdf-bleed
+        className="print-paper bg-surface shadow-xl min-h-[297mm] w-full flex flex-col text-[13px] leading-relaxed text-foreground overflow-visible"
+        style={{ fontFamily: 'var(--font-sans)' }}
+      >
       {/* Top Accent Bar with Stripes / Header Block */}
       <div className="w-full text-white p-10 sm:p-14 relative" style={{ backgroundColor: accent }}>
         <div className="max-w-3xl mx-auto text-center space-y-3">
@@ -64,6 +69,8 @@ export function Paperformal({
           {business.taxId && <p className="text-xs font-mono opacity-80 pt-1">{business.taxIdLabel || 'TAX ID'}: {business.taxId}</p>}
         </div>
       </div>
+
+      
 
       <div className="px-6 py-6 sm:px-10 sm:py-8 flex flex-col gap-6">
         {/* Bill To / Ship To / Meta */}

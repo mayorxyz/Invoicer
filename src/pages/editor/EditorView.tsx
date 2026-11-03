@@ -13,7 +13,7 @@ import { CURRENCY_LIST } from '../../data/currencies';
 import { ACCENT_PALETTE, UNITS } from '../../lib/defaults';
 import type { Mode, Status, PaperSize } from '../../types';
 import { PreviewStage } from './PreviewStage';
-import { PaperDefault } from '../../components/papers/Default';
+import { PaperDefault } from '../../papers/Default';
 
 export function EditorView() {
   const { draft, newDraft, updateDraft, saveDraft, state } = useStore();

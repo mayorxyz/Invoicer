@@ -1,8 +1,8 @@
 import React from 'react';
-import { useStore } from '../../store/useStore';
-import { totals, formatMoney, toMinor } from '../../lib/money';
-import { formatDateLocale } from '../../lib/dates';
-import { MODE_LABELS } from '../../data/countries';
+import { useStore } from '../store/useStore';
+import { totals, formatMoney, toMinor } from '../lib/money';
+import { formatDateLocale } from '../lib/dates';
+import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
 
 type MinimalProps = PaperProps & {

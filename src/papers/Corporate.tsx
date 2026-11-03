@@ -1,8 +1,8 @@
 import React from 'react';
-import { useStore } from '../../store/useStore';
-import { totals, formatMoney, toMinor } from '../../lib/money';
-import { formatDateLocale } from '../../lib/dates';
-import { MODE_LABELS } from '../../data/countries';
+import { useStore } from '../store/useStore';
+import { totals, formatMoney, toMinor } from '../lib/money';
+import { formatDateLocale } from '../lib/dates';
+import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
 
 type CorporateProps = PaperProps & {
@@ -49,10 +49,12 @@ export function PaperCorporate({
   const metaRow = 'flex justify-between sm:justify-end gap-6';
 
   return (
-    <div
-      className="print-paper relative bg-surface shadow-xl w-full flex flex-col text-[13px] leading-snug text-foreground overflow-visible"
-      style={{ fontFamily: 'var(--font-sans)' }}
-    >
+      <div
+        data-template="corporate"
+        data-pdf-flow
+        className="print-paper relative bg-surface shadow-xl w-full flex flex-col text-[13px] leading-snug text-foreground overflow-visible"
+        style={{ fontFamily: 'var(--font-sans)' }}
+      >
       {/* Preview-only page guides: hidden in print and skipped by html2canvas/html2pdf */}
       {showPageGuides && (
         <div

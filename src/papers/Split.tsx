@@ -1,8 +1,8 @@
 import React from 'react';
-import { useStore } from '../../store/useStore';
-import { totals, formatMoney, toMinor } from '../../lib/money';
-import { formatDateLocale } from '../../lib/dates';
-import { MODE_LABELS } from '../../data/countries';
+import { useStore } from '../store/useStore';
+import { totals, formatMoney, toMinor } from '../lib/money';
+import { formatDateLocale } from '../lib/dates';
+import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
 
 type SplitProps = PaperProps & {
@@ -48,11 +48,12 @@ export function PaperSplit({
   const metaRow = 'flex justify-between sm:justify-end gap-4';
 
   return (
-    <div
-      data-template="split"
-      className="print-paper relative bg-surface shadow-xl w-full flex flex-col text-[13px] leading-snug text-foreground overflow-visible"
-      style={{ fontFamily: 'var(--font-sans)', ...keepColors }}
-    >
+      <div
+        data-template="split"
+        data-pdf-bleed
+        className="print-paper relative bg-surface shadow-xl w-full flex flex-col text-[13px] leading-snug text-foreground overflow-visible"
+        style={{ fontFamily: 'var(--font-sans)', ...keepColors }}
+      >
       {/* Preview-only page guides: hidden in print and skipped by html2canvas/html2pdf */}
       {showPageGuides && (
         <div
@@ -66,7 +67,7 @@ export function PaperSplit({
       )}
 
       {/* Top Accent Bar */}
-      <div className="w-full h-3 sm:h-4" style={{ backgroundColor: accent, ...keepColors, ...avoidBreak }} />
+      <div data-pdf-header className="w-full h-3 sm:h-4" style={{ backgroundColor: accent, ...keepColors, ...avoidBreak }} />
 
       <div className="px-6 py-5 sm:px-10 sm:py-6 flex flex-col gap-5">
         {/* Business Header */}
@@ -227,7 +228,7 @@ export function PaperSplit({
       </div>
 
       {/* Bottom Accent Bar */}
-      <div className="w-full h-3 sm:h-4" style={{ backgroundColor: accent, ...keepColors, ...avoidBreak }} />
+      <div data-pdf-footer className="w-full h-3 sm:h-4" style={{ backgroundColor: accent, ...keepColors, ...avoidBreak }} />
     </div>
   );
 }

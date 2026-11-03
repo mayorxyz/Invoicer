@@ -1,5 +1,5 @@
-import { formatMoney, toMinor } from '../../lib/money';
-import { formatDateLocale } from '../../lib/dates';
+import { formatMoney, toMinor } from '../lib/money';
+import { formatDateLocale } from '../lib/dates';
 import type { PaperProps } from './shared';
 
 export function PaperDefault({

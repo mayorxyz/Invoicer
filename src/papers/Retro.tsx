@@ -1,8 +1,8 @@
 import React from 'react';
-import { useStore } from '../../store/useStore';
-import { totals, formatMoney, toMinor } from '../../lib/money';
-import { formatDateLocale } from '../../lib/dates';
-import { MODE_LABELS } from '../../data/countries';
+import { useStore } from '../store/useStore';
+import { totals, formatMoney, toMinor } from '../lib/money';
+import { formatDateLocale } from '../lib/dates';
+import { MODE_LABELS } from '../data/countries';
 import type { PaperProps } from './shared';
 
 type RetroProps = PaperProps & {
@@ -51,11 +51,13 @@ export function PaperRetro({
   const labelCell = 'py-1.5 px-2.5 text-right border-r border-black/40';
 
   return (
-    <div
-      data-template="retro"
-      className="print-paper relative shadow-xl w-full flex flex-col text-[12px] leading-snug text-black overflow-visible px-6 py-6 sm:px-10 sm:py-8 gap-5"
-      style={{ backgroundColor: accent, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', ...keepColors }}
-    >
+      <div
+        data-template="retro"
+        data-pdf-bleed
+        data-pdf-paper-bg
+        className="print-paper relative shadow-xl w-full flex flex-col text-[12px] leading-snug text-black overflow-visible px-6 py-6 sm:px-10 sm:py-8 gap-5"
+        style={{ backgroundColor: accent, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', ...keepColors }}
+      >
       {/* Preview-only page guides: hidden in print and skipped by html2canvas/html2pdf */}
       {showPageGuides && (
         <div
