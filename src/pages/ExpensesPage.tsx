@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { PageHeader } from '../components/ui/PageHeader';
-import { StatCard } from '../components/ui/StatCard';
 import { DataTable } from '../components/ui/DataTable';
 import { EmptyState } from '../components/ui/EmptyState';
 import { SampleBanner } from '../components/ui/SampleBanner';
@@ -185,11 +184,12 @@ export function ExpensesPage() {
     },
   ];
 
+  // Added 'color' property to ensure desktop and mobile stats match perfectly
   const statItems = [
-    { label: 'This Month', value: formatMoney(stats.thisMonth * 100, state.settings.homeCurrency), icon: '$' },
-    { label: 'Last Month', value: formatMoney(stats.lastMonth * 100, state.settings.homeCurrency), icon: '←' },
-    { label: 'Top Category', value: stats.topCategory, icon: '#' },
-    { label: 'Total', value: formatMoney(stats.totalExpenses * 100, state.settings.homeCurrency), icon: 'Σ' },
+    { label: 'This Month', value: formatMoney(stats.thisMonth * 100, state.settings.homeCurrency), color: 'text-foreground', icon: '$' },
+    { label: 'Last Month', value: formatMoney(stats.lastMonth * 100, state.settings.homeCurrency), color: 'text-muted', icon: '←' },
+    { label: 'Top Category', value: stats.topCategory, color: 'text-accent', icon: '#' },
+    { label: 'Total', value: formatMoney(stats.totalExpenses * 100, state.settings.homeCurrency), color: 'text-rose-600 dark:text-rose-400', icon: 'Σ' },
   ];
 
   return (
@@ -206,30 +206,24 @@ export function ExpensesPage() {
 
       {isDemo && <SampleBanner onClear={dismissDemo} />}
 
-      {/* Statistics Section: Desktop Cards vs Mobile 2x2 Grid */}
+      {/* Statistics Section */}
       <div className="mb-4">
-        {/* Desktop StatCards */}
+        {/* Desktop Stats (Now uses identical markup/colors as mobile for 100% consistency) */}
         <div className="hidden lg:grid grid-cols-4 gap-4">
-          <StatCard
-            label="This Month"
-            value={formatMoney(stats.thisMonth * 100, state.settings.homeCurrency)}
-            icon="$"
-          />
-          <StatCard
-            label="Last Month"
-            value={formatMoney(stats.lastMonth * 100, state.settings.homeCurrency)}
-            icon="←"
-          />
-          <StatCard
-            label="Top Category"
-            value={stats.topCategory}
-            icon="#"
-          />
-          <StatCard
-            label="Total"
-            value={formatMoney(stats.totalExpenses * 100, state.settings.homeCurrency)}
-            icon="Σ"
-          />
+          {statItems.map((item, idx) => (
+            <div
+              key={idx}
+              className="bg-surface border border-border/80 rounded-xl px-4 py-3 flex flex-col justify-between shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] uppercase font-bold tracking-wider text-muted">{item.label}</span>
+                <span className="text-sm text-muted/80">{item.icon}</span>
+              </div>
+              <span className={`text-lg font-bold mt-2 truncate ${item.color}`}>
+                {item.value}
+              </span>
+            </div>
+          ))}
         </div>
 
         {/* Mobile Compact 2x2 Grid */}
@@ -243,7 +237,7 @@ export function ExpensesPage() {
                 <span className="text-[10px] uppercase font-bold tracking-wider text-muted">{item.label}</span>
                 <span className="text-xs text-muted/80">{item.icon}</span>
               </div>
-              <span className="text-xs md:text-sm font-bold mt-1 truncate text-foreground">
+              <span className={`text-xs md:text-sm font-bold mt-1 truncate ${item.color}`}>
                 {item.value}
               </span>
             </div>

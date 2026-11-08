@@ -53,7 +53,6 @@ export function Sidebar() {
       link.remove();
       updateSettings({ lastBackupDate: new Date().toISOString().slice(0, 10) });
 
-      // Allow the browser to begin downloading before releasing the URL.
       window.setTimeout(() => {
         URL.revokeObjectURL(url);
       }, 1000);
@@ -189,7 +188,6 @@ export function Sidebar() {
                       : 'text-muted hover:bg-background-subtle/70 hover:text-foreground',
                   ].join(' ')}
                 >
-                  {/* Minimal active indicator */}
                   {isActive && (
                     <span
                       aria-hidden="true"
@@ -257,80 +255,84 @@ export function Sidebar() {
         </nav>
       </div>
 
-      {/* Integrated footer */}
-      <footer className="sidebar-footer shrink-0 border-t border-border/70 p-2.5">
+            {/* Redesigned Integrated Footer */}
+      <footer className="sidebar-footer shrink-0 border-t border-border/50 p-3">
         {!collapsed ? (
-          <div className="space-y-2.5">
-            {/* Compact backup action */}
-            <div className="rounded-lg bg-background-subtle/60 p-3">
-              <div className="mb-2.5 flex items-center gap-2.5">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-muted">
-                  <Icon name="download" size={17} />
+          <div className="space-y-3">
+            {/* Elegant Backup Widget */}
+            <div className="group rounded-xl border border-border/60 bg-background-subtle/40 p-3 transition-all hover:border-border hover:bg-background-subtle/80">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent transition-colors group-hover:bg-accent/20">
+                  <Icon name="download" size={16} weight="bold" />
                 </div>
-
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold text-foreground">
-                    Data backup
-                  </p>
-
-                  <p className="mt-0.5 truncate text-[10px] text-muted">
+                  <p className="text-[13px] font-semibold text-foreground">Data Backup</p>
+                  <p className="mt-0.5 truncate text-[11px] text-muted">
                     {state.settings.lastBackupDate
                       ? `Last backup: ${state.settings.lastBackupDate}`
-                      : 'Keep your data safe'}
+                      : 'Export your data locally'}
                   </p>
                 </div>
               </div>
-
-              <Button
+              
+              {/* FIX: Native button with explicit flex classes to prevent wrapper span issues */}
+              <button
                 type="button"
-                variant="ghost"
-                size="sm"
                 onClick={handleBackup}
-                className="w-full justify-center border border-border bg-surface text-xs hover:bg-background-subtle"
+                className="flex w-full items-center justify-center gap-2 rounded-md border border-border/60 bg-surface px-3 text-[12px] font-medium text-foreground transition-all hover:bg-accent/10 hover:text-accent hover:border-accent/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 style={{ height: '32px' }}
               >
-                <Icon name="download" size={14} />
-                <span className="ml-2">Download backup</span>
-              </Button>
+                <Icon name="download" size={14} className="shrink-0" />
+                <span>Download .json</span>
+              </button>
             </div>
 
-            {/* Business profile */}
-            <div className="flex items-center gap-2.5 rounded-lg px-1.5 py-2 transition-colors hover:bg-background-subtle">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-contrast">
+            {/* Business Profile (Clickable to Settings) */}
+            <button
+              type="button"
+              onClick={() => setView('settings')}
+              className="group flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-background-subtle/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-contrast shadow-sm">
                 {businessInitial}
               </div>
-
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-semibold text-foreground">
+                <p className="truncate text-[13px] font-semibold text-foreground">
                   {businessName}
                 </p>
-
-                <p className="truncate text-[10px] text-muted">
+                <p className="truncate text-[11px] text-muted">
                   {businessEmail}
                 </p>
               </div>
-            </div>
+              <Icon 
+                name="gear" 
+                size={14} 
+                className="text-muted shrink-0 opacity-0 transition-opacity group-hover:opacity-100" 
+              />
+            </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-1.5">
+          <div className="flex flex-col items-center gap-3 py-1">
             <Tooltip content="Download backup" position="right">
               <button
                 type="button"
                 onClick={handleBackup}
                 aria-label="Download backup"
-                className="flex h-9 w-9 items-center justify-center rounded-md text-muted transition-colors hover:bg-background-subtle hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:bg-background-subtle hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
-                <Icon name="download" size={18} />
+                <Icon name="download" size={18} className="shrink-0" />
               </button>
             </Tooltip>
 
             <Tooltip content={businessName} position="right">
-              <div
+              <button
+                type="button"
+                onClick={() => setView('settings')}
                 aria-label={businessName}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-xs font-semibold text-accent-contrast"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-contrast shadow-sm transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 {businessInitial}
-              </div>
+              </button>
             </Tooltip>
           </div>
         )}

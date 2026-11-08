@@ -23,6 +23,7 @@ const keepColors = { WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' 
 export function PaperSplit({
   signature = '',
   photos = [],
+  business: businessProp,
   accent: accentProp,
   shipToEnabled = false,
   paymentTerms = '',
@@ -33,7 +34,7 @@ export function PaperSplit({
   const { draft, state } = useStore();
   if (!draft) return null;
 
-  const business = state.businesses[0] || {};
+  const business = businessProp ?? state.businesses[0] ?? {};
   const t = totals(draft);
   const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
@@ -188,7 +189,7 @@ export function PaperSplit({
         >
           <div className="min-w-0 space-y-2 text-xs">
             <div>
-              <p className="font-bold uppercase tracking-wider text-ink text-[11px] mb-0.5 font-mono">Terms & Conditions</p>
+              <p className="font-bold uppercase tracking-wider text-ink text-[11px] mb-0.5 font-mono">Notes & Terms</p>
               <p className="text-slate whitespace-pre-line break-words">{termsText}</p>
             </div>
             {draft.terms && draft.notes && (

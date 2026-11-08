@@ -155,6 +155,14 @@ export async function downloadInvoicePdf(
     }
 
     await document.fonts.ready;
+    await Promise.all(
+      Array.from(clone.querySelectorAll<HTMLElement>('*')).map(el => {
+        const s = getComputedStyle(el);
+        return document.fonts
+          .load(`${s.fontStyle} ${s.fontWeight} ${s.fontSize} ${s.fontFamily}`, 'AaBbCc 0123')
+          .catch(() => []);
+      })
+    );
 
     await Promise.all(
       Array.from(clone.querySelectorAll('img')).map(img =>
@@ -219,12 +227,28 @@ if (!bleed && source.getAttribute('data-template') !== 'corporate') {
       windowHeight: fullHeight,
       logging: false,
       onclone: clonedDoc => {
-        const root = clonedDoc.documentElement;
-        root.classList.remove('dark');
-        root.removeAttribute('data-theme');
-        root.style.colorScheme = 'light';
-        clonedDoc.body.classList.remove('dark');
-      },
+  const root = clonedDoc.documentElement;
+  root.classList.remove('dark');
+  root.removeAttribute('data-theme');
+  root.style.colorScheme = 'light';
+  clonedDoc.body.classList.remove('dark');
+
+  // html2canvas can't render small-caps / OpenType feature text with correct widths
+  const win = clonedDoc.defaultView!;
+  clonedDoc.querySelectorAll<HTMLElement>('.ledger-ed *').forEach(el => {
+    const s = win.getComputedStyle(el);
+    const caps = s.fontVariantCaps && s.fontVariantCaps !== 'normal';
+    const feat = s.fontFeatureSettings && s.fontFeatureSettings !== 'normal';
+    if (caps || feat) {
+      el.style.fontVariantCaps = 'normal';
+      el.style.fontFeatureSettings = 'normal';
+      if (caps) el.style.textTransform = 'uppercase';
+    }
+    el.style.wordSpacing = 'normal';
+    el.style.fontKerning = 'none';
+        el.style.textRendering = 'optimizeSpeed';
+  });
+},
     });
 
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });

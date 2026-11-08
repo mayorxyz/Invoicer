@@ -94,11 +94,13 @@ export function Select({
           if (e.key === 'ArrowDown') { e.preventDefault(); step(1); }
           if (e.key === 'ArrowUp') { e.preventDefault(); step(-1); }
         }}
-        className={`inline-flex items-center justify-between gap-2 border border-border rounded-md bg-surface text-foreground px-2.5 text-xs font-medium text-left cursor-pointer hover:border-[var(--border-strong)] focus:border-[var(--accent)] disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+        // Made smaller: h-8 sm:h-9, reduced padding (px-2.5 py-1.5), smaller gap, and changed bg-surface to bg-background to remove the stark white
+        className={`inline-flex items-center justify-between gap-2 border border-border rounded-md bg-background text-foreground px-2.5 py-1.5 text-xs sm:text-sm font-medium text-left h-8 sm:h-9 cursor-pointer hover:border-[var(--border-strong)] focus:border-[var(--accent)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${className}`}
       >
-        <span className="truncate">{current?.label ?? ''}</span>
-        <Icon name="caret-down" size={12} />
+        <span className="truncate">{current?.label ?? 'Select...'}</span>
+        <Icon name="caret-down" size={14} className="opacity-60" />
       </button>
+      
       {open && createPortal(
         <>
           <div className="fixed inset-0 z-[100]" onClick={() => setOpen(false)} />
@@ -118,12 +120,12 @@ export function Select({
                   aria-selected={active}
                   disabled={o.disabled}
                   onClick={() => pick(o.value)}
-                  className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between cursor-pointer disabled:opacity-40 ${
+                  className={`w-full text-left px-3 py-2 text-xs sm:text-sm flex items-center justify-between cursor-pointer disabled:opacity-40 transition-colors ${
                     active ? 'bg-accent/10 font-semibold text-accent' : 'text-foreground hover:bg-background-subtle'
                   }`}
                 >
-                  <span>{o.label}</span>
-                  {active && <Icon name="check" size={14} color="var(--accent)" />}
+                  <span className="truncate">{o.label}</span>
+                  {active && <Icon name="check" size={14} className="text-accent flex-shrink-0" />}
                 </button>
               );
             })}

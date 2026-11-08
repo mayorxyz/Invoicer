@@ -23,6 +23,7 @@ const corporateTextColor = '#801515';
 export function PaperCorporate({
   signature = '',
   photos = [],
+  business: businessProp,
   accent: accentProp,
   shipToEnabled = false,
   paymentTerms = '',
@@ -33,7 +34,7 @@ export function PaperCorporate({
   const { draft, state } = useStore();
   if (!draft) return null;
 
-  const business = state.businesses[0] || {};
+  const business = businessProp ?? state.businesses[0] ?? {};
   const t = totals(draft);
   const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
@@ -200,7 +201,7 @@ export function PaperCorporate({
         >
           <div className="min-w-0 space-y-2">
             <div>
-              <p className="font-bold uppercase tracking-wider text-slate text-[10px] mb-1 font-mono">Terms & Conditions</p>
+              <p className="font-bold uppercase tracking-wider text-slate text-[10px] mb-1 font-mono">Notes & Terms</p>
               <p className="text-xs text-slate whitespace-pre-line break-words">{termsText}</p>
             </div>
             {draft.terms && draft.notes && (

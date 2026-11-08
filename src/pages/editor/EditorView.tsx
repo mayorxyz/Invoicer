@@ -10,7 +10,7 @@ import { totals, formatMoney } from '../../lib/money';
 import { today, addDays } from '../../lib/dates';
 import { getCountry, MODE_LABELS } from '../../data/countries';
 import { CURRENCY_LIST } from '../../data/currencies';
-import { ACCENT_PALETTE, UNITS } from '../../lib/defaults';
+import { ACCENT_NONE, ACCENT_PALETTE, UNITS } from '../../lib/defaults';
 import type { Mode, Status, PaperSize } from '../../types';
 import { PreviewStage } from './PreviewStage';
 import { PaperDefault } from '../../papers/Default';
@@ -18,9 +18,23 @@ import { PaperDefault } from '../../papers/Default';
 export function EditorView() {
   const { draft, newDraft, updateDraft, saveDraft, state } = useStore();
   const [mobileTab, setMobileTab] = useState<'form' | 'preview'>('form');
+  const [business, setBusiness] = useState(() => ({
+    ...state.businesses[0],
+    paymentInstructions: [...(state.businesses[0]?.paymentInstructions ?? [])],
+    numberPrefix: { ...(state.businesses[0]?.numberPrefix ?? {}) },
+    counter: { ...(state.businesses[0]?.counter ?? {}) },
+  }));
 
-  const business = state.businesses[0];
   const country = getCountry(state.settings.country);
+
+  React.useEffect(() => {
+    setBusiness({
+      ...state.businesses[0],
+      paymentInstructions: [...(state.businesses[0]?.paymentInstructions ?? [])],
+      numberPrefix: { ...(state.businesses[0]?.numberPrefix ?? {}) },
+      counter: { ...(state.businesses[0]?.counter ?? {}) },
+    });
+  }, [state.businesses[0]]);
 
   if (!draft) {
     return (
@@ -99,9 +113,9 @@ export function EditorView() {
         <Accordion>
           <AccordionSection index="01" title="Business" completed={completedSections.business} defaultOpen>
             <div className="space-y-3">
-              <Input label="Business name" value={business.name} onChange={e => useStore.getState().updateBusiness({ name: e.target.value })} />
-              <Input label="Email" type="email" value={business.email} onChange={e => useStore.getState().updateBusiness({ email: e.target.value })} />
-              <Textarea label="Address" value={business.address} onChange={e => useStore.getState().updateBusiness({ address: e.target.value })} rows={2} />
+              <Input label="Business name" value={business.name} onChange={e => setBusiness(prev => ({ ...prev, name: e.target.value }))} />
+              <Input label="Email" type="email" value={business.email} onChange={e => setBusiness(prev => ({ ...prev, email: e.target.value }))} />
+              <Textarea label="Address" value={business.address} onChange={e => setBusiness(prev => ({ ...prev, address: e.target.value }))} rows={2} />
             </div>
           </AccordionSection>
 

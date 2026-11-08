@@ -1,7 +1,7 @@
 import type { AppState, Invoice, Client, SavedItem, Expense, TimeEntry, BusinessProfile, Settings } from '../types';
 import { DEFAULT_BUSINESS, DEFAULT_SETTINGS } from './defaults';
 
-const SCHEMA_VERSION = 3;
+const SCHEMA_VERSION = 4;
 const KEY = 'invoicer_v2';
 const OLD_NONE_ACCENT = '#111827';
 
@@ -16,9 +16,12 @@ function migrateAccentV2(state: AppState): AppState {
     invoices: (state.invoices || []).map((inv) =>
       inv.accent === OLD_NONE_ACCENT ? { ...inv, accent: 'none' } : inv,
     ),
-    businesses: (state.businesses || []).map((b) =>
-      b.defaultAccent === OLD_NONE_ACCENT ? { ...b, defaultAccent: 'none' } : b,
-    ),
+    businesses: (state.businesses || []).map((b) => {
+      const next: BusinessProfile = { ...b };
+      if (next.defaultAccent === OLD_NONE_ACCENT) next.defaultAccent = 'none';
+      if (!next.defaultTemplate || next.defaultTemplate === 'minimal') next.defaultTemplate = 'default';
+      return next;
+    }),
   };
 }
 

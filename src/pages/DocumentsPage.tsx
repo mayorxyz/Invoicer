@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useStore } from '../store/useStore';
 import { PageHeader } from '../components/ui/PageHeader';
-import { StatCard } from '../components/ui/StatCard';
 import { DataTable } from '../components/ui/DataTable';
 import { EmptyState } from '../components/ui/EmptyState';
 import { SampleBanner } from '../components/ui/SampleBanner';
@@ -38,30 +37,38 @@ export function DocumentsPage() {
     };
   }, [activeDropdownId]);
 
-  // Calculate statistics
+  // Calculate statistics (Fixed to respect status changes)
   const stats = useMemo(() => {
-    const invoices = state.invoices;
-    const totalInvoiced = invoices.reduce((sum, inv) => {
-      const total = inv.items.reduce((s, item) => s + item.qty * item.price, 0);
-      return sum + total;
-    }, 0);
+    let totalInvoiced = 0;
+    let totalPaid = 0;
+    let totalOutstanding = 0;
+    let totalOverdue = 0;
 
-    const totalPaid = invoices.reduce((sum, inv) => {
-      return sum + inv.payments.reduce((s, p) => s + p.amount, 0);
-    }, 0);
-
-    const totalOutstanding = totalInvoiced - totalPaid;
-
-    const overdueInvoices = invoices.filter(inv => {
+    state.invoices.forEach(inv => {
       const status = inv.status || derivedStatus(inv);
-      return status === 'overdue';
-    });
-
-    const totalOverdue = overdueInvoices.reduce((sum, inv) => {
       const total = inv.items.reduce((s, item) => s + item.qty * item.price, 0);
       const paid = inv.payments.reduce((s, p) => s + p.amount, 0);
-      return sum + (total - paid);
-    }, 0);
+      const balance = Math.max(0, total - paid);
+
+      // Exclude cancelled invoices from all dashboard stats entirely
+      if (status === 'cancelled') return;
+
+      totalInvoiced += total;
+
+      if (status === 'paid') {
+        // If manually marked as paid, the entire invoice total counts as paid
+        totalPaid += total;
+      } else {
+        // Otherwise, only count actual recorded payments
+        totalPaid += paid;
+        // The remaining balance is outstanding
+        totalOutstanding += balance;
+        
+        if (status === 'overdue') {
+          totalOverdue += balance;
+        }
+      }
+    });
 
     return {
       invoiced: totalInvoiced,
@@ -222,32 +229,25 @@ export function DocumentsPage() {
 
       {/* Statistics Section */}
       <div className="mb-4">
+        {/* Desktop Stats (Now uses identical markup/colors as mobile for 100% consistency) */}
         <div className="hidden lg:grid grid-cols-4 gap-4">
-          <StatCard
-            label="Invoiced"
-            value={formatMoney(stats.invoiced, state.settings.homeCurrency)}
-            icon="$"
-          />
-          <StatCard
-            label="Paid"
-            value={formatMoney(stats.paid, state.settings.homeCurrency)}
-            icon="✓"
-            className="text-emerald-600 dark:text-emerald-400"
-          />
-          <StatCard
-            label="Outstanding"
-            value={formatMoney(stats.outstanding, state.settings.homeCurrency)}
-            icon="⏱"
-            className="text-amber-600 dark:text-amber-400"
-          />
-          <StatCard
-            label="Overdue"
-            value={formatMoney(stats.overdue, state.settings.homeCurrency)}
-            icon="⚠"
-            className="text-rose-600 dark:text-rose-400"
-          />
+          {statItems.map((item, idx) => (
+            <div
+              key={idx}
+              className="bg-surface border border-border/80 rounded-xl px-4 py-3 flex flex-col justify-between shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] uppercase font-bold tracking-wider text-muted">{item.label}</span>
+                <span className="text-sm text-muted/80">{item.icon}</span>
+              </div>
+              <span className={`text-lg font-bold mt-2 truncate ${item.color}`}>
+                {item.value}
+              </span>
+            </div>
+          ))}
         </div>
 
+        {/* Mobile Stats */}
         <div className="lg:hidden grid grid-cols-2 gap-2">
           {statItems.map((item, idx) => (
             <div

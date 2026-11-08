@@ -25,15 +25,14 @@ export const DEFAULT_BUSINESS: BusinessProfile = {
   defaultPricingMode: 'exclusive',
   defaultDueDays: 14,
   defaultNotes: 'Thank you for your business!',
-  defaultTerms: 'Payment is due within the specified period.',
-  defaultTemplate: 'minimal',
+  defaultTemplate: 'default',
   defaultAccent: 'none',
   defaultPaperSize: 'A4',
   defaultLanguage: 'en',
 };
 
 export const DEFAULT_SETTINGS: Settings = {
-  schemaVersion: 3,
+  schemaVersion: 4,
   language: 'en',
   theme: 'system',
   accent: 'none',

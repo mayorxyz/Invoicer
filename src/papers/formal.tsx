@@ -22,6 +22,7 @@ const avoidBreak: React.CSSProperties = { breakInside: 'avoid', pageBreakInside:
 export function Paperformal({
   signature = '',
   photos = [],
+  business: businessProp,
   accent: accentProp,
   shipToEnabled = false,
   paymentTerms = '',
@@ -32,7 +33,7 @@ export function Paperformal({
   const { draft, state } = useStore();
   if (!draft) return null;
 
-  const business = state.businesses[0] || {};
+  const business = businessProp ?? state.businesses[0] ?? {};
   const t = totals(draft);
   const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);
@@ -185,12 +186,7 @@ export function Paperformal({
                     <p className="text-xs text-slate whitespace-pre-line break-words">{draft.notes}</p>
                   </div>
                 )}
-                {draft.terms && (
-                  <div>
-                    <p className="font-bold uppercase tracking-wider text-slate text-[10px] mb-1 font-mono">Terms & Conditions</p>
-                    <p className="text-xs text-slate whitespace-pre-line break-words">{draft.terms}</p>
-                  </div>
-                )}
+        
                 {hasBank && (
                   <div className="text-xs space-y-0.5 text-slate">
                     {draft.bankName && (

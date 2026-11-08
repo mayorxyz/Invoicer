@@ -178,6 +178,10 @@ export interface BusinessProfile {
   taxId?: string;
   taxIdLabel?: string;
   regNumber?: string;
+  registrationNumber?: string;
+  bankName?: string;
+  bankAccount?: string;
+  bankRouting?: string;
   country: CountryCode;
   paymentInstructions: PaymentInstruction[];
   signature?: string;

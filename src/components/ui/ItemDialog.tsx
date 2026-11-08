@@ -16,7 +16,7 @@ export function ItemDialog({ open, onClose, onSave, initialData }: ItemDialogPro
   const [sku, setSku] = useState('');
   const [category, setCategory] = useState('');
   const [unit, setUnit] = useState('pcs');
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState('');
   const [tax, setTax] = useState(0);
   const [active, setActive] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -28,7 +28,7 @@ export function ItemDialog({ open, onClose, onSave, initialData }: ItemDialogPro
         setSku(initialData.sku || '');
         setCategory(initialData.category || '');
         setUnit(initialData.unit);
-        setPrice(initialData.price);
+        setPrice(String(initialData.price));
         setTax(0); // SavedItem doesn't have tax field, default to 0
         setActive(true);
       } else {
@@ -36,7 +36,7 @@ export function ItemDialog({ open, onClose, onSave, initialData }: ItemDialogPro
         setSku('');
         setCategory('');
         setUnit('pcs');
-        setPrice(0);
+        setPrice('');
         setTax(0);
         setActive(true);
       }
@@ -49,7 +49,7 @@ export function ItemDialog({ open, onClose, onSave, initialData }: ItemDialogPro
     if (!name.trim()) {
       newErrors.name = 'Name is required';
     }
-    if (price < 0) {
+    if ((parseFloat(price) || 0) < 0) {
       newErrors.price = 'Price must be positive';
     }
     setErrors(newErrors);
@@ -65,7 +65,7 @@ export function ItemDialog({ open, onClose, onSave, initialData }: ItemDialogPro
       sku: sku.trim() || undefined,
       category: category.trim() || undefined,
       unit,
-      price,
+      price: parseFloat(price) || 0,
     });
     onClose();
   };
@@ -157,7 +157,7 @@ export function ItemDialog({ open, onClose, onSave, initialData }: ItemDialogPro
             <input
               type="number"
               value={price}
-              onChange={(e) => setPrice(parseFloat(e.target.value) || 0)}
+              onChange={(e) => setPrice(e.target.value)}
               className={`w-full px-3 py-2.5 bg-background border rounded-md text-sm ${
                 errors.price ? 'border-danger' : 'border-border'
               }`}

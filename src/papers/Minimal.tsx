@@ -16,6 +16,7 @@ type MinimalProps = PaperProps & {
 export function PaperMinimal({
   signature = '',
   photos = [],
+  business: businessProp,
   accent: accentProp,
   shipToEnabled = false,
   paymentTerms = '',
@@ -24,7 +25,7 @@ export function PaperMinimal({
   const { draft, state } = useStore();
   if (!draft) return null;
 
-  const business = state.businesses[0] || {};
+  const business = businessProp ?? state.businesses[0] ?? {};
   const t = totals(draft);
   const accent = resolveAccent(accentProp, state.settings?.accent, draft.accent);
   const m = (n: number) => formatMoney(n, draft.currency);

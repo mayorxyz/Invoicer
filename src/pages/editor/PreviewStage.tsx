@@ -191,7 +191,8 @@ export function PreviewStage({
 
   const renderSelectedTemplate = () => {
     if (paper) return paper;
-    const common = { accent, signature, photos, ...extra };
+    const business = state.businesses[0];
+    const common = { business, accent, signature, photos, ...extra };
     switch (draft.template) {
       case 'minimal': return <PaperMinimal {...common} />;
       case 'corporate': return <PaperCorporate {...common} />;
@@ -206,7 +207,7 @@ export function PreviewStage({
         return (
           <PaperDefault
             draft={draft}
-            business={state.businesses[0]}
+            business={business}
             totals={totals(draft)}
             accent={accent}
             shipToEnabled={extra.shipToEnabled}

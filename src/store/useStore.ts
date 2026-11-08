@@ -113,6 +113,9 @@ function createEmptyDoc(mode: Mode, business: BusinessProfile): Invoice {
     discType: 'percent', discVal: 0,
     shipping: 0,
     payments: [],
+    bankName: business.bankName || '',
+    bankAccount: business.bankAccount || '',
+    bankRouting: business.bankRouting || '',
     paymentInstructions: [...business.paymentInstructions],
     milestones: [],
     notes: business.defaultNotes,
@@ -142,10 +145,7 @@ function dismissDemoOnWrite(state: AppState): AppState {
 }
 
 export const useStore = create<Store>((set, get) => ({
-  state: {
-    schemaVersion: 3, invoices: [], clients: [], savedItems: [], expenses: [], timeEntries: [],
-    businesses: [DEFAULT_BUSINESS], activeBusinessId: DEFAULT_BUSINESS.id, settings: DEFAULT_SETTINGS,
-  },
+  state: storage.loadState(),
   draft: null,
   view: 'editor',
   mobileTab: 'form',
@@ -450,7 +450,7 @@ export const useStore = create<Store>((set, get) => ({
   wipeAll: () => {
     storage.wipeAll();
     const fresh: AppState = {
-      schemaVersion: 3, invoices: [], clients: [], savedItems: [], expenses: [], timeEntries: [],
+      schemaVersion: 4, invoices: [], clients: [], savedItems: [], expenses: [], timeEntries: [],
       businesses: [DEFAULT_BUSINESS], activeBusinessId: DEFAULT_BUSINESS.id, settings: DEFAULT_SETTINGS,
     };
     set({ state: fresh, draft: null });

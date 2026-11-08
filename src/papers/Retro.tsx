@@ -22,6 +22,7 @@ const keepColors = { WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' 
 export function PaperRetro({
   signature = '',
   photos = [],
+  business: businessProp,
   shipToEnabled = false,
   paymentTerms = '',
   poNumber: poProp,
@@ -31,7 +32,7 @@ export function PaperRetro({
   const { draft, state } = useStore();
   if (!draft) return null;
 
-  const business = state.businesses[0] || {};
+  const business = businessProp ?? state.businesses[0] ?? {};
   const t = totals(draft);
   const m = (n: number) => formatMoney(n, draft.currency);
   const fmt = (d: string) => (d ? formatDateLocale(d, 'en-US', 'MM/dd/yyyy') : '');
@@ -219,7 +220,7 @@ export function PaperRetro({
               )}
               {draft.terms && (
                 <div>
-                  <p className="font-bold uppercase tracking-wider text-[10px] mb-0.5">Terms & Conditions</p>
+                  <p className="font-bold uppercase tracking-wider text-[10px] mb-0.5">Notes & Terms</p>
                   <p className="whitespace-pre-line break-words">{draft.terms}</p>
                 </div>
               )}

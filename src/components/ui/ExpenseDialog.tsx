@@ -17,9 +17,9 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
   const [date, setDate] = useState(today());
   const [vendor, setVendor] = useState('');
   const [category, setCategory] = useState('');
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState('');
   const [currency, setCurrency] = useState('USD');
-  const [tax, setTax] = useState(0);
+  const [tax, setTax] = useState('');
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -29,17 +29,17 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
         setDate(initialData.date);
         setVendor(initialData.vendor);
         setCategory(initialData.category);
-        setAmount(initialData.amount);
+        setAmount(String(initialData.amount));
         setCurrency(initialData.currency);
-        setTax(initialData.tax || 0);
+        setTax(initialData.tax ? String(initialData.tax) : '');
         setNotes(initialData.note || '');
       } else {
         setDate(today());
         setVendor('');
         setCategory('');
-        setAmount(0);
+        setAmount('');
         setCurrency('USD');
-        setTax(0);
+        setTax('');
         setNotes('');
       }
       setErrors({});
@@ -51,7 +51,7 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
     if (!vendor.trim()) {
       newErrors.vendor = 'Vendor is required';
     }
-    if (amount <= 0) {
+    if ((parseFloat(amount) || 0) <= 0) {
       newErrors.amount = 'Amount must be greater than 0';
     }
     setErrors(newErrors);
@@ -66,9 +66,9 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
       date,
       vendor: vendor.trim(),
       category: category.trim() || 'General',
-      amount,
+      amount: parseFloat(amount) || 0,
       currency,
-      tax: tax || undefined,
+      tax: parseFloat(tax) || undefined,
       note: notes.trim() || undefined,
     });
     onClose();
@@ -145,7 +145,7 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
             <input
               type="number"
               value={amount}
-              onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
+              onChange={(e) => setAmount(e.target.value)}
               className={`w-full px-3 py-2.5 bg-background border rounded-md text-sm ${
                 errors.amount ? 'border-danger' : 'border-border'
               }`}
@@ -176,7 +176,7 @@ export function ExpenseDialog({ open, onClose, onSave, initialData }: ExpenseDia
           <input
             type="number"
             value={tax}
-            onChange={(e) => setTax(parseFloat(e.target.value) || 0)}
+            onChange={(e) => setTax(e.target.value)}
             className="w-full text-sm"
             placeholder="0.00"
             step="0.01"

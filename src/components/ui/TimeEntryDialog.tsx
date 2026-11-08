@@ -17,7 +17,7 @@ export function TimeEntryDialog({ open, onClose, onSave, initialData }: TimeEntr
   const [description, setDescription] = useState('');
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('17:00');
-  const [rate, setRate] = useState(0);
+  const [rate, setRate] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -28,14 +28,14 @@ export function TimeEntryDialog({ open, onClose, onSave, initialData }: TimeEntr
         setDescription(initialData.description);
         setStartTime(initialData.startTime.split('T')[1]?.substring(0, 5) || '09:00');
         setEndTime(initialData.endTime?.split('T')[1]?.substring(0, 5) || '17:00');
-        setRate(initialData.rate);
+        setRate(String(initialData.rate));
       } else {
         setDate(today());
         setClientId('');
         setDescription('');
         setStartTime('09:00');
         setEndTime('17:00');
-        setRate(0);
+        setRate('');
       }
       setErrors({});
     }
@@ -46,7 +46,7 @@ export function TimeEntryDialog({ open, onClose, onSave, initialData }: TimeEntr
     if (!description.trim()) {
       newErrors.description = 'Description is required';
     }
-    if (rate <= 0) {
+    if ((parseFloat(rate) || 0) <= 0) {
       newErrors.rate = 'Rate must be greater than 0';
     }
     setErrors(newErrors);
@@ -63,7 +63,7 @@ export function TimeEntryDialog({ open, onClose, onSave, initialData }: TimeEntr
       description: description.trim(),
       startTime: `${date}T${startTime}:00`,
       endTime: `${date}T${endTime}:00`,
-      rate,
+      rate: parseFloat(rate) || 0,
       currency: 'USD',
     });
     onClose();
@@ -159,7 +159,7 @@ export function TimeEntryDialog({ open, onClose, onSave, initialData }: TimeEntr
           <input
             type="number"
             value={rate}
-            onChange={(e) => setRate(parseFloat(e.target.value) || 0)}
+            onChange={(e) => setRate(e.target.value)}
             className={`w-full px-3 py-2.5 bg-background border rounded-md text-sm ${
               errors.rate ? 'border-danger' : 'border-border'
             }`}

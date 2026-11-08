@@ -20,27 +20,21 @@ export function PaperDefault({
       {/* Header */}
       <div className="invoice-header flex flex-row justify-between items-start gap-4 @md:gap-6 border-b border-[#e4e4e4] pb-5 @md:pb-6">
         <div className="from-block min-w-0 max-w-[58%] space-y-2 @md:space-y-3">
-          {business.logo ? (
+          {business.logo && (
             <img src={business.logo} alt="Logo" className="h-10 @md:h-12 max-w-[160px] object-contain" />
-          ) : (
-            <div className="text-xs font-mono italic text-muted print:hidden">[Company Logo]</div>
           )}
-          {business.name ? (
+          {business.name && (
             <div className="from-value text-sm @md:text-base font-bold break-words">{business.name}</div>
-          ) : (
-            <div className="text-sm @md:text-base font-bold print:hidden">Acme Corporation</div>
           )}
-          {business.address ? (
+          {business.address && (
             <div className="from-value text-xs whitespace-pre-line leading-relaxed break-words">{business.address}</div>
-          ) : (
-            <div className="text-xs text-muted whitespace-pre-line leading-relaxed print:hidden">123 Innovation Way, Suite 400</div>
           )}
           {(business.email || business.phone) && (
             <div className="from-value text-xs mt-1 break-all">
               {business.email}{business.email && business.phone ? ' • ' : ''}{business.phone}
             </div>
           )}
-          {business.taxId && <div className="from-value text-[11px] font-mono">TAX ID: {business.taxId}</div>}
+          {business.taxId && <div className="from-value text-[11px] font-mono">{business.taxIdLabel || 'Tax ID'}: {business.taxId}</div>}
         </div>
         <div className="invoice-meta ml-auto shrink-0 text-right space-y-2">
           <div className="text-xl @sm:text-2xl @md:text-3xl font-black tracking-tight uppercase" style={{ color: '#1e293b' }}>
@@ -60,10 +54,8 @@ export function PaperDefault({
       <div data-pdf-break className="grid grid-cols-1 @sm:grid-cols-2 gap-5 text-xs">
         <div className="border-l-2 pl-3 py-0.5 min-w-0" style={{ borderColor: accentLine(resolvedAccent) }}>
           <div className="text-[10px] uppercase font-bold tracking-wider text-muted mb-1">Bill To</div>
-          {draft.client.name ? (
+          {draft.client.name && (
             <div className="font-bold text-foreground break-words">{draft.client.name}</div>
-          ) : (
-            <div className="font-bold text-foreground print:hidden">Client Name</div>
           )}
           {draft.client.address && <div className="text-muted whitespace-pre-line break-words">{draft.client.address}</div>}
           {(draft.client.email || draft.client.phone) && (
@@ -75,8 +67,8 @@ export function PaperDefault({
         {shipToEnabled && (
           <div className="border-l-2 border-rule pl-3 py-0.5 min-w-0">
             <div className="text-[10px] uppercase font-bold tracking-wider text-muted mb-1">Ship To</div>
-            <div className="font-bold text-foreground break-words">{draft.shipToName || 'Recipient Name'}</div>
-            <div className="text-muted whitespace-pre-line break-words">{draft.shipToAddress || 'Shipping Address'}</div>
+            {draft.shipToName && <div className="font-bold text-foreground break-words">{draft.shipToName}</div>}
+            {draft.shipToAddress && <div className="text-muted whitespace-pre-line break-words">{draft.shipToAddress}</div>}
           </div>
         )}
       </div>
@@ -119,7 +111,7 @@ export function PaperDefault({
         <div className="flex-1 min-w-0 text-xs space-y-4 notes-block @md:pr-2">
           <div className="space-y-1">
             <div className="text-[10px] uppercase font-bold tracking-wider text-muted">Notes & Terms</div>
-            <div className="text-[11px] text-muted whitespace-pre-line leading-relaxed break-words">{draft.notes || 'Thank you for your business!'}</div>
+            <div className="text-[11px] text-muted whitespace-pre-line leading-relaxed break-words">{draft.notes}</div>
           </div>
 
           <div className="pt-2 space-y-0.5 text-slate">

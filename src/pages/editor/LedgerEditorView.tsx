@@ -3,7 +3,7 @@ import { useStore } from '../../store/useStore';
 import { Icon } from '../../components/ui/Icon';
 import { totals, formatMoney, fromMinor } from '../../lib/money';
 import { today, addDays } from '../../lib/dates';
-import type { Mode, Template } from '../../types';
+import type { Mode, Template, BusinessProfile } from '../../types';
 import { v4 as uuid } from 'uuid';
 import { downloadInvoicePdf } from '../../lib/downloadInvoicePdf';
 import { EditorForm } from './EditorForm';
@@ -19,7 +19,7 @@ import { PaperSplit } from '../../papers/Split';
 import { PaperModernClean } from '../../papers/ModernClean';
 import { PreviewStage } from './PreviewStage';
 import { FontSizeControl } from '../../components/ui/FontSizeControl';
-import { FontStyleControl } from '../../components/ui/FontStyleControl';
+import { FontStyleControl, PaperTypography } from '../../components/ui/FontStyleControl';
 import { ACCENT_NONE } from '../../lib/defaults';
 import { resolveAccent } from '../../lib/accent';
 
@@ -40,17 +40,32 @@ export function LedgerEditorView() {
   const { draft, newDraft, updateDraft, saveDraft, state, updateSettings } = useStore();
   const [mobileTab, setMobileTab] = useState<'form' | 'preview'>('form');
   const [shipToEnabled, setShipToEnabled] = useState(false);
-  const [signature, setSignature] = useState<string>('');
+  const [signature, setSignature] = useState<string>(state.businesses[0]?.signature || '');
+  // Editor keeps its own copy of the business profile so temporary edits never
+  // mutate the saved profile in Settings or the active business store entry.
+  const [business, setBusiness] = useState<BusinessProfile>(() => ({
+    ...state.businesses[0],
+    paymentInstructions: [...(state.businesses[0]?.paymentInstructions ?? [])],
+    numberPrefix: { ...(state.businesses[0]?.numberPrefix ?? {}) },
+    counter: { ...(state.businesses[0]?.counter ?? {}) },
+  }));
   const [photos, setPhotos] = useState<string[]>([]);
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState<string>('');
   const [accentOpen, setAccentOpen] = useState(false);
-  const [template, setTemplate] = useState<Template>('default');
+  const accentBtnRef = useRef<HTMLButtonElement>(null);
+  const [accentPos, setAccentPos] = useState({ top: 0, left: 0 });
   const [splitPercent, setSplitPercent] = useState(50);
   const [isDraggingSplit, setIsDraggingSplit] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
   const splitContainerRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+
+  const toggleAccent = () => {
+    const r = accentBtnRef.current?.getBoundingClientRect();
+    if (r) setAccentPos({ top: r.bottom + 6, left: r.left });
+    setAccentOpen(o => !o);
+  };
 
   const moveSplit = (clientX: number) => {
     const bounds = splitContainerRef.current?.getBoundingClientRect();
@@ -62,6 +77,18 @@ export function LedgerEditorView() {
   useEffect(() => {
     if (!draft) newDraft('invoice');
   }, []);
+
+  // Load saved business details into the editor whenever the saved profile
+  // changes (first load, Settings save, or backup restore).
+  useEffect(() => {
+    setBusiness({
+      ...state.businesses[0],
+      paymentInstructions: [...(state.businesses[0]?.paymentInstructions ?? [])],
+      numberPrefix: { ...(state.businesses[0]?.numberPrefix ?? {}) },
+      counter: { ...(state.businesses[0]?.counter ?? {}) },
+    });
+    setSignature(state.businesses[0]?.signature || '');
+  }, [state.businesses[0]]);
 
   const handleSave = useCallback(() => {
     saveDraft();
@@ -82,11 +109,13 @@ export function LedgerEditorView() {
 
   if (!draft) return null;
 
+  const template = draft.template;
   const accent = resolveAccent(undefined, state.settings.accent, draft.accent);
   const uiAccent = accent === ACCENT_NONE ? '#111827' : accent;
-  const business = state.businesses[0];
   const t = totals(draft);
-  const setBiz = (patch: Record<string, unknown>) => useStore.getState().updateBusiness(patch as any);
+
+  const setBiz = (patch: Record<string, unknown>) =>
+    setBusiness(prev => ({ ...prev, ...patch } as BusinessProfile));
 
   const getPaymentTerms = () => {
     const days = Math.round((new Date(draft.dueDate).getTime() - new Date(draft.issueDate).getTime()) / 86400000);
@@ -161,13 +190,6 @@ export function LedgerEditorView() {
     setShipToEnabled(false);
   };
 
-  const handlePrint = () => {
-    const originalTitle = document.title;
-    document.title = `${draft.number}-${draft.client.name || 'client'}`;
-    window.print();
-    setTimeout(() => { document.title = originalTitle; }, 100);
-  };
-
   const handleDownloadPDF = async () => {
     setIsDownloading(true);
     setDownloadError('');
@@ -195,35 +217,31 @@ export function LedgerEditorView() {
     : <PaperMinimal {...paperProps} />;
 
   const bar = (
-    <div className="flex items-center justify-between gap-2 sm:gap-3">
-      <div className="flex items-center gap-3 sm:gap-6 font-mono min-w-0">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+      <div className="flex items-center justify-between gap-3 sm:justify-start sm:gap-6 font-mono min-w-0">
         <div className="min-w-0">
           <div className="text-[9px] sm:text-[10px] uppercase font-bold text-muted">Total</div>
           <div className="text-xs sm:text-sm md:text-base font-bold text-foreground whitespace-nowrap">{formatMoney(t.total, draft.currency)}</div>
         </div>
-        <div className="h-6 sm:h-8 w-px bg-rule shrink-0" />
-        <div className="min-w-0">
-          <div className="text-[9px] sm:text-[10px] uppercase font-bold" style={{ color: 'var(--accent)' }}>Balance Due</div>
-          <div className="text-sm sm:text-base md:text-lg font-extrabold whitespace-nowrap" style={{ color: 'var(--accent)' }}>{formatMoney(Math.max(0, t.balance), draft.currency)}</div>
+        <div className="hidden sm:block h-6 sm:h-8 w-px bg-rule shrink-0" />
+        <div className="min-w-0 text-right sm:text-left">
+          <div className="text-[9px] sm:text-[10px] uppercase font-bold" style={{ color: 'var(--color-foreground)' }}>Balance Due</div>
+          <div className="text-sm sm:text-base md:text-lg font-extrabold whitespace-nowrap" style={{ color: 'var(--color-foreground)' }}>{formatMoney(Math.max(0, t.balance), draft.currency)}</div>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-1.5 sm:flex sm:items-start sm:gap-2 shrink-0">
-        <button onClick={handlePrint} className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-background text-foreground border border-rule rounded-lg text-[11px] sm:text-xs font-semibold px-2 sm:px-3 h-8 sm:h-10 hover:bg-background/80 transition-colors">
-          <Icon name="printer" size={14} />
-          <span>Print</span>
-        </button>
+      <div className="grid grid-cols-2 gap-1.5 sm:flex sm:items-start sm:gap-2 sm:shrink-0">
         <div className="flex flex-col gap-1 min-w-0">
-          <button onClick={handleDownloadPDF} disabled={isDownloading} className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-background text-foreground border border-rule rounded-lg text-[11px] sm:text-xs font-semibold px-2 sm:px-3 h-8 sm:h-10 hover:bg-background/80 transition-colors disabled:opacity-50">
+          <button onClick={handleDownloadPDF} disabled={isDownloading} className="inline-flex w-full sm:w-auto items-center justify-center gap-1.5 sm:gap-2 bg-background text-foreground border border-rule rounded-lg text-[11px] sm:text-xs font-semibold px-2 sm:px-3 h-9 sm:h-10 hover:bg-background/80 transition-colors disabled:opacity-50">
             {isDownloading ? <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" /> : <Icon name="download" size={14} />}
             <span>{isDownloading ? 'Wait...' : 'PDF'}</span>
           </button>
-          {downloadError && <span className="text-xs text-danger">{downloadError}</span>}
+          {downloadError && <span className="text-[10px] leading-tight text-danger text-center">{downloadError}</span>}
         </div>
         <button
           onClick={handleSave}
-          className="inline-flex items-center justify-center gap-1.5 sm:gap-2 text-white rounded-lg text-[11px] sm:text-xs font-semibold px-2 sm:px-3 h-8 sm:h-10 shadow-md hover:opacity-90 transition-all active:scale-95"
-          style={{ backgroundColor: justSaved ? '#16a34a' : 'var(--accent)' }}
+          className="inline-flex w-full sm:w-auto items-center justify-center gap-1.5 sm:gap-2 rounded-lg text-[11px] sm:text-xs font-semibold px-2 sm:px-3 h-9 sm:h-10 shadow-md hover:opacity-90 transition-all active:scale-95"
+          style={{ backgroundColor: justSaved ? '#16a34a' : 'var(--color-foreground)', color: 'var(--color-background)' }}
           title="Save document (Ctrl+S)"
         >
           <Icon name={justSaved ? 'check' : 'floppy-disk'} size={14} />
@@ -252,7 +270,9 @@ export function LedgerEditorView() {
         <div className="h-11 px-3 md:px-6 flex items-center gap-2 relative overflow-x-auto no-bar whitespace-nowrap">
           <div className="relative shrink-0">
             <button
-              onClick={() => setAccentOpen(o => !o)}
+              type="button"
+              ref={accentBtnRef}
+              onClick={toggleAccent}
               className="flex items-center gap-1.5 h-7 px-2 rounded-lg border border-rule text-xs font-medium hover:bg-background"
               aria-label="Accent colour"
             >
@@ -271,12 +291,16 @@ export function LedgerEditorView() {
             </button>
             {accentOpen && (
               <>
-                <div className="fixed inset-0 z-10" onClick={() => setAccentOpen(false)} />
-                <div className="absolute left-0 top-9 z-20 bg-surface border border-rule rounded-xl shadow-lg p-2 flex gap-2">
+                <div className="fixed inset-0 z-40" onClick={() => setAccentOpen(false)} />
+                <div
+                  className="fixed z-50 bg-surface border border-rule rounded-xl shadow-lg p-2 flex gap-2"
+                  style={{ top: accentPos.top, left: accentPos.left }}
+                >
                   {ACCENTS.map(c => {
                     const isSelected = accent === c.value;
                     return (
                       <button
+                        type="button"
                         key={c.value}
                         onClick={() => { updateSettings({ accent: c.value }); setAccentOpen(false); }}
                         className="w-6 h-6 rounded-full transition-transform hover:scale-110 relative flex items-center justify-center overflow-hidden"
@@ -306,7 +330,7 @@ export function LedgerEditorView() {
             <Select
               aria-label="Template"
               value={template}
-              onChange={e => setTemplate(e.target.value as Template)}
+              onChange={e => updateDraft({ template: e.target.value as Template })}
               className="h-7 text-xs border border-rule rounded-lg bg-surface text-foreground px-2 outline-none focus:ring-1 focus:ring-accent"
             >
               <option value="default">Default</option>
@@ -433,6 +457,12 @@ export function LedgerEditorView() {
       <footer className="hidden lg:block shrink-0 bg-surface border-t border-rule px-6 py-2 print-hide">
         {bar}
       </footer>
+
+      {/* Print-only unscaled copy of the document. The on-screen preview is
+          hidden while printing, so this is what the browser prints. */}
+      <div className="print-only">
+        <PaperTypography>{previewPaper}</PaperTypography>
+      </div>
     </div>
   );
 }
