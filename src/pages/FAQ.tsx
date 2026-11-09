@@ -320,13 +320,13 @@ export default function FAQ() {
               </div>
               <div className="lg:col-span-5">
                 <div className="flex flex-wrap gap-3 lg:justify-end">
-                  <Link
-                    to="/"
+                  <a
+                    href="https://invoicer-editor.vercel.app/"
                     className="inline-flex items-center gap-2 px-6 py-3.5 text-[14px] font-medium text-white bg-[#FF5A1F] rounded-md hover:bg-[#E84E15] transition-colors"
                   >
                     Open the app
                     <ArrowRight size={15} />
-                  </Link>
+                  </a>
                   <Link
                     to="/features"
                     className="inline-flex items-center gap-2 px-6 py-3.5 text-[14px] font-medium text-white border border-white/20 rounded-md hover:bg-white/5 transition-colors"

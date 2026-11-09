@@ -74,12 +74,12 @@ export default function SiteHeader() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Link
-              to="/"
+            <a
+              href="https://invoicer-editor.vercel.app/"
               className="inline-flex items-center px-4 py-2 text-[13px] font-semibold text-white bg-[#111] rounded-md hover:bg-[#333] transition-colors"
             >
               Open App
-            </Link>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -126,13 +126,13 @@ export default function SiteHeader() {
               
               {/* Mobile CTA */}
               <div className="pt-4 border-t border-[#E5E5E5] mt-4">
-                <Link
-                  to="/"
+                <a
+                  href="https://invoicer-editor.vercel.app/"
                   className="block w-full text-center px-4 py-3 text-[14px] font-semibold text-white bg-[#111] rounded-md hover:bg-[#333] transition-colors"
                   onClick={() => setIsMobileOpen(false)}
                 >
                   Open App
-                </Link>
+                </a>
               </div>
             </div>
           </nav>

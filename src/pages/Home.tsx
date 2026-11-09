@@ -184,13 +184,13 @@ export default function Home() {
                 className="flex flex-wrap gap-3 mb-8 hero-animate"
                 style={{ animationDelay: '0.24s' }}
               >
-                <Link
-                  to="/"
+                <a
+                  href="https://invoicer-editor.vercel.app/"
                   className="inline-flex items-center gap-2 px-5 py-3 text-[14px] font-medium text-white bg-[#111] rounded-md hover:bg-[#333] transition-colors"
                 >
                   Start creating, it's free
                   <ArrowRight size={15} />
-                </Link>
+                </a>
                 <Link
                   to="/guide"
                   className="inline-flex items-center gap-2 px-5 py-3 text-[14px] font-medium text-[#111] bg-white border border-[#E5E5E5] rounded-md hover:border-[#111] transition-colors"
@@ -599,13 +599,13 @@ export default function Home() {
               in minutes.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link
-                to="/"
+              <a
+                href="https://invoicer-editor.vercel.app/"
                 className="inline-flex items-center gap-2 px-6 py-3.5 text-[14px] font-medium text-[#111] bg-white rounded-md hover:bg-white/90 transition-colors"
               >
                 Open the app
                 <ArrowRight size={15} />
-              </Link>
+              </a>
               <Link
                 to="/features"
                 className="inline-flex items-center gap-2 px-6 py-3.5 text-[14px] font-medium text-white border border-white/20 rounded-md hover:bg-white/5 transition-colors"

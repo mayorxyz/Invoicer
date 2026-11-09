@@ -174,13 +174,13 @@ export default function Pricing() {
                     Everything you need. Nothing you pay for.
                   </h2>
                 </div>
-                <Link
-                  to="/"
+                <a
+                  href="https://invoicer-editor.vercel.app/"
                   className="inline-flex items-center justify-center gap-2 px-5 py-3 text-[14px] font-medium text-white bg-[#FF5A1F] rounded-md hover:bg-[#E84E15] transition-colors shrink-0"
                 >
                   Start creating
                   <ArrowRight size={15} />
-                </Link>
+                </a>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-12">
@@ -360,13 +360,13 @@ export default function Pricing() {
               No account, no credit card, no setup. Open the app and go.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link
-                to="/"
+              <a
+                href="https://invoicer-editor.vercel.app/"
                 className="inline-flex items-center gap-2 px-6 py-3.5 text-[14px] font-medium text-white bg-[#FF5A1F] rounded-md hover:bg-[#E84E15] transition-colors"
               >
                 Open the app
                 <ArrowRight size={15} />
-              </Link>
+              </a>
               <Link
                 to="/features"
                 className="inline-flex items-center gap-2 px-6 py-3.5 text-[14px] font-medium text-white border border-white/20 rounded-md hover:bg-white/5 transition-colors"
